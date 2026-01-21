@@ -13,7 +13,7 @@ const rl = readline.createInterface({
 const askQuestion = (query) => new Promise((resolve) => rl.question(query, resolve));
 
 async function main() {
-  console.log("\n--- 🚀 GÉNÉRATEUR REACT STACK V4 (MULTI-PM) ---");
+  console.log("\n--- 🚀 GÉNÉRATEUR STACK V5 ---");
 
   // 1. Nom du projet
   let projectName = await askQuestion("👉 Quel est le nom de votre projet ? ");
