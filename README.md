@@ -30,14 +30,6 @@ L'architecture générée suit une logique **Feature-Based**. Au lieu de regroup
 * **`src/components/`** : Composants UI globaux et réutilisables (Button, Input, Card).
 * **`src/hooks/`** : Hooks globaux partagés entre plusieurs fonctionnalités.
 
-### 🤖 Le "AI-Source of Truth"
-Chaque projet généré inclut un fichier **`.ai-stack-instructions.md`**. 
-Ce fichier est conçu pour être partagé avec vos outils d'IA (Cursor, Claude Code, etc.). Il explique à l'IA :
-1. Les technologies utilisées.
-2. Les règles de nommage et de structure.
-3. Les standards de développement à respecter.
-
-Cela garantit que le code généré par l'IA sera **toujours compatible** avec votre architecture sans que vous ayez à le réexpliquer à chaque fois.
 
 ---
 
@@ -70,14 +62,23 @@ Le terminal vous posera alors une question interactive :
 ```plaintext
 👉 Quel est le nom de votre projet ?
 ```
+
+Après avoir rentré le nom de votre projet, le terminal vous posera une seconde question :
+```plaintext
+📦 Quel gestionnaire de paquets préférez-vous ?
+1. npm
+2. pnpm
+3. bun
+Votre choix (1, 2 ou 3) :
+```
+Vous n'avez qu'à répondre par 1, 2 ou 3
+
 Actions automatisées par le script :
 
 - Création de l'arborescence complète des dossiers.
 
-- Génération des fichiers de configuration (Tailwind v4, PostCSS, Firebase).
+- Génération des fichiers de configuration (React, Tailwind v4, Firebase).
 
 - Création d'une page d'accueil animée (App.jsx) pour tester le rendu immédiatement.
 
-- Installation automatique de toutes les dépendances via NPM.
-
-- Injection du fichier d'instructions pour l'IA
+- Installation automatique de toutes les dépendances via votre gestionaire de paquets.
