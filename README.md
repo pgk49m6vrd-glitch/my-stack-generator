@@ -52,3 +52,32 @@ Clonez le dépôt ou téléchargez les fichiers sources dans un dossier dédié.
 Ouvrez votre terminal et déplacez-vous dans le projet :
 ```bash
 cd my-stack-generator
+```
+### 3. Lier la commande au système
+Exécutez la commande suivante pour enregistrer **`create-my-stack`** sur votre ordinateur :
+```bash
+npm link
+```
+
+---
+
+## 💻 Utilisation
+Pour créer un nouveau projet, il vous suffit de lancer :
+```bash
+create-my-stack
+```
+Le terminal vous posera alors une question interactive :
+```plaintext
+👉 Quel est le nom de votre projet ?
+```
+Actions automatisées par le script :
+
+- Création de l'arborescence complète des dossiers.
+
+- Génération des fichiers de configuration (Tailwind v4, PostCSS, Firebase).
+
+- Création d'une page d'accueil animée (App.jsx) pour tester le rendu immédiatement.
+
+- Installation automatique de toutes les dépendances via NPM.
+
+- Injection du fichier d'instructions pour l'IA
