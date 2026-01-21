@@ -1,0 +1,41 @@
+name: Commit log
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  save-commits:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build commit log (Markdown)
+        run: |
+          # Détecte la plage de commits fournie par l'événement push
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            RANGE="${{ github.sha }}"
+          else
+            RANGE="${{ github.event.before }}..${{ github.sha }}"
+          fi
+
+          outfile="commit-log-${{ github.sha }}.md"
+          echo "# Commit log for $GITHUB_REF ($RANGE)" > "$outfile"
+          echo "" >> "$outfile"
+
+          # Pour chaque commit dans la plage, écrit SHA, auteur, date, titre (subject) et description (body)
+          git log "$RANGE" --pretty=format:'### %H%n- Author: %an <%ae>%n- Date: %aI%n- Title: %s%n%n%b%n' >> "$outfile" || true
+
+          echo "Wrote $outfile"
+          ls -l "$outfile"
+
+      - name: Upload commit log as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: commit-log-${{ github.sha }}
+          path: commit-log-${{ github.sha }}.md
