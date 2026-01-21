@@ -13,10 +13,23 @@ const rl = readline.createInterface({
 const askQuestion = (query) => new Promise((resolve) => rl.question(query, resolve));
 
 async function main() {
-  console.log("\n--- 🛠️  GÉNÉRATEUR DE STACK REACT V4 (FIXED) ---");
+  console.log("\n--- 🚀 GÉNÉRATEUR REACT STACK V4 (MULTI-PM) ---");
 
+  // 1. Nom du projet
   let projectName = await askQuestion("👉 Quel est le nom de votre projet ? ");
   projectName = projectName.trim() || 'mon-projet-anime';
+
+  // 2. Choix du gestionnaire de paquets
+  console.log("\n📦 Quel gestionnaire de paquets préférez-vous ?");
+  console.log("1. npm");
+  console.log("2. pnpm");
+  console.log("3. bun");
+  let pmChoice = await askQuestion("Votre choix (1, 2 ou 3) [1] : ");
+  
+  let pm = "npm";
+  let installCmd = "install";
+  if (pmChoice === "2") { pm = "pnpm"; installCmd = "add"; }
+  if (pmChoice === "3") { pm = "bun"; installCmd = "add"; }
 
   const root = path.join(process.cwd(), projectName);
 
@@ -26,7 +39,7 @@ async function main() {
     return;
   }
 
-  console.log(`\n🚀 Création du projet en cours...`);
+  console.log(`\n✨ Décollage imminent avec ${pm}...`);
 
   // Dossiers
   const folders = [
@@ -45,17 +58,28 @@ async function main() {
 
   // Fichiers
   const files = {
+    'vite.config.js': `import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+})`,
+
     'src/lib/firebase.config.js': `import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "VOTRE_API_KEY",
-  authDomain: "VOTRE_AUTH_DOMAIN",
-  projectId: "VOTRE_PROJECT_ID",
-  storageBucket: "VOTRE_STORAGE_BUCKET",
-  messagingSenderId: "VOTRE_MESSAGING_ID",
-  appId: "VOTRE_APP_ID"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "VOTRE_API_KEY",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
@@ -74,7 +98,7 @@ function App() {
           ${projectName}
         </h1>
         <p className="text-slate-400 text-lg md:text-xl max-w-md mx-auto mb-8">
-          Stack React + Tailwind V4 + Firebase opérationnelle.
+          Stack React + Tailwind V4 + Firebase opérationnelle via ${pm}.
         </p>
         <div className="px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white inline-block">
           Architecture Feature-Based prête
@@ -97,20 +121,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </React.StrictMode>
 );`,
 
-    // CORRECTIF POSTCSS POUR TAILWIND V4
-    'postcss.config.js': `export default {
-  plugins: {
-    '@tailwindcss/postcss': {},
-    autoprefixer: {},
-  },
-}`,
-
-    // CORRECTIF CSS POUR TAILWIND V4
     'src/index.css': `@import "tailwindcss";`,
 
-    'index.html': `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>${projectName}</title></head><body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>`,
+    'index.html': `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>${projectName}</title></head><body class="bg-slate-900"><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>`,
 
-    '.ai-stack-instructions.md': `# Technical Stack & Project Architecture\n\n- React, Vite, Tailwind V4, Firebase.\n- Structure: Feature-Based (src/features).`
+    '.gitignore': `node_modules\ndist\n.env\n.env.local\n.DS_Store`,
+
+    '.ai-stack-instructions.md': `# Technical Stack\n\n- React + Vite\n- Tailwind V4\n- Firebase\n- Package Manager: ${pm}`
   };
 
   Object.entries(files).forEach(([filePath, content]) => {
@@ -126,16 +143,21 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   };
   fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(projectPkgJson, null, 2));
 
-  console.log("📦 Installation des dépendances (V4)...");
+  console.log(`\n📦 Installation des dépendances avec ${pm}...`);
   try {
-    // AJOUT DE @tailwindcss/postcss ICI
-    execSync(`npm install vite @vitejs/plugin-react react react-dom firebase tailwindcss @tailwindcss/postcss postcss autoprefixer`, { 
+    // Installation des dépendances normales
+    execSync(`${pm} ${installCmd} react react-dom firebase`, { cwd: root, stdio: 'inherit' });
+    
+    // Installation des devDependencies
+    const devFlag = pm === "npm" ? "--save-dev" : "-D";
+    execSync(`${pm} ${installCmd} ${devFlag} vite @vitejs/plugin-react tailwindcss @tailwindcss/vite`, { 
       cwd: root, 
       stdio: 'inherit' 
     });
-    console.log(`\n✅ Terminé ! Lancez :\n  cd ${projectName}\n  npm run dev`);
+
+    console.log(`\n✅ Terminé ! Lancez :\n  cd ${projectName}\n  ${pm === 'npm' ? 'npm run dev' : pm + ' dev'}`);
   } catch (error) {
-    console.error("\n❌ Erreur installation.");
+    console.error("\n❌ Erreur lors de l'installation.");
   }
   rl.close();
 }
