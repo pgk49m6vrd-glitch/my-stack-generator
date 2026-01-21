@@ -1,0 +1,11 @@
+{
+  "name": "my-stack-generator",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "create-my-stack": "./index.js" 
+  },
+  "dependencies": {
+    "child_process": "^1.0.2"
+  }
+}
