@@ -42,7 +42,7 @@ Clone the repository or download the source files into a dedicated folder.
 
 ### 2. Go to the folder
 
-Open your terminal and navigate to the project:
+Open your terminal and navigate to the project, you have to tap twice:
 
 ```bash
 cd my-stack-generator
@@ -50,7 +50,7 @@ cd my-stack-generator
 
 ### 3. Link the command to your system
 
-Run the following command twice to register **`create-my-stack`** on your computer:
+Run the following command to register **`create-my-stack`** on your computer:
 
 ```bash
 npm link
