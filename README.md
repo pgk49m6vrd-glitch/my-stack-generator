@@ -50,7 +50,7 @@ cd my-stack-generator
 
 ### 3. Link the command to your system
 
-Run the following command to register **`create-my-stack`** on your computer:
+Run the following command twice to register **`create-my-stack`** on your computer:
 
 ```bash
 npm link
