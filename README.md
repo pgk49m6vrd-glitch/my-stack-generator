@@ -6,6 +6,26 @@ This project is a personal command-line interface (CLI) designed to automate the
 
 ---
 
+## 📄 License Notice & Disclaimer
+
+A copy of the license is included in the **LICENSE** file inside the my-stack-generator.zip archive.
+
+This project is distributed under the GNU Affero General Public License (AGPL). In summary:
+
+- **You are free to:**
+  - Use, copy, and distribute the software, including commercially.
+  - Modify the source code and share your modifications.
+- **You must:**
+  - Provide access to the complete source code (including your modifications) if you make the software available to others, especially over a network.
+  - Keep the same license (AGPL) for any distributed or network-accessible modifications.
+- **You may not:**
+  - Impose further restrictions beyond those of the AGPL.
+  - Remove or alter the license notices.
+
+**Important:** You must read the full LICENSE file before using, modifying, or distributing this project. This summary and the rest of this documentation are for informational purposes only and do not constitute legal advice or override the terms of the license. Only the LICENSE file is legally binding.
+
+---
+
 ## 🚀 Why use My Stack Generator?
 
 The goal is to eliminate "setup fatigue." With a single command, you get a production-ready environment that follows current best practices.
@@ -36,19 +56,23 @@ The generated architecture follows a **Feature-Based** logic. Instead of groupin
 
 Follow these steps to install the command globally on your machine:
 
-### 1. Download the project
+### 1. Download the release
 
-Clone the repository or download the source files into a dedicated folder.
+Go to the Releases section of this repository and download the file: **my-stack-generator.zip**. Make sure to choose the latest stable version (currently **1.0.0**).
 
-### 2. Go to the folder
+### 2. Extract the archive
 
-Open your terminal and navigate to the project, you have to tap twice:
+After downloading, extract the contents of **my-stack-generator.zip**.
+
+### 3. Go to the folder
+
+Open your terminal and navigate to the extracted **my-stack-generator** folder using the following command (replace `{path-to-my-stack-generator}` with the actual path):
 
 ```bash
-cd my-stack-generator
+cd [path-to-my-stack-generator]/my-stack-generator
 ```
 
-### 3. Link the command to your system
+### 4. Link the command to your system
 
 Run the following command to register **`create-my-stack`** on your computer:
 
@@ -60,7 +84,7 @@ npm link
 
 ## 💻 Utilisation
 
-Pour créer un nouveau projet, il vous suffit de lancer :
+For create a new prject, you just have to run the following command:
 
 ```bash
 create-my-stack
