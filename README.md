@@ -1,60 +1,81 @@
 # 🛠️ My Stack Generator
 
-**Le générateur de boilerplate ultime pour le développement "AI-Native" avec React, Tailwind v4 et Firebase.**
+**The ultimate boilerplate generator for "AI-Native" development with React, Tailwind v4, and Firebase.**
 
-Ce projet est une interface de ligne de commande (CLI) personnelle conçue pour automatiser la création de projets web modernes. Plutôt que de configurer manuellement chaque outil, ce générateur déploie une architecture robuste, scalable et immédiatement comprise par les assistants IA (Cursor, Claude Code, Google AntiGravity, etc.).
-
----
-
-## 🚀 Pourquoi utiliser My Stack Generator ?
-
-Le but est de supprimer la "fatigue du setup". En une seule commande, vous obtenez un environnement de production prêt à l'emploi qui respecte les meilleures pratiques actuelles.
-
-### La Stack Technique
-* **Framework :** [React](https://reactjs.org/) (via Vite) pour une rapidité d'exécution maximale.
-* **Styling :** [Tailwind CSS v4](https://tailwindcss.com/) (moteur haute performance).
-* **Backend :** [Firebase](https://firebase.google.com/) (SDK Modulaire v9+) pré-configuré.
-* **Architecture :** Feature-Based Design (Organisation par domaines métiers).
+This project is a personal command-line interface (CLI) designed to automate the creation of modern web projects. Instead of manually configuring each tool, this generator deploys a robust, scalable architecture that is immediately understood by AI assistants (Cursor, Claude Code, Google AntiGravity, etc.).
 
 ---
 
-## 🏗️ Architecture & Points Forts
+## 📄 License Notice & Disclaimer
 
-L'architecture générée suit une logique **Feature-Based**. Au lieu de regrouper les fichiers par "type technique" (tous les composants ensemble, tous les hooks ensemble), nous les regroupons par **fonctionnalité**.
+A copy of the license is included in the **LICENSE** file inside the my-stack-generator.zip archive.
 
+This project is distributed under the GNU Affero General Public License (AGPL). In summary:
 
+- **You are free to:**
+  - Use, copy, and distribute the software, including commercially.
+  - Modify the source code and share your modifications.
+- **You must:**
+  - Provide access to the complete source code (including your modifications) if you make the software available to others, especially over a network.
+  - Keep the same license (AGPL) for any distributed or network-accessible modifications.
+- **You may not:**
+  - Impose further restrictions beyond those of the AGPL.
+  - Remove or alter the license notices.
 
-### Structure des dossiers :
-* **`src/features/`** : Le cœur de l'application. Chaque dossier (ex: `auth`) contient ses propres `components`, `hooks` et `services`. 
-* **`src/lib/`** : Centralisation des configurations (ex: `firebase.config.js`).
-* **`src/components/`** : Composants UI globaux et réutilisables (Button, Input, Card).
-* **`src/hooks/`** : Hooks globaux partagés entre plusieurs fonctionnalités.
+**Important:** You must read the full LICENSE file before using, modifying, or distributing this project. This summary and the rest of this documentation are for informational purposes only and do not constitute legal advice or override the terms of the license. Only the LICENSE file is legally binding.
 
-### 🤖 Le "AI-Source of Truth"
-Chaque projet généré inclut un fichier **`.ai-stack-instructions.md`**. 
-Ce fichier est conçu pour être partagé avec vos outils d'IA (Cursor, Claude Code, etc.). Il explique à l'IA :
-1. Les technologies utilisées.
-2. Les règles de nommage et de structure.
-3. Les standards de développement à respecter.
+---
 
-Cela garantit que le code généré par l'IA sera **toujours compatible** avec votre architecture sans que vous ayez à le réexpliquer à chaque fois.
+## 🚀 Why use My Stack Generator?
+
+The goal is to eliminate "setup fatigue." With a single command, you get a production-ready environment that follows current best practices.
+
+### The Tech Stack
+
+* **Framework:** [React](https://reactjs.org/) (via Vite) for maximum speed.
+* **Styling:** [Tailwind CSS v4](https://tailwindcss.com/) (high-performance engine).
+* **Backend:** [Firebase](https://firebase.google.com/) (Modular SDK v9+) pre-configured.
+* **Architecture:** Feature-Based Design (Organization by business domains).
+
+---
+
+## 🏗️ Architecture & Highlights
+
+The generated architecture follows a **Feature-Based** logic. Instead of grouping files by "technical type" (all components together, all hooks together), we group them by **feature**.
+
+### Folder structure
+
+* **`src/features/`**: The core of the application. Each folder (e.g., `auth`) contains its own `components`, `hooks`, and `services`.
+* **`src/lib/`**: Centralized configurations (e.g., `firebase.config.js`).
+* **`src/components/`**: Global and reusable UI components (Button, Input, Card).
+* **`src/hooks/`**: Global hooks shared across multiple features.
 
 ---
 
 ## ⚙️ Installation
 
-Suivez ces étapes pour installer la commande globalement sur votre machine :
+Follow these steps to install the command globally on your machine:
 
-### 1. Télécharger le projet
-Clonez le dépôt ou téléchargez les fichiers sources dans un dossier dédié.
+### 1. Download the release
 
-### 2. Accéder au dossier
-Ouvrez votre terminal et déplacez-vous dans le projet :
+Go to the Releases section of this repository and download the file: **my-stack-generator.zip**. Make sure to choose the latest stable version (currently **1.0.0**).
+
+### 2. Extract the archive
+
+After downloading, extract the contents of **my-stack-generator.zip**.
+
+### 3. Go to the folder
+
+Open your terminal and navigate to the extracted **my-stack-generator** folder using the following command (replace `{path-to-my-stack-generator}` with the actual path):
+
 ```bash
-cd my-stack-generator
+cd [path-to-my-stack-generator]/my-stack-generator
 ```
-### 3. Lier la commande au système
-Exécutez la commande suivante pour enregistrer **`create-my-stack`** sur votre ordinateur :
+
+### 4. Link the command to your system
+
+Run the following command to register **`create-my-stack`** on your computer:
+
 ```bash
 npm link
 ```
@@ -62,22 +83,37 @@ npm link
 ---
 
 ## 💻 Utilisation
-Pour créer un nouveau projet, il vous suffit de lancer :
+
+For create a new prject, you just have to run the following command:
+
 ```bash
 create-my-stack
 ```
-Le terminal vous posera alors une question interactive :
+
+The terminal will then ask you an interactive question:
+
 ```plaintext
-👉 Quel est le nom de votre projet ?
+👉 What is your project name?
 ```
-Actions automatisées par le script :
 
-- Création de l'arborescence complète des dossiers.
+After entering your project name, the terminal will ask you a second question:
 
-- Génération des fichiers de configuration (Tailwind v4, PostCSS, Firebase).
+```plaintext
+📦 Which package manager do you prefer?
+1. npm
+2. pnpm
+3. bun
+Your choice (1, 2 or 3):
+```
 
-- Création d'une page d'accueil animée (App.jsx) pour tester le rendu immédiatement.
+You just have to answer with 1, 2, or 3.
 
-- Installation automatique de toutes les dépendances via NPM.
+Automated actions performed by the script:
 
-- Injection du fichier d'instructions pour l'IA
+* Creation of the complete folder structure.
+
+* Generation of configuration files (React, Tailwind v4, Firebase).
+
+* Creation of an animated home page (App.jsx) to test the rendering immediately.
+
+* Automatic installation of all dependencies via your chosen package manager.

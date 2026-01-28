@@ -13,18 +13,18 @@ const rl = readline.createInterface({
 const askQuestion = (query) => new Promise((resolve) => rl.question(query, resolve));
 
 async function main() {
-  console.log("\n--- 🚀 GÉNÉRATEUR REACT STACK V4 (MULTI-PM) ---");
+  console.log("\n--- 🚀 GÉNÉRATEUR STACK V5 ---");
 
   // 1. Nom du projet
-  let projectName = await askQuestion("👉 Quel est le nom de votre projet ? ");
+  let projectName = await askQuestion("👉 What is your project name?");
   projectName = projectName.trim() || 'mon-projet-anime';
 
   // 2. Choix du gestionnaire de paquets
-  console.log("\n📦 Quel gestionnaire de paquets préférez-vous ?");
+  console.log("\n📦 Which package manager do you prefer?");
   console.log("1. npm");
   console.log("2. pnpm");
   console.log("3. bun");
-  let pmChoice = await askQuestion("Votre choix (1, 2 ou 3) [1] : ");
+  let pmChoice = await askQuestion("Your Choice (1, 2 or 3) : ");
   
   let pm = "npm";
   let installCmd = "install";
