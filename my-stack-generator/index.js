@@ -44,13 +44,10 @@ async function main() {
   pmChoice = pmChoice.trim();
   
   let pm = "npm";
-  let installCmd = "install";
   if (pmChoice === "2") {
     pm = "pnpm";
-    installCmd = "add";
   } else if (pmChoice === "3") {
     pm = "bun";
-    installCmd = "add";
   } else if (pmChoice !== "1") {
     console.log("⚠️  Invalid choice. Defaulting to npm.");
   }
@@ -77,8 +74,9 @@ async function main() {
     'public'
   ];
 
-  fs.mkdirSync(root, { recursive: true });
-  folders.forEach(folder => fs.mkdirSync(path.join(root, folder), { recursive: true }));
+  // Optimization: Parallelize directory creation to prevent blocking
+  await fs.promises.mkdir(root, { recursive: true });
+  await Promise.all(folders.map(folder => fs.promises.mkdir(path.join(root, folder), { recursive: true })));
 
   // Fichiers
   const files = {
@@ -159,26 +157,31 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     fs.promises.writeFile(path.join(root, filePath), content)
   ));
 
+  // Optimization: Pre-fill package.json with deps to allow single install command
   const projectPkgJson = {
     name: sanitizePackageName(projectName),
     private: true,
     version: "1.0.0",
     type: "module",
-    scripts: { "dev": "vite", "build": "vite build", "preview": "vite preview" }
+    scripts: { "dev": "vite", "build": "vite build", "preview": "vite preview" },
+    dependencies: {
+      "react": "latest",
+      "react-dom": "latest",
+      "firebase": "latest"
+    },
+    devDependencies: {
+      "vite": "latest",
+      "@vitejs/plugin-react": "latest",
+      "tailwindcss": "latest",
+      "@tailwindcss/vite": "latest"
+    }
   };
   fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(projectPkgJson, null, 2));
 
   console.log(`\n📦 Installing dependencies with ${pm}...`);
   try {
-    // Installing normal dependencies
-    execSync(`${pm} ${installCmd} react react-dom firebase`, { cwd: root, stdio: 'inherit' });
-    
-    // Installing devDependencies
-    const devFlag = pm === "npm" ? "--save-dev" : "-D";
-    execSync(`${pm} ${installCmd} ${devFlag} vite @vitejs/plugin-react tailwindcss @tailwindcss/vite`, { 
-      cwd: root, 
-      stdio: 'inherit' 
-    });
+    // Optimization: Single installation step reduces overhead
+    execSync(`${pm} install`, { cwd: root, stdio: 'inherit' });
 
     console.log(`\n✅ Done! Run:\n  cd ${projectName}\n  ${pm === 'npm' ? 'npm run dev' : pm + ' dev'}`);
   } catch (error) {
