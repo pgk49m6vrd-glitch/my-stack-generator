@@ -12,12 +12,28 @@ const rl = readline.createInterface({
 
 const askQuestion = (query) => new Promise((resolve) => rl.question(query, resolve));
 
+function validateProjectName(name) {
+  if (!name || name.trim() === '') return false;
+  return !name.includes('/') && !name.includes('\\') && !name.includes('..');
+}
+
+function sanitizePackageName(name) {
+  return name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+}
+
 async function main() {
   console.log("\n--- 🚀 GÉNÉRATEUR STACK V5 ---");
 
   // 1. Nom du projet
-  let projectName = await askQuestion("👉 What is your project name?");
-  projectName = projectName.trim() || 'mon-projet-anime';
+  let projectName = '';
+  while (true) {
+    projectName = await askQuestion("👉 What is your project name? ");
+    projectName = projectName.trim() || 'mon-projet-anime';
+    if (validateProjectName(projectName)) {
+      break;
+    }
+    console.log("❌ Invalid project name. Please avoid '/', '\\' and '..'");
+  }
 
   // 2. Choix du gestionnaire de paquets
   console.log("\n📦 Which package manager do you prefer?");
@@ -135,7 +151,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   });
 
   const projectPkgJson = {
-    name: projectName,
+    name: sanitizePackageName(projectName),
     private: true,
     version: "1.0.0",
     type: "module",
