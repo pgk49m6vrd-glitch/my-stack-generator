@@ -14,7 +14,7 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 function validateProjectName(name) {
   if (!name || name.trim() === '') return false;
-  return !name.includes('/') && !name.includes('\\') && !name.includes('..');
+  return !name.includes('/') && !name.includes('\\') && !name.includes('..') && !name.includes(' ');
 }
 
 function sanitizePackageName(name) {
@@ -32,7 +32,7 @@ async function main() {
     if (validateProjectName(projectName)) {
       break;
     }
-    console.log("❌ Invalid project name. Please avoid '/', '\\' and '..'");
+    console.log("❌ Invalid project name. Please avoid spaces, '/', '\\' and '..'");
   }
 
   // 2. Package Manager Selection
