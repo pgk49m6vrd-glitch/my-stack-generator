@@ -130,9 +130,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     '.ai-stack-instructions.md': `# Technical Stack\n\n- React + Vite\n- Tailwind V4\n- Firebase\n- Package Manager: ${pm}`
   };
 
-  Object.entries(files).forEach(([filePath, content]) => {
-    fs.writeFileSync(path.join(root, filePath), content);
-  });
+  // Optimization: Write files in parallel to improve performance
+  await Promise.all(Object.entries(files).map(([filePath, content]) =>
+    fs.promises.writeFile(path.join(root, filePath), content)
+  ));
 
   const projectPkgJson = {
     name: projectName,
