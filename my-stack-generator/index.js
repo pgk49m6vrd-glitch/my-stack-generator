@@ -24,7 +24,7 @@ function sanitizePackageName(name) {
 async function main() {
   console.log("\n--- 🚀 STACK GENERATOR V5 ---");
 
-  // 1. Nom du projet
+  // 1. Project Name
   let projectName = '';
   while (true) {
     projectName = await askQuestion("👉 What is your project name? ");
@@ -34,9 +34,6 @@ async function main() {
     }
     console.log("❌ Invalid project name. Please avoid '/', '\\' and '..'");
   }
-  // 1. Project Name
-  let projectName = await askQuestion("👉 What is your project name? ");
-  projectName = projectName.trim() || 'my-awesome-project';
 
   // 2. Package Manager Selection
   console.log("\n📦 Which package manager do you prefer?");
