@@ -13,33 +13,41 @@ const rl = readline.createInterface({
 const askQuestion = (query) => new Promise((resolve) => rl.question(query, resolve));
 
 async function main() {
-  console.log("\n--- 🚀 GÉNÉRATEUR STACK V5 ---");
+  console.log("\n--- 🚀 STACK GENERATOR V5 ---");
 
-  // 1. Nom du projet
-  let projectName = await askQuestion("👉 What is your project name?");
-  projectName = projectName.trim() || 'mon-projet-anime';
+  // 1. Project Name
+  let projectName = await askQuestion("👉 What is your project name? ");
+  projectName = projectName.trim() || 'my-awesome-project';
 
-  // 2. Choix du gestionnaire de paquets
+  // 2. Package Manager Selection
   console.log("\n📦 Which package manager do you prefer?");
   console.log("1. npm");
   console.log("2. pnpm");
   console.log("3. bun");
   let pmChoice = await askQuestion("Your Choice (1, 2 or 3) : ");
+  pmChoice = pmChoice.trim();
   
   let pm = "npm";
   let installCmd = "install";
-  if (pmChoice === "2") { pm = "pnpm"; installCmd = "add"; }
-  if (pmChoice === "3") { pm = "bun"; installCmd = "add"; }
+  if (pmChoice === "2") {
+    pm = "pnpm";
+    installCmd = "add";
+  } else if (pmChoice === "3") {
+    pm = "bun";
+    installCmd = "add";
+  } else if (pmChoice !== "1") {
+    console.log("⚠️  Invalid choice. Defaulting to npm.");
+  }
 
   const root = path.join(process.cwd(), projectName);
 
   if (fs.existsSync(root)) {
-    console.log(`❌ Erreur : Le dossier "${projectName}" existe déjà.`);
+    console.log(`❌ Error: Directory "${projectName}" already exists.`);
     rl.close();
     return;
   }
 
-  console.log(`\n✨ Décollage imminent avec ${pm}...`);
+  console.log(`\n✨ Starting setup with ${pm}...`);
 
   // Dossiers
   const folders = [
@@ -98,10 +106,10 @@ function App() {
           ${projectName}
         </h1>
         <p className="text-slate-400 text-lg md:text-xl max-w-md mx-auto mb-8">
-          Stack React + Tailwind V4 + Firebase opérationnelle via ${pm}.
+          React + Tailwind V4 + Firebase Stack operational via ${pm}.
         </p>
         <div className="px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white inline-block">
-          Architecture Feature-Based prête
+          Feature-Based Architecture ready
         </div>
       </div>
     </div>
@@ -123,7 +131,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
     'src/index.css': `@import "tailwindcss";`,
 
-    'index.html': `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>${projectName}</title></head><body class="bg-slate-900"><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>`,
+    'index.html': `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>${projectName}</title></head><body class="bg-slate-900"><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>`,
 
     '.gitignore': `node_modules\ndist\n.env\n.env.local\n.DS_Store`,
 
@@ -143,21 +151,21 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   };
   fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(projectPkgJson, null, 2));
 
-  console.log(`\n📦 Installation des dépendances avec ${pm}...`);
+  console.log(`\n📦 Installing dependencies with ${pm}...`);
   try {
-    // Installation des dépendances normales
+    // Installing normal dependencies
     execSync(`${pm} ${installCmd} react react-dom firebase`, { cwd: root, stdio: 'inherit' });
     
-    // Installation des devDependencies
+    // Installing devDependencies
     const devFlag = pm === "npm" ? "--save-dev" : "-D";
     execSync(`${pm} ${installCmd} ${devFlag} vite @vitejs/plugin-react tailwindcss @tailwindcss/vite`, { 
       cwd: root, 
       stdio: 'inherit' 
     });
 
-    console.log(`\n✅ Terminé ! Lancez :\n  cd ${projectName}\n  ${pm === 'npm' ? 'npm run dev' : pm + ' dev'}`);
+    console.log(`\n✅ Done! Run:\n  cd ${projectName}\n  ${pm === 'npm' ? 'npm run dev' : pm + ' dev'}`);
   } catch (error) {
-    console.error("\n❌ Erreur lors de l'installation.");
+    console.error("\n❌ Error during installation.");
   }
   rl.close();
 }
