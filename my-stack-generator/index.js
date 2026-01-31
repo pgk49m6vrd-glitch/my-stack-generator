@@ -12,9 +12,28 @@ const rl = readline.createInterface({
 
 const askQuestion = (query) => new Promise((resolve) => rl.question(query, resolve));
 
+function validateProjectName(name) {
+  if (!name || name.trim() === '') return false;
+  return !name.includes('/') && !name.includes('\\') && !name.includes('..');
+}
+
+function sanitizePackageName(name) {
+  return name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+}
+
 async function main() {
   console.log("\n--- 🚀 STACK GENERATOR V5 ---");
 
+  // 1. Nom du projet
+  let projectName = '';
+  while (true) {
+    projectName = await askQuestion("👉 What is your project name? ");
+    projectName = projectName.trim() || 'my-awesome-project';
+    if (validateProjectName(projectName)) {
+      break;
+    }
+    console.log("❌ Invalid project name. Please avoid '/', '\\' and '..'");
+  }
   // 1. Project Name
   let projectName = await askQuestion("👉 What is your project name? ");
   projectName = projectName.trim() || 'my-awesome-project';
@@ -144,7 +163,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   ));
 
   const projectPkgJson = {
-    name: projectName,
+    name: sanitizePackageName(projectName),
     private: true,
     version: "1.0.0",
     type: "module",
