@@ -14,7 +14,9 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 function validateProjectName(name) {
   if (!name || name.trim() === '') return false;
-  return !name.includes('/') && !name.includes('\\') && !name.includes('..') && !name.includes(' ');
+  // Sentinel: Use strict whitelist to prevent command injection and path traversal
+  const validNameRegex = /^[a-zA-Z0-9-_]+$/;
+  return validNameRegex.test(name);
 }
 
 function sanitizePackageName(name) {
@@ -32,7 +34,7 @@ async function main() {
     if (validateProjectName(projectName)) {
       break;
     }
-    console.log("❌ Invalid project name. Please avoid spaces, '/', '\\' and '..'");
+    console.log("❌ Invalid project name. Only letters, numbers, hyphens, and underscores are allowed.");
   }
 
   // 2. Package Manager Selection
