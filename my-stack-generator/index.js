@@ -96,7 +96,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "VOTRE_API_KEY",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "YOUR_API_KEY",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
@@ -115,7 +115,7 @@ function App() {
     <div className="min-h-screen bg-slate-900 flex items-center justify-center overflow-hidden relative">
       <div className="absolute w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
       <div className="relative z-10 text-center px-4">
-        <div className="inline-block animate-bounce mb-6 text-6xl">🚀</div>
+        <div role="img" aria-label="Rocket launching" className="inline-block animate-bounce mb-6 text-6xl">🚀</div>
         <h1 className="text-5xl md:text-7xl font-black mb-4 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
           ${projectName}
         </h1>
