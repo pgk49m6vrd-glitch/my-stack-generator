@@ -113,10 +113,10 @@ export const db = getFirestore(app);`,
 function App() {
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center overflow-hidden relative">
-      <div className="absolute w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse motion-reduce:animate-none"></div>
       <div className="relative z-10 text-center px-4">
-        <div className="inline-block animate-bounce mb-6 text-6xl">🚀</div>
-        <h1 className="text-5xl md:text-7xl font-black mb-4 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+        <span role="img" aria-label="Rocket launching" className="inline-block animate-bounce motion-reduce:animate-none mb-6 text-6xl">🚀</span>
+        <h1 className="text-5xl md:text-7xl font-black mb-4 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent forced-colors:text-[CanvasText]">
           ${projectName}
         </h1>
         <p className="text-slate-400 text-lg md:text-xl max-w-md mx-auto mb-8">
