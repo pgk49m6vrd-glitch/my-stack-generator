@@ -80,8 +80,29 @@ async function main() {
   await fs.promises.mkdir(root, { recursive: true });
   await Promise.all(folders.map(folder => fs.promises.mkdir(path.join(root, folder), { recursive: true })));
 
+  // Optimization: Pre-fill package.json with deps to allow single install command
+  const projectPkgJson = {
+    name: sanitizePackageName(projectName),
+    private: true,
+    version: "1.0.0",
+    type: "module",
+    scripts: { "dev": "vite", "build": "vite build", "preview": "vite preview" },
+    dependencies: {
+      "react": "latest",
+      "react-dom": "latest",
+      "firebase": "latest"
+    },
+    devDependencies: {
+      "vite": "latest",
+      "@vitejs/plugin-react": "latest",
+      "tailwindcss": "latest",
+      "@tailwindcss/vite": "latest"
+    }
+  };
+
   // Fichiers
   const files = {
+    'package.json': JSON.stringify(projectPkgJson, null, 2),
     'vite.config.js': `import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -158,27 +179,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   await Promise.all(Object.entries(files).map(([filePath, content]) =>
     fs.promises.writeFile(path.join(root, filePath), content)
   ));
-
-  // Optimization: Pre-fill package.json with deps to allow single install command
-  const projectPkgJson = {
-    name: sanitizePackageName(projectName),
-    private: true,
-    version: "1.0.0",
-    type: "module",
-    scripts: { "dev": "vite", "build": "vite build", "preview": "vite preview" },
-    dependencies: {
-      "react": "latest",
-      "react-dom": "latest",
-      "firebase": "latest"
-    },
-    devDependencies: {
-      "vite": "latest",
-      "@vitejs/plugin-react": "latest",
-      "tailwindcss": "latest",
-      "@tailwindcss/vite": "latest"
-    }
-  };
-  fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(projectPkgJson, null, 2));
 
   console.log(`\n📦 Installing dependencies with ${pm}...`);
   try {
