@@ -3,7 +3,7 @@ name: Commit log
 on:
   push:
     branches:
-      - '**'
+      - main
 
 jobs:
   save-commits:
@@ -28,8 +28,8 @@ jobs:
           echo "# Commit log for $GITHUB_REF ($RANGE)" > "$outfile"
           echo "" >> "$outfile"
 
-          # Pour chaque commit dans la plage, écrit SHA, auteur, date, titre (subject) et description (body)
-          git log "$RANGE" --pretty=format:'### %H%n- Author: %an <%ae>%n- Date: %aI%n- Title: %s%n%n%b%n' >> "$outfile" || true
+          # Build log without exposing emails
+          git log "$RANGE" --pretty=format:'### %H%n- Author: %an%n- Date: %aI%n- Title: %s%n%n%b%n' >> "$outfile" || true
 
           echo "Wrote $outfile"
           ls -l "$outfile"
@@ -39,3 +39,4 @@ jobs:
         with:
           name: commit-log-${{ github.sha }}
           path: commit-log-${{ github.sha }}.md
+          retention-days: 7

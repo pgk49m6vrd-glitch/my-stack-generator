@@ -52,6 +52,13 @@ The generated architecture follows a **Feature-Based** logic. Instead of groupin
 
 ---
 
+## 📋 Prerequisites
+
+Before installing, ensure you have the following:
+
+- **Node.js**: version 18.0.0 or higher.
+- **Package Manager**: npm, pnpm, or bun.
+
 ## ⚙️ Installation
 
 Follow these steps to install the command globally on your machine:
@@ -74,7 +81,7 @@ cd [path-to-my-stack-generator]/my-stack-generator
 
 ### 4. Link the command to your system
 
-Run one of this following command to register **`mystack`** on your computer:
+Run one of these following commands to register **`mystack`** on your computer:
 
 ```bash
 npm install
@@ -88,11 +95,11 @@ pnpm link
 bun install
 bun link
 ```
-> *We are recomanding you to use bun*
+> *We recommend using bun*
 
 ---
 
-## 💻 Utilisation
+## 💻 Usage
 
 To create a new project, simply run the following command:
 

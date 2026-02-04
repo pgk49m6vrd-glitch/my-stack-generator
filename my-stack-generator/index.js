@@ -5,6 +5,7 @@ import spawn from 'cross-spawn';
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
+import { fileURLToPath } from 'url';
 import validatePkgName from 'validate-npm-package-name';
 
 const rl = readline.createInterface({
@@ -14,11 +15,30 @@ const rl = readline.createInterface({
 
 const askQuestion = (query) => new Promise((resolve) => rl.question(query, resolve));
 
+let currentRoot = '';
+
+const cleanup = () => {
+  if (currentRoot && fs.existsSync(currentRoot)) {
+    try {
+      fs.rmSync(currentRoot, { recursive: true, force: true });
+      console.log(`\n🧹 Cleaned up: ${currentRoot}`);
+    } catch (e) {
+      // Ignore cleanup errors
+    }
+  }
+};
+
+process.on('SIGINT', () => {
+  cleanup();
+  rl.close();
+  process.exit(1);
+});
+
 /**
  * Validates the project name against Windows reserved names,
  * dot/space endings, and basic character rules.
  */
-function validateProjectName(name) {
+export function validateProjectName(name) {
   if (!name || name.trim() === '') return false;
 
   // Length check to prevent DoS/filesystem errors
@@ -35,14 +55,16 @@ function validateProjectName(name) {
   if (name.endsWith(' ') || name.endsWith('.')) return false;
 
   // Whitelist: letters, numbers, hyphens, underscores, dots
-  const validNameRegex = /^[a-zA-Z0-9-_\.]+$/;
+  const validNameRegex = /^[a-zA-Z0-9_.-]+$/;
   if (!validNameRegex.test(name)) return false;
 
   // Path resolution check to prevent path traversal
   const root = path.resolve(process.cwd(), name);
-  const cwd = process.cwd();
-  if (!root.startsWith(cwd + path.sep) && root !== cwd) {
-      return false;
+  const realCwd = fs.realpathSync(process.cwd());
+  const relative = path.relative(realCwd, root);
+
+  if (relative.startsWith('..') || path.isAbsolute(relative)) {
+    return false;
   }
 
   return true;
@@ -55,7 +77,7 @@ function sanitizePackageName(name) {
   const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
   const validation = validatePkgName(sanitized);
   if (!validation.validForNewPackages) {
-    return 'my-awesome-project';
+    throw new Error(`Invalid package name: "${sanitized}". npm names must be lowercase, URL-friendly, and not reserved.`);
   }
   return sanitized;
 }
@@ -65,8 +87,8 @@ function sanitizePackageName(name) {
  */
 function checkPackageManager(pm) {
   try {
-    execSync(`${pm} --version`, { stdio: 'ignore' });
-    return true;
+    const result = spawn.sync(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
+    return result.status === 0;
   } catch (e) {
     return false;
   }
@@ -82,7 +104,6 @@ async function main() {
 
   console.log("\n--- 🚀 MYSTACK GENERATOR V1.2.0 ---");
 
-  let root = '';
   try {
     // 1. Project Name
     let projectName = '';
@@ -145,7 +166,8 @@ async function main() {
       }
     }
 
-    root = path.join(process.cwd(), projectName);
+    const root = path.join(process.cwd(), projectName);
+    currentRoot = root;
 
     if (fs.existsSync(root)) {
       console.log(`❌ Error: Directory "${projectName}" already exists.`);
@@ -205,15 +227,15 @@ function App() {
           🚀
         </span>
 
-        <h1 className="text-5xl md:text-7xl font-black mb-4 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent forced-colors:text-[CanvasText]">
+        <h1 className="text-5xl md:text-7xl font-black mb-4 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent forced-colors:text-[CanvasText] break-words text-balance max-w-4xl mx-auto">
           ${projectName}
         </h1>
 
-        <p className="text-lg md:text-xl max-w-md mx-auto mb-8 opacity-90">
+        <p className="text-lg md:text-xl max-w-md mx-auto mb-8 opacity-90 forced-colors:text-[CanvasText]">
           React + Tailwind V4 + ${backend.charAt(0).toUpperCase() + backend.slice(1)} Stack operational.
         </p>
 
-        <div className="px-6 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white/90 inline-block shadow-xl">
+        <div className="px-6 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white/90 inline-block shadow-xl forced-colors:text-[CanvasText]">
           Feature-Based Architecture ready
         </div>
       </div>
@@ -264,7 +286,14 @@ body {
 
 ::-webkit-scrollbar-thumb {
   @apply bg-slate-700 rounded-full border-2 border-slate-900 hover:bg-slate-600;
-}`,
+}
+
+/* Firefox support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #0f172a;
+}
+`,
 
       'README.md': `# ${projectName}
 
@@ -304,11 +333,12 @@ Built with **My Stack Generator**.
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Modern web application built with ${projectName}" />
   <meta name="theme-color" content="#0f172a" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="${projectName}" />
-  <meta property="og:description" content="Built with React, Tailwind v4 and ${backend}" />
+  <meta property="og:description" content="Built with React, Tailwind v4 and ${backend.charAt(0).toUpperCase() + backend.slice(1)}" />
 
   <title>${projectName}</title>
 </head>
@@ -336,6 +366,18 @@ Built with **My Stack Generator**.
             src: "/favicon.svg",
             sizes: "any",
             type: "image/svg+xml"
+          },
+          {
+            src: "/favicon.svg",
+            sizes: "192x192",
+            type: "image/svg+xml",
+            purpose: "any maskable"
+          },
+          {
+            src: "/favicon.svg",
+            sizes: "512x512",
+            type: "image/svg+xml",
+            purpose: "any maskable"
           }
         ]
       }, null, 2),
@@ -378,8 +420,8 @@ const firebaseConfig = {
 let app;
 const getFirebaseApp = () => {
   if (!getApps().length) {
-    if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "") {
-      console.warn("Firebase API Key is missing. Check your .env file.");
+    if (!firebaseConfig.apiKey) {
+      throw new Error("Firebase API Key is missing. Please set VITE_FIREBASE_API_KEY in your .env file.");
     }
     app = initializeApp(firebaseConfig);
   } else {
@@ -404,12 +446,9 @@ let client;
 export const getSupabase = () => {
   if (!client) {
     if (!supabaseUrl || !supabaseAnonKey) {
-      console.warn("Supabase credentials missing. Check your .env file.");
+      throw new Error("Supabase credentials missing. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.");
     }
-    client = createClient(
-      supabaseUrl || 'https://placeholder.supabase.co',
-      supabaseAnonKey || 'placeholder-key'
-    );
+    client = createClient(supabaseUrl, supabaseAnonKey);
   }
   return client;
 };
@@ -427,7 +466,13 @@ export const getSupabase = () => {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
         await new Promise((resolve, reject) => {
-          const child = spawn(pm, ['install'], { cwd: root, stdio: 'inherit' });
+          const args = ['install'];
+          if (pm === 'npm') {
+            args.push('--no-audit', '--no-fund');
+          } else if (pm === 'pnpm') {
+            args.push('--no-audit');
+          }
+          const child = spawn(pm, args, { cwd: root, stdio: 'inherit' });
           child.on('close', (code) => {
             if (code === 0) resolve();
             else reject(new Error(`Installation failed with code ${code}`));
@@ -458,9 +503,12 @@ export const getSupabase = () => {
 
   } catch (error) {
     console.error(`\n❌ Error: ${error.message}`);
+    cleanup();
   } finally {
     rl.close();
   }
 }
 
-main();
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main();
+}
