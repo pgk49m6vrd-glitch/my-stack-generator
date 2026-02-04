@@ -5,8 +5,14 @@
   "bin": {
     "mystack": "./index.js"
   },
+  "files": [
+    "index.js"
+  ],
   "engines": {
     "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "node test-validation.js"
   },
   "dependencies": {
     "cross-spawn": "^7.0.6",
