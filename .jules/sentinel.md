@@ -7,3 +7,8 @@
 **Vulnerability:** `package.json` listed `child_process` (a Node.js built-in) as a dependency.
 **Learning:** Developers sometimes mistakenly add built-ins to `dependencies`. This creates a supply chain risk if a malicious package with that name exists on npm (typosquatting or shadowing).
 **Prevention:** Audit `package.json` to ensure only real external packages are listed. Built-in modules (`fs`, `path`, `child_process`, etc.) should never be in `dependencies`.
+
+## 2025-02-19 - CLI Input Length Constraints
+**Vulnerability:** Unbounded user input for project names creates potential for filesystem errors and denial of service.
+**Learning:** Even in local CLI tools, input validation must account for platform constraints (filesystem limits, npm naming rules). npm enforces a 214-character limit on package names.
+**Prevention:** Explicitly validate input length against known downstream constraints (e.g., max 214 chars) before attempting operations.

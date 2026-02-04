@@ -22,6 +22,9 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 function validateProjectName(name) {
   if (!name || name.trim() === '') return false;
 
+  // Length check to prevent DoS/filesystem errors
+  if (name.length > 214) return false;
+
   // Refuse . and ..
   if (name === '.' || name === '..') return false;
 
@@ -90,7 +93,7 @@ async function main() {
       if (validateProjectName(projectName)) {
         break;
       }
-      console.log("❌ Invalid project name. Avoid reserved names, ending with space/dot, or special characters.");
+      console.log("❌ Invalid project name. Must be 1-214 characters, avoid reserved names, ending with space/dot, or special characters.");
     }
 
     // 2. Package Manager Selection
