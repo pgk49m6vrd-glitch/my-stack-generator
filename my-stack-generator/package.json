@@ -4,5 +4,8 @@
   "type": "module",
   "bin": {
     "create-my-stack": "./index.js" 
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
