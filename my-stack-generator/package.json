@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "cross-spawn": "^7.0.6",
-    "p-limit": "^5.0.0",
     "validate-npm-package-name": "^7.0.2"
   }
 }
