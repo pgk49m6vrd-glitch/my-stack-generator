@@ -29,7 +29,7 @@ async function main() {
   // 1. Project Name
   let projectName = '';
   while (true) {
-    projectName = await askQuestion("👉 What is your project name? ");
+    projectName = await askQuestion("👉 What is your project name? (default: my-awesome-project) ");
     projectName = projectName.trim() || 'my-awesome-project';
     if (validateProjectName(projectName)) {
       break;
@@ -42,7 +42,7 @@ async function main() {
   console.log("1. npm");
   console.log("2. pnpm");
   console.log("3. bun");
-  let pmChoice = await askQuestion("Your Choice (1, 2 or 3) : ");
+  let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
   pmChoice = pmChoice.trim();
   
   let pm = "npm";
@@ -50,7 +50,7 @@ async function main() {
     pm = "pnpm";
   } else if (pmChoice === "3") {
     pm = "bun";
-  } else if (pmChoice !== "1") {
+  } else if (pmChoice !== "1" && pmChoice !== "") {
     console.log("⚠️  Invalid choice. Defaulting to npm.");
   }
 
