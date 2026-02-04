@@ -6,7 +6,6 @@ import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import validatePkgName from 'validate-npm-package-name';
-import pLimit from 'p-limit';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -370,10 +369,9 @@ export const getSupabase = () => {
       files['.env.example'] = `VITE_SUPABASE_URL=\nVITE_SUPABASE_ANON_KEY=`;
     }
 
-    // Optimization: Write files with limited concurrency
-    const limit = pLimit(5);
+    // Optimization: Write files concurrently
     await Promise.all(Object.entries(files).map(([filePath, content]) =>
-      limit(() => fs.promises.writeFile(path.join(root, filePath), content))
+      fs.promises.writeFile(path.join(root, filePath), content)
     ));
 
     const install = await askQuestion(`\n📦 Do you want to install dependencies with ${pm}? (Y/n) `);
