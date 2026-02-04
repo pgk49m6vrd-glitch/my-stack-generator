@@ -3,7 +3,7 @@ name: Commit log
 on:
   push:
     branches:
-      - '**'
+      - main
 
 jobs:
   save-commits:
@@ -28,14 +28,21 @@ jobs:
           echo "# Commit log for $GITHUB_REF ($RANGE)" > "$outfile"
           echo "" >> "$outfile"
 
-          # Pour chaque commit dans la plage, écrit SHA, auteur, date, titre (subject) et description (body)
-          git log "$RANGE" --pretty=format:'### %H%n- Author: %an <%ae>%n- Date: %aI%n- Title: %s%n%n%b%n' >> "$outfile" || true
+          # Build log without exposing emails
+          git log "$RANGE" --pretty=format:'### %H%n- Author: %an%n- Date: %aI%n- Title: %s%n%n%b%n' >> "$outfile" || true
 
           echo "Wrote $outfile"
           ls -l "$outfile"
 
-      - name: Upload commit log as artifact
-        uses: actions/upload-artifact@v4
+      - name: Send commit log via email
+        uses: dawidd6/action-send-mail@v3
         with:
-          name: commit-log-${{ github.sha }}
-          path: commit-log-${{ github.sha }}.md
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "GitHub Commit Log: ${{ github.repository }} - ${{ github.ref_name }}"
+          to: ${{ secrets.RECIPIENT_EMAIL }}
+          from: "GitHub Actions <${{ secrets.MAIL_USERNAME }}>"
+          body: "Please find the attached commit log for the recent push to ${{ github.ref_name }}."
+          attachments: "commit-log-${{ github.sha }}.md"

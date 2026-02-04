@@ -14,33 +14,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # important pour pouvoir comparer au commit précédent
+          fetch-depth: 0
 
       - name: Compute added/deleted lines for this commit
         run: |
-          # On récupère le SHA du commit courant
           COMMIT_SHA=${{ github.sha }}
-
-          # Si c'est le premier commit, il n'a pas de parent, donc on traite un cas spécial
-          PARENT_SHA=$(git rev-parse ${COMMIT_SHA}^ || echo "")
-
-          if [ -z "$PARENT_SHA" ]; then
-            # Premier commit : diff par rapport à un arbre vide
-            DIFF_RANGE=${COMMIT_SHA}
+          # Detect the commit range
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            DIFF_RANGE="${COMMIT_SHA}"
           else
-            # Commit normal : diff par rapport au parent direct
-            DIFF_RANGE=${PARENT_SHA}..${COMMIT_SHA}
+            DIFF_RANGE="${{ github.event.before }}..${COMMIT_SHA}"
           fi
 
-          # On utilise git diff pour obtenir le nombre total de lignes ajoutées/supprimées
-          # --shortstat donne un résumé, qu'on parse ensuite
-          STATS_LINE=$(git diff --shortstat $DIFF_RANGE || echo "")
+          # Use git diff --numstat for reliable parsing
+          # numstat output format: added \t deleted \t filename
+          STATS=$(git diff --numstat $DIFF_RANGE || echo "")
 
-          # Exemple de STATS_LINE :
-          # " 3 files changed, 54 insertions(+), 10 deletions(-)"
-          # On extrait les nombres (si pas de match, on retourne 0)
-          ADDED=$(echo "$STATS_LINE" | sed -n 's/.*, \([0-9]\+\) insertions*(+).*/\1/p')
-          DELETED=$(echo "$STATS_LINE" | sed -n 's/.*, \([0-9]\+\) deletions*(-).*/\1/p')
+          ADDED=$(echo "$STATS" | awk '{sum+=$1} END {print sum+0}')
+          DELETED=$(echo "$STATS" | awk '{sum+=$2} END {print sum+0}')
 
           if [ -z "$ADDED" ]; then ADDED=0; fi
           if [ -z "$DELETED" ]; then DELETED=0; fi
