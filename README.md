@@ -84,29 +84,37 @@ npm link
 
 ## 💻 Utilisation
 
-For create a new prject, you just have to run the following command:
+To create a new project, simply run the following command:
 
 ```bash
 create-my-stack
 ```
 
-The terminal will then ask you an interactive question:
+The terminal will guide you through a few interactive questions:
 
+### 1. Project name
 ```plaintext
-👉 What is your project name?
+👉 What is your project name? (default: my-awesome-project)
 ```
 
-After entering your project name, the terminal will ask you a second question:
-
+### 2. Package manager selection
 ```plaintext
 📦 Which package manager do you prefer?
 1. npm
 2. pnpm
 3. bun
-Your choice (1, 2 or 3):
+Your Choice (1, 2 or 3) [default: 1]:
 ```
 
-You just have to answer with 1, 2, or 3.
+### 3. Dependency installation
+```plaintext
+📦 Do you want to install dependencies with [npm/pnpm/bun]? (Y/n)
+```
+
+- **Answer "Y" (Yes)**: The generator will automatically download and install all necessary libraries (React, Tailwind, Firebase, etc.) into a `node_modules` folder. This step is required for the project to run, but can take a bit of time depending on your internet connection.
+- **Answer "n" (No)**: The script will only create the project structure and files. You can choose this if you want to install dependencies later. In this case, the CLI will display the specific command you need to run (e.g., `npm install`) to get started.
+
+---
 
 Automated actions performed by the script:
 
@@ -115,5 +123,3 @@ Automated actions performed by the script:
 * Generation of configuration files (React, Tailwind v4, Firebase).
 
 * Creation of an animated home page (App.jsx) to test the rendering immediately.
-
-* Automatic installation of all dependencies via your chosen package manager.
