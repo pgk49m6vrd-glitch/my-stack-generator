@@ -246,7 +246,52 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
 body {
   @apply bg-slate-900 text-slate-200;
+}
+
+::selection {
+  @apply bg-purple-500/30 text-purple-200;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-700 rounded-full border-2 border-slate-900 hover:bg-slate-600;
 }`,
+
+      'README.md': `# ${projectName}
+
+Built with **My Stack Generator**.
+
+## 🚀 Getting Started
+
+1. **Install dependencies**:
+   \`\`\`bash
+   ${pm} install
+   \`\`\`
+
+2. **Start the development server**:
+   \`\`\`bash
+   ${pm === 'npm' ? 'npm run dev' : pm + ' dev'}
+   \`\`\`
+
+## 🛠️ Stack
+
+- **Framework**: React + Vite
+- **Styling**: Tailwind CSS v4
+- **Backend**: ${backend === 'firebase' ? 'Firebase' : 'Supabase'}
+
+## 📂 Project Structure
+
+- \`src/features/\`: Domain-specific features (components, hooks, services).
+- \`src/components/\`: Shared UI components.
+- \`src/lib/\`: Backend configuration.
+`,
 
       'index.html': `<!DOCTYPE html>
 <html lang="en">
