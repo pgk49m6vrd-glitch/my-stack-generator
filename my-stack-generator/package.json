@@ -1,11 +1,16 @@
 {
   "name": "my-stack-generator",
-  "version": "5.0.0",
+  "version": "1.2.0",
   "type": "module",
   "bin": {
-    "create-my-stack": "./index.js" 
+    "mystack": "./index.js"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cross-spawn": "^7.0.6",
+    "p-limit": "^5.0.0",
+    "validate-npm-package-name": "^7.0.2"
   }
 }
