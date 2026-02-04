@@ -77,6 +77,7 @@ cd [path-to-my-stack-generator]/my-stack-generator
 Run the following command to register **`mystack`** on your computer:
 
 ```bash
+npm install
 npm link
 ```
 
