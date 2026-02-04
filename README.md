@@ -74,12 +74,21 @@ cd [path-to-my-stack-generator]/my-stack-generator
 
 ### 4. Link the command to your system
 
-Run the following command to register **`mystack`** on your computer:
+Run one of this following command to register **`mystack`** on your computer:
 
 ```bash
 npm install
 npm link
 ```
+```bash
+pnpm install
+pnpm link
+```
+```bash
+bun install
+bun link
+```
+> *We are recomanding you to use bun*
 
 ---
 
