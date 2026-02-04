@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 
-import { execSync, spawn } from 'child_process';
+import { execSync } from 'child_process';
+import spawn from 'cross-spawn';
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
+import validatePkgName from 'validate-npm-package-name';
+import pLimit from 'p-limit';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -12,18 +15,52 @@ const rl = readline.createInterface({
 
 const askQuestion = (query) => new Promise((resolve) => rl.question(query, resolve));
 
+/**
+ * Validates the project name against Windows reserved names,
+ * dot/space endings, and basic character rules.
+ */
 function validateProjectName(name) {
   if (!name || name.trim() === '') return false;
-  // Sentinel: Use strict whitelist to prevent command injection and path traversal
-  // Relaxed to allow dots for folder names
+
+  // Refuse . and ..
+  if (name === '.' || name === '..') return false;
+
+  // Windows reserved names
+  const reservedNames = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$/i;
+  if (reservedNames.test(name)) return false;
+
+  // Names ending in space or dot (Windows issues)
+  if (name.endsWith(' ') || name.endsWith('.')) return false;
+
+  // Whitelist: letters, numbers, hyphens, underscores, dots
   const validNameRegex = /^[a-zA-Z0-9-_\.]+$/;
-  return validNameRegex.test(name);
+  if (!validNameRegex.test(name)) return false;
+
+  // Path resolution check to prevent path traversal
+  const root = path.resolve(process.cwd(), name);
+  const cwd = process.cwd();
+  if (!root.startsWith(cwd + path.sep) && root !== cwd) {
+      return false;
+  }
+
+  return true;
 }
 
+/**
+ * Sanitizes and validates the npm package name.
+ */
 function sanitizePackageName(name) {
-  return name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
+  const validation = validatePkgName(sanitized);
+  if (!validation.validForNewPackages) {
+    return 'my-awesome-project';
+  }
+  return sanitized;
 }
 
+/**
+ * Checks if a package manager is available in the system.
+ */
 function checkPackageManager(pm) {
   try {
     execSync(`${pm} --version`, { stdio: 'ignore' });
@@ -34,8 +71,16 @@ function checkPackageManager(pm) {
 }
 
 async function main() {
-  console.log("\n--- 🚀 STACK GENERATOR V5 ---");
+  // Node version check
+  const nodeVersionMajor = parseInt(process.versions.node.split('.')[0], 10);
+  if (nodeVersionMajor < 18) {
+    console.error(`\n❌ Error: Node.js version 18 or higher is required. You are using ${process.versions.node}.`);
+    process.exit(1);
+  }
 
+  console.log("\n--- 🚀 MYSTACK GENERATOR V1.2.0 ---");
+
+  let root = '';
   try {
     // 1. Project Name
     let projectName = '';
@@ -45,41 +90,69 @@ async function main() {
       if (validateProjectName(projectName)) {
         break;
       }
-      console.log("❌ Invalid project name. Only letters, numbers, hyphens, underscores, and dots are allowed.");
+      console.log("❌ Invalid project name. Avoid reserved names, ending with space/dot, or special characters.");
     }
 
     // 2. Package Manager Selection
-    console.log("\n📦 Which package manager do you prefer?");
-    console.log("1. npm");
-    console.log("2. pnpm");
-    console.log("3. bun");
-    let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
-    pmChoice = pmChoice.trim();
+    let pm = "";
+    while (true) {
+      console.log("\n📦 Which package manager do you prefer?");
+      console.log("1. npm");
+      console.log("2. pnpm");
+      console.log("3. bun");
+      let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
+      pmChoice = pmChoice.trim();
 
-    let pm = "npm";
-    if (pmChoice === "2") {
-      pm = "pnpm";
-    } else if (pmChoice === "3") {
-      pm = "bun";
-    } else if (pmChoice !== "1" && pmChoice !== "") {
-      console.log("⚠️  Invalid choice. Defaulting to npm.");
+      if (pmChoice === "1" || pmChoice === "") {
+        pm = "npm";
+      } else if (pmChoice === "2") {
+        pm = "pnpm";
+      } else if (pmChoice === "3") {
+        pm = "bun";
+      }
+
+      if (pm) {
+        if (!checkPackageManager(pm)) {
+          console.error(`\n❌ Error: ${pm} is not installed or not available in your PATH.`);
+          pm = ""; // Reset to re-ask
+          continue;
+        }
+        break;
+      } else {
+        console.log("⚠️  Invalid choice. Please select 1, 2, or 3.");
+      }
     }
 
-    if (!checkPackageManager(pm)) {
-      console.error(`\n❌ Error: ${pm} is not installed or not available in your PATH.`);
-      return;
+    // 3. Backend Choice
+    let backend = "";
+    while (true) {
+      console.log("\n🔥 Which back-end do you prefer?");
+      console.log("1. Firebase");
+      console.log("2. Supabase");
+      let backendChoice = await askQuestion("Your Choice (1 or 2) [default: 1]: ");
+      backendChoice = backendChoice.trim();
+
+      if (backendChoice === "1" || backendChoice === "") {
+        backend = "firebase";
+        break;
+      } else if (backendChoice === "2") {
+        backend = "supabase";
+        break;
+      } else {
+        console.log("⚠️  Invalid choice. Please select 1 or 2.");
+      }
     }
 
-    const root = path.join(process.cwd(), projectName);
+    root = path.join(process.cwd(), projectName);
 
     if (fs.existsSync(root)) {
       console.log(`❌ Error: Directory "${projectName}" already exists.`);
       return;
     }
 
-    console.log(`\n✨ Starting setup with ${pm}...`);
+    console.log(`\n✨ Starting setup with ${pm} and ${backend}...`);
 
-    // Dossiers
+    // Folders structure
     const folders = [
       'src/features/auth/components',
       'src/features/auth/hooks',
@@ -91,11 +164,10 @@ async function main() {
       'public'
     ];
 
-    // Optimization: Parallelize directory creation to prevent blocking
     await fs.promises.mkdir(root, { recursive: true });
     await Promise.all(folders.map(folder => fs.promises.mkdir(path.join(root, folder), { recursive: true })));
 
-    // Fichiers
+    // File templates
     const files = {
       'vite.config.js': `import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
@@ -108,43 +180,38 @@ export default defineConfig({
   ],
 })`,
 
-      'src/lib/firebase.config.js': `import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-
-const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
-if (!apiKey || apiKey === "VOTRE_API_KEY") {
-  throw new Error("Firebase API Key is missing. Please check your .env file.");
-}
-
-const firebaseConfig = {
-  apiKey,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
-};
-
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);`,
-
       'src/App.jsx': `import React from 'react';
 
 function App() {
   return (
-    <main className="min-h-screen bg-slate-900 flex items-center justify-center overflow-hidden relative">
-      <div className="absolute w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse motion-reduce:animate-none"></div>
+    <main className="min-h-screen bg-slate-900 flex items-center justify-center overflow-hidden relative font-sans text-slate-200">
+      {/* Background Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-slate-900 to-purple-500/10" aria-hidden="true"></div>
+
+      {/* Decorative Orb */}
+      <div
+        className="absolute w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse motion-reduce:animate-none"
+        aria-hidden="true"
+      ></div>
+
       <div className="relative z-10 text-center px-4">
-        <span role="img" aria-label="Rocket launching" className="inline-block animate-bounce motion-reduce:animate-none mb-6 text-6xl">🚀</span>
+        <span
+          role="img"
+          aria-label="Rocket launching"
+          className="inline-block animate-bounce motion-reduce:animate-none mb-6 text-6xl"
+        >
+          🚀
+        </span>
+
         <h1 className="text-5xl md:text-7xl font-black mb-4 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent forced-colors:text-[CanvasText]">
           ${projectName}
         </h1>
-        <p className="text-slate-200 text-lg md:text-xl max-w-md mx-auto mb-8">
-          React + Tailwind V4 + Firebase Stack operational via ${pm}.
+
+        <p className="text-lg md:text-xl max-w-md mx-auto mb-8 opacity-90">
+          React + Tailwind V4 + ${backend.charAt(0).toUpperCase() + backend.slice(1)} Stack operational.
         </p>
-        <div className="px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white inline-block">
+
+        <div className="px-6 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white/90 inline-block shadow-xl">
           Feature-Based Architecture ready
         </div>
       </div>
@@ -165,13 +232,66 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </React.StrictMode>
 );`,
 
-      'src/index.css': `@import "tailwindcss";`,
+      'src/index.css': `@import "tailwindcss";
 
-      'index.html': `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="App created with My Stack Generator" /><meta name="theme-color" content="#0f172a" /><title>${projectName}</title></head><body class="bg-slate-900"><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>`,
+@theme {
+  --font-sans: "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif";
+}
+
+:root {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply bg-slate-900 text-slate-200;
+}`,
+
+      'index.html': `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Modern web application built with ${projectName}" />
+  <meta name="theme-color" content="#0f172a" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="${projectName}" />
+  <meta property="og:description" content="Built with React, Tailwind v4 and ${backend}" />
+
+  <title>${projectName}</title>
+</head>
+<body class="bg-slate-900">
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>`,
 
       '.gitignore': `node_modules\ndist\n.env\n.env.local\n.DS_Store`,
 
-      '.ai-stack-instructions.md': `# Technical Stack\n\n- React + Vite\n- Tailwind V4\n- Firebase\n- Package Manager: ${pm}`,
+      '.ai-stack-instructions.md': `# Technical Stack\n\n- React + Vite\n- Tailwind V4\n- ${backend.charAt(0).toUpperCase() + backend.slice(1)}\n- Package Manager: ${pm}`,
+
+      'public/favicon.svg': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🚀</text></svg>`,
+
+      'public/site.webmanifest': JSON.stringify({
+        name: projectName,
+        short_name: projectName,
+        start_url: "/",
+        display: "standalone",
+        background_color: "#0f172a",
+        theme_color: "#0f172a",
+        icons: [
+          {
+            src: "/favicon.svg",
+            sizes: "any",
+            type: "image/svg+xml"
+          }
+        ]
+      }, null, 2),
 
       'package.json': JSON.stringify({
         name: sanitizePackageName(projectName),
@@ -183,7 +303,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         dependencies: {
           "react": "^19.0.0",
           "react-dom": "^19.0.0",
-          "firebase": "^12.8.0"
+          ...(backend === 'firebase' ? { "firebase": "^12.8.0" } : { "@supabase/supabase-js": "^2.48.1" })
         },
         devDependencies: {
           "vite": "^6.0.0",
@@ -194,31 +314,104 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       }, null, 2)
     };
 
-    // Optimization: Write files in parallel to improve performance
+    if (backend === 'firebase') {
+      files['src/lib/firebase.config.js'] = `import { initializeApp, getApps } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
+};
+
+let app;
+const getFirebaseApp = () => {
+  if (!getApps().length) {
+    if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "") {
+      console.warn("Firebase API Key is missing. Check your .env file.");
+    }
+    app = initializeApp(firebaseConfig);
+  } else {
+    app = getApps()[0];
+  }
+  return app;
+};
+
+// Lazy initialization of services
+// Usage: const auth = getFirebaseAuth();
+export const getFirebaseAuth = () => getAuth(getFirebaseApp());
+export const getFirebaseDb = () => getFirestore(getFirebaseApp());
+`;
+      files['.env.example'] = `VITE_FIREBASE_API_KEY=\nVITE_FIREBASE_AUTH_DOMAIN=\nVITE_FIREBASE_PROJECT_ID=\nVITE_FIREBASE_STORAGE_BUCKET=\nVITE_FIREBASE_MESSAGING_ID=\nVITE_FIREBASE_APP_ID=`;
+    } else {
+      files['src/lib/supabase.config.js'] = `import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+let client;
+export const getSupabase = () => {
+  if (!client) {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn("Supabase credentials missing. Check your .env file.");
+    }
+    client = createClient(
+      supabaseUrl || 'https://placeholder.supabase.co',
+      supabaseAnonKey || 'placeholder-key'
+    );
+  }
+  return client;
+};
+`;
+      files['.env.example'] = `VITE_SUPABASE_URL=\nVITE_SUPABASE_ANON_KEY=`;
+    }
+
+    // Optimization: Write files with limited concurrency
+    const limit = pLimit(5);
     await Promise.all(Object.entries(files).map(([filePath, content]) =>
-      fs.promises.writeFile(path.join(root, filePath), content)
+      limit(() => fs.promises.writeFile(path.join(root, filePath), content))
     ));
 
     const install = await askQuestion(`\n📦 Do you want to install dependencies with ${pm}? (Y/n) `);
     if (install.trim().toLowerCase() !== 'n') {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
-      await new Promise((resolve, reject) => {
-        const child = spawn(pm, ['install'], { cwd: root, stdio: 'inherit', shell: true });
-        child.on('close', (code) => {
-          if (code === 0) resolve();
-          else reject(new Error(`Installation failed with code ${code}`));
+      try {
+        await new Promise((resolve, reject) => {
+          const child = spawn(pm, ['install'], { cwd: root, stdio: 'inherit' });
+          child.on('close', (code) => {
+            if (code === 0) resolve();
+            else reject(new Error(`Installation failed with code ${code}`));
+          });
+          child.on('error', reject);
         });
-        child.on('error', reject);
-      });
-      console.log(`\n✅ Done! Run:\n  cd ${projectName}\n  ${pm === 'npm' ? 'npm run dev' : pm + ' dev'}`);
+        console.log(`\n✅ Done! Project created in ./${projectName}`);
+        console.log(`\n🚀 Get started:`);
+        console.log(`  cd ${projectName}`);
+        console.log(`  ${pm === 'npm' ? 'npm run dev' : pm + ' dev'}`);
+        console.log(`\n💡 Don't forget to configure your .env file based on .env.example`);
+      } catch (e) {
+        console.error(`\n❌ Installation failed. Cleaning up...`);
+        if (fs.existsSync(root)) {
+          fs.rmSync(root, { recursive: true, force: true });
+        }
+        console.error(`Project folder removed due to installation failure.`);
+        throw e;
+      }
     } else {
-      console.log(`\n✅ Done! Run:\n  cd ${projectName}\n  ${pm} install\n  ${pm === 'npm' ? 'npm run dev' : pm + ' dev'}`);
+      console.log(`\n✅ Done! Project created in ./${projectName}`);
+      console.log(`\n🚀 Next steps:`);
+      console.log(`  cd ${projectName}`);
+      console.log(`  ${pm} install`);
+      console.log(`  ${pm === 'npm' ? 'npm run dev' : pm + ' dev'}`);
+      console.log(`\n💡 Don't forget to configure your .env file based on .env.example`);
     }
 
   } catch (error) {
     console.error(`\n❌ Error: ${error.message}`);
-    // Optional: cleanup
-    // if (fs.existsSync(root)) { fs.rmSync(root, { recursive: true, force: true }); }
   } finally {
     rl.close();
   }

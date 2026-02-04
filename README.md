@@ -1,6 +1,6 @@
 # 🛠️ My Stack Generator
 
-**The ultimate boilerplate generator for "AI-Native" development with React, Tailwind v4, and Firebase.**
+**The ultimate boilerplate generator for "AI-Native" development with React, Tailwind v4, and Firebase or Supabase.**
 
 This project is a personal command-line interface (CLI) designed to automate the creation of modern web projects. Instead of manually configuring each tool, this generator deploys a robust, scalable architecture that is immediately understood by AI assistants (Cursor, Claude Code, Google AntiGravity, etc.).
 
@@ -34,7 +34,7 @@ The goal is to eliminate "setup fatigue." With a single command, you get a produ
 
 * **Framework:** [React](https://reactjs.org/) (via Vite) for maximum speed.
 * **Styling:** [Tailwind CSS v4](https://tailwindcss.com/) (high-performance engine).
-* **Backend:** [Firebase](https://firebase.google.com/) (Modular SDK v9+) pre-configured.
+* **Backend:** [Firebase](https://firebase.google.com/) or [Supabase](https://supabase.com/) pre-configured.
 * **Architecture:** Feature-Based Design (Organization by business domains).
 
 ---
@@ -46,7 +46,7 @@ The generated architecture follows a **Feature-Based** logic. Instead of groupin
 ### Folder structure
 
 * **`src/features/`**: The core of the application. Each folder (e.g., `auth`) contains its own `components`, `hooks`, and `services`.
-* **`src/lib/`**: Centralized configurations (e.g., `firebase.config.js`).
+* **`src/lib/`**: Centralized configurations (e.g., `firebase.config.js` or `supabase.config.js`).
 * **`src/components/`**: Global and reusable UI components (Button, Input, Card).
 * **`src/hooks/`**: Global hooks shared across multiple features.
 
@@ -58,7 +58,7 @@ Follow these steps to install the command globally on your machine:
 
 ### 1. Download the release
 
-Go to the Releases section of this repository and download the file: **my-stack-generator.zip**. Make sure to choose the latest stable version (currently **1.1.7**).
+Go to the Releases section of this repository and download the file: **my-stack-generator.zip**. Make sure to choose the latest stable version (currently **1.2.0**).
 
 ### 2. Extract the archive
 
@@ -74,7 +74,7 @@ cd [path-to-my-stack-generator]/my-stack-generator
 
 ### 4. Link the command to your system
 
-Run the following command to register **`create-my-stack`** on your computer:
+Run the following command to register **`mystack`** on your computer:
 
 ```bash
 npm link
@@ -87,7 +87,7 @@ npm link
 To create a new project, simply run the following command:
 
 ```bash
-create-my-stack
+mystack
 ```
 
 The terminal will guide you through a few interactive questions:
@@ -106,20 +106,28 @@ The terminal will guide you through a few interactive questions:
 Your Choice (1, 2 or 3) [default: 1]:
 ```
 
-### 3. Dependency installation
+### 3. Backend selection
+```plaintext
+🔥 Which back-end do you prefer?
+1. Firebase
+2. Supabase
+Your Choice (1 or 2) [default: 1]:
+```
+
+### 4. Dependency installation
 ```plaintext
 📦 Do you want to install dependencies with [npm/pnpm/bun]? (Y/n)
 ```
 
-- **Answer "Y" (Yes)**: The generator will automatically download and install all necessary libraries (React, Tailwind, Firebase, etc.) into a `node_modules` folder. This step is required for the project to run, but can take a bit of time depending on your internet connection.
-- **Answer "n" (No)**: The script will only create the project structure and files. You can choose this if you want to install dependencies later. In this case, the CLI will display the specific command you need to run (e.g., `npm install`) to get started.
+- **Answer "Y" (Yes)**: The generator will automatically download and install all necessary libraries. This step is required for the project to run. **Note:** If installation fails, the project folder will be automatically cleaned up.
+- **Answer "n" (No)**: The script will only create the project structure and files. You will need to run the install command manually later.
 
 ---
 
 Automated actions performed by the script:
 
 * Creation of the complete folder structure.
-
-* Generation of configuration files (React, Tailwind v4, Firebase).
-
-* Creation of an animated home page (App.jsx) to test the rendering immediately.
+* Generation of configuration files (React, Tailwind v4, Firebase or Supabase).
+* Generation of base UX assets (favicon.svg, site.webmanifest).
+* Creation of a modern, accessible home page (App.jsx).
+* Generation of `.env.example` for easy configuration.
