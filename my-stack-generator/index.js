@@ -151,7 +151,26 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
     '.gitignore': `node_modules\ndist\n.env\n.env.local\n.DS_Store`,
 
-    '.ai-stack-instructions.md': `# Technical Stack\n\n- React + Vite\n- Tailwind V4\n- Firebase\n- Package Manager: ${pm}`
+    '.ai-stack-instructions.md': `# Technical Stack\n\n- React + Vite\n- Tailwind V4\n- Firebase\n- Package Manager: ${pm}`,
+
+    'package.json': JSON.stringify({
+      name: sanitizePackageName(projectName),
+      private: true,
+      version: "1.0.0",
+      type: "module",
+      scripts: { "dev": "vite", "build": "vite build", "preview": "vite preview" },
+      dependencies: {
+        "react": "latest",
+        "react-dom": "latest",
+        "firebase": "latest"
+      },
+      devDependencies: {
+        "vite": "latest",
+        "@vitejs/plugin-react": "latest",
+        "tailwindcss": "latest",
+        "@tailwindcss/vite": "latest"
+      }
+    }, null, 2)
   };
 
   // Optimization: Write files in parallel to improve performance
@@ -159,26 +178,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     fs.promises.writeFile(path.join(root, filePath), content)
   ));
 
-  // Optimization: Pre-fill package.json with deps to allow single install command
-  const projectPkgJson = {
-    name: sanitizePackageName(projectName),
-    private: true,
-    version: "1.0.0",
-    type: "module",
-    scripts: { "dev": "vite", "build": "vite build", "preview": "vite preview" },
-    dependencies: {
-      "react": "latest",
-      "react-dom": "latest",
-      "firebase": "latest"
-    },
-    devDependencies: {
-      "vite": "latest",
-      "@vitejs/plugin-react": "latest",
-      "tailwindcss": "latest",
-      "@tailwindcss/vite": "latest"
-    }
-  };
-  fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(projectPkgJson, null, 2));
 
   console.log(`\n📦 Installing dependencies with ${pm}...`);
   try {
