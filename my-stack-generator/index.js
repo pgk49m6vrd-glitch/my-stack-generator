@@ -125,12 +125,13 @@ async function main() {
       console.log("3. bun");
       let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
       pmChoice = pmChoice.trim();
+      const pmChoiceLower = pmChoice.toLowerCase();
 
-      if (pmChoice === "1" || pmChoice === "") {
+      if (pmChoice === "1" || pmChoice === "" || pmChoiceLower === "npm") {
         pm = "npm";
-      } else if (pmChoice === "2") {
+      } else if (pmChoice === "2" || pmChoiceLower === "pnpm") {
         pm = "pnpm";
-      } else if (pmChoice === "3") {
+      } else if (pmChoice === "3" || pmChoiceLower === "bun") {
         pm = "bun";
       }
 
@@ -154,11 +155,12 @@ async function main() {
       console.log("2. Supabase");
       let backendChoice = await askQuestion("Your Choice (1 or 2) [default: 1]: ");
       backendChoice = backendChoice.trim();
+      const backendChoiceLower = backendChoice.toLowerCase();
 
-      if (backendChoice === "1" || backendChoice === "") {
+      if (backendChoice === "1" || backendChoice === "" || backendChoiceLower === "firebase") {
         backend = "firebase";
         break;
-      } else if (backendChoice === "2") {
+      } else if (backendChoice === "2" || backendChoiceLower === "supabase") {
         backend = "supabase";
         break;
       } else {
@@ -462,7 +464,7 @@ export const getSupabase = () => {
     ));
 
     const install = await askQuestion(`\n📦 Do you want to install dependencies with ${pm}? (Y/n) `);
-    if (install.trim().toLowerCase() !== 'n') {
+    if (!['n', 'no'].includes(install.trim().toLowerCase())) {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
         await new Promise((resolve, reject) => {

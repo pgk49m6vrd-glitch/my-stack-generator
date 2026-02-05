@@ -13,3 +13,7 @@
 ## 2025-10-26 - Dark Mode Completeness
 **Learning:** A dark mode app with default white scrollbars and blue selection breaks immersion.
 **Action:** Style `::selection` and `::-webkit-scrollbar` to match the theme for a "native-like" feel in web apps.
+
+## 2025-05-24 - The "No" Trap in CLI
+**Learning:** Defaulting to "Yes" on any input that isn't explicitly "n" creates a trap where users typing "no" get the opposite of what they intended.
+**Action:** Always validate negative inputs explicitly (e.g., check for both "n" and "no") to respect user intent.
