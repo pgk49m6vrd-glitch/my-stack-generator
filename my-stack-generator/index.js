@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import { execSync } from 'child_process';
 import spawn from 'cross-spawn';
 import fs from 'fs';
 import path from 'path';
@@ -34,6 +33,14 @@ process.on('SIGINT', () => {
   process.exit(1);
 });
 
+// Constants for validation
+const RESERVED_NAMES_REGEX = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$/i;
+const VALID_NAME_REGEX = /^[a-zA-Z0-9_.-]+$/;
+const SANITIZE_REGEX_INVALID = /[^a-z0-9-]/g;
+const SANITIZE_REGEX_TRIM = /^-+|-+$/g;
+
+let cachedRealCwd;
+
 /**
  * Validates the project name against Windows reserved names,
  * dot/space endings, and basic character rules.
@@ -48,20 +55,22 @@ export function validateProjectName(name) {
   if (name === '.' || name === '..') return false;
 
   // Windows reserved names
-  const reservedNames = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$/i;
-  if (reservedNames.test(name)) return false;
+  if (RESERVED_NAMES_REGEX.test(name)) return false;
 
   // Names ending in space or dot (Windows issues)
   if (name.endsWith(' ') || name.endsWith('.')) return false;
 
   // Whitelist: letters, numbers, hyphens, underscores, dots
-  const validNameRegex = /^[a-zA-Z0-9_.-]+$/;
-  if (!validNameRegex.test(name)) return false;
+  if (!VALID_NAME_REGEX.test(name)) return false;
 
   // Path resolution check to prevent path traversal
   const root = path.resolve(process.cwd(), name);
-  const realCwd = fs.realpathSync(process.cwd());
-  const relative = path.relative(realCwd, root);
+
+  if (!cachedRealCwd) {
+    cachedRealCwd = fs.realpathSync(process.cwd());
+  }
+
+  const relative = path.relative(cachedRealCwd, root);
 
   if (relative.startsWith('..') || path.isAbsolute(relative)) {
     return false;
@@ -74,7 +83,7 @@ export function validateProjectName(name) {
  * Sanitizes and validates the npm package name.
  */
 function sanitizePackageName(name) {
-  const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
+  const sanitized = name.trim().toLowerCase().replace(SANITIZE_REGEX_INVALID, '-').replace(SANITIZE_REGEX_TRIM, '');
   const validation = validatePkgName(sanitized);
   if (!validation.validForNewPackages) {
     throw new Error(`Invalid package name: "${sanitized}". npm names must be lowercase, URL-friendly, and not reserved.`);
