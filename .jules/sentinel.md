@@ -12,3 +12,8 @@
 **Vulnerability:** Unbounded user input for project names creates potential for filesystem errors and denial of service.
 **Learning:** Even in local CLI tools, input validation must account for platform constraints (filesystem limits, npm naming rules). npm enforces a 214-character limit on package names.
 **Prevention:** Explicitly validate input length against known downstream constraints (e.g., max 214 chars) before attempting operations.
+
+## 2026-02-05 - Directory Creation Race Condition (TOCTOU)
+**Vulnerability:** Checking `fs.existsSync` before `mkdir(recursive: true)` allows a race condition where a directory can be created by an attacker in between, leading to hijacking.
+**Learning:** `mkdir` with `recursive: true` suppresses `EEXIST` errors, making it dangerous for "exclusive creation" logic. Atomic operations (`mkdir` without recursive) are safer for ensuring ownership.
+**Prevention:** Avoid `recursive: true` when you need to guarantee you are creating a *new* directory. Handle `EEXIST` explicitly. Update cleanup logic to only run if creation was definitely successful.
