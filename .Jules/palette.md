@@ -13,3 +13,11 @@
 ## 2025-10-26 - Dark Mode Completeness
 **Learning:** A dark mode app with default white scrollbars and blue selection breaks immersion.
 **Action:** Style `::selection` and `::-webkit-scrollbar` to match the theme for a "native-like" feel in web apps.
+
+## 2026-02-06 - The 'No' Trap in CLIs
+**Learning:** Users often type 'no' instead of 'n' for negative confirmation. Strict `!== 'n'` checks default to 'yes', causing unintended actions (like installing dependencies).
+**Action:** Always check for both 'n' and 'no' (case-insensitive) in negative confirmation logic.
+
+## 2026-02-06 - Flexible CLI Selections
+**Learning:** Users instinctively type the name of the option (e.g., 'npm') in numbered menus. Rejecting valid text input creates unnecessary friction.
+**Action:** Support both index numbers and case-insensitive name matching for all CLI selection menus.
