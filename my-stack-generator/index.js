@@ -167,7 +167,7 @@ async function main() {
     }
 
     const root = path.join(process.cwd(), projectName);
-    currentRoot = root;
+    // Do not set currentRoot here to avoid cleaning up existing directories if we fail before creation.
 
     if (fs.existsSync(root)) {
       console.log(`❌ Error: Directory "${projectName}" already exists.`);
@@ -188,7 +188,18 @@ async function main() {
       'public'
     ];
 
-    await fs.promises.mkdir(root, { recursive: true });
+    // Create root directory safely (atomic-ish check)
+    try {
+      await fs.promises.mkdir(root);
+    } catch (e) {
+      if (e.code === 'EEXIST') {
+        console.log(`❌ Error: Directory "${projectName}" already exists.`);
+        return;
+      }
+      throw e;
+    }
+    // Now we own the directory
+    currentRoot = root;
     await Promise.all(folders.map(folder => fs.promises.mkdir(path.join(root, folder), { recursive: true })));
 
     // File templates
