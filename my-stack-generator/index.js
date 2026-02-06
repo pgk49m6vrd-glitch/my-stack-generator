@@ -126,11 +126,12 @@ async function main() {
       let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
       pmChoice = pmChoice.trim();
 
-      if (pmChoice === "1" || pmChoice === "") {
+      const choice = pmChoice.toLowerCase();
+      if (choice === "1" || choice === "" || choice === "npm") {
         pm = "npm";
-      } else if (pmChoice === "2") {
+      } else if (choice === "2" || choice === "pnpm") {
         pm = "pnpm";
-      } else if (pmChoice === "3") {
+      } else if (choice === "3" || choice === "bun") {
         pm = "bun";
       }
 
@@ -142,7 +143,7 @@ async function main() {
         }
         break;
       } else {
-        console.log("⚠️  Invalid choice. Please select 1, 2, or 3.");
+        console.log("⚠️  Invalid choice. Please select 1, 2, 3, or type the name.");
       }
     }
 
@@ -153,16 +154,16 @@ async function main() {
       console.log("1. Firebase");
       console.log("2. Supabase");
       let backendChoice = await askQuestion("Your Choice (1 or 2) [default: 1]: ");
-      backendChoice = backendChoice.trim();
+      const choice = backendChoice.trim().toLowerCase();
 
-      if (backendChoice === "1" || backendChoice === "") {
+      if (choice === "1" || choice === "" || choice === "firebase") {
         backend = "firebase";
         break;
-      } else if (backendChoice === "2") {
+      } else if (choice === "2" || choice === "supabase") {
         backend = "supabase";
         break;
       } else {
-        console.log("⚠️  Invalid choice. Please select 1 or 2.");
+        console.log("⚠️  Invalid choice. Please select 1, 2, or type the name.");
       }
     }
 
@@ -473,7 +474,9 @@ export const getSupabase = () => {
     ));
 
     const install = await askQuestion(`\n📦 Do you want to install dependencies with ${pm}? (Y/n) `);
-    if (install.trim().toLowerCase() !== 'n') {
+    const installAnswer = install.trim().toLowerCase();
+
+    if (installAnswer !== 'n' && installAnswer !== 'no') {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
         await new Promise((resolve, reject) => {
