@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import { execSync } from 'child_process';
 import spawn from 'cross-spawn';
 import fs from 'fs';
 import path from 'path';
@@ -485,9 +484,7 @@ export const getSupabase = () => {
         await new Promise((resolve, reject) => {
           const args = ['install'];
           if (pm === 'npm') {
-            args.push('--no-audit', '--no-fund');
-          } else if (pm === 'pnpm') {
-            args.push('--no-audit');
+            args.push('--no-fund');
           }
           const child = spawn(pm, args, { cwd: root, stdio: 'inherit' });
           child.on('close', (code) => {
