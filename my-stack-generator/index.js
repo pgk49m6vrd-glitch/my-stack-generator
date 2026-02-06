@@ -38,6 +38,11 @@ process.on('SIGINT', () => {
  * Validates the project name against Windows reserved names,
  * dot/space endings, and basic character rules.
  */
+// Hoisted regexes for performance
+const RESERVED_NAMES = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$/i;
+const VALID_NAME_REGEX = /^[a-zA-Z0-9_.-]+$/;
+let cachedRealCwd;
+
 export function validateProjectName(name) {
   if (!name || name.trim() === '') return false;
 
@@ -48,20 +53,21 @@ export function validateProjectName(name) {
   if (name === '.' || name === '..') return false;
 
   // Windows reserved names
-  const reservedNames = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$/i;
-  if (reservedNames.test(name)) return false;
+  if (RESERVED_NAMES.test(name)) return false;
 
   // Names ending in space or dot (Windows issues)
   if (name.endsWith(' ') || name.endsWith('.')) return false;
 
   // Whitelist: letters, numbers, hyphens, underscores, dots
-  const validNameRegex = /^[a-zA-Z0-9_.-]+$/;
-  if (!validNameRegex.test(name)) return false;
+  if (!VALID_NAME_REGEX.test(name)) return false;
 
   // Path resolution check to prevent path traversal
+  // Cache realCwd to avoid repeated fs calls
+  if (!cachedRealCwd) {
+    cachedRealCwd = fs.realpathSync(process.cwd());
+  }
   const root = path.resolve(process.cwd(), name);
-  const realCwd = fs.realpathSync(process.cwd());
-  const relative = path.relative(realCwd, root);
+  const relative = path.relative(cachedRealCwd, root);
 
   if (relative.startsWith('..') || path.isAbsolute(relative)) {
     return false;
