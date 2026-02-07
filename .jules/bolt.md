@@ -9,3 +9,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2025-02-18 - Synchronous IO in Validation Loops
 **Learning:** Including synchronous file system calls (like `fs.realpathSync`) inside validation functions used in interactive loops creates unnecessary blocking overhead.
 **Action:** Cache static environment values (like CWD) and hoist regex patterns to module scope to ensure validation logic remains CPU-bound only.
+
+## 2026-02-27 - Dependency Reduction
+**Learning:** Using a dedicated package (`validate-npm-package-name`) for simple validation logic that overlaps with existing sanitization adds unnecessary install weight and startup latency.
+**Action:** Replaced the external dependency with a native implementation using `module.builtinModules` and regex, reducing install size by ~200KB and eliminating a runtime import.
