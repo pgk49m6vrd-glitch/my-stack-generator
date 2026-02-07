@@ -128,14 +128,14 @@ async function main() {
       console.log("1. npm");
       console.log("2. pnpm");
       console.log("3. bun");
-      let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
-      pmChoice = pmChoice.trim();
+      let pmChoice = await askQuestion("Your Choice (1, 2, 3 or name) [default: 1]: ");
+      pmChoice = pmChoice.trim().toLowerCase();
 
-      if (pmChoice === "1" || pmChoice === "") {
+      if (pmChoice === "1" || pmChoice === "" || pmChoice === "npm") {
         pm = "npm";
-      } else if (pmChoice === "2") {
+      } else if (pmChoice === "2" || pmChoice === "pnpm") {
         pm = "pnpm";
-      } else if (pmChoice === "3") {
+      } else if (pmChoice === "3" || pmChoice === "bun") {
         pm = "bun";
       }
 
@@ -157,17 +157,17 @@ async function main() {
       console.log("\n🔥 Which back-end do you prefer?");
       console.log("1. Firebase");
       console.log("2. Supabase");
-      let backendChoice = await askQuestion("Your Choice (1 or 2) [default: 1]: ");
-      backendChoice = backendChoice.trim();
+      let backendChoice = await askQuestion("Your Choice (1, 2 or name) [default: 1]: ");
+      backendChoice = backendChoice.trim().toLowerCase();
 
-      if (backendChoice === "1" || backendChoice === "") {
+      if (backendChoice === "1" || backendChoice === "" || backendChoice === "firebase") {
         backend = "firebase";
         break;
-      } else if (backendChoice === "2") {
+      } else if (backendChoice === "2" || backendChoice === "supabase") {
         backend = "supabase";
         break;
       } else {
-        console.log("⚠️  Invalid choice. Please select 1 or 2.");
+        console.log("⚠️  Invalid choice. Please select 1, 2, or enter a name.");
       }
     }
 

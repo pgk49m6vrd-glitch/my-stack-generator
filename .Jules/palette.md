@@ -13,3 +13,7 @@
 ## 2025-10-26 - Dark Mode Completeness
 **Learning:** A dark mode app with default white scrollbars and blue selection breaks immersion.
 **Action:** Style `::selection` and `::-webkit-scrollbar` to match the theme for a "native-like" feel in web apps.
+
+## 2025-10-27 - Natural Language in CLI
+**Learning:** Forcing users to map their intent (e.g., "npm") to arbitrary numbers (e.g., "1") creates friction. Supporting natural language input as a "hidden delight" respects user intent.
+**Action:** Allow text input alongside numeric selection in CLI menus for smoother interaction.
