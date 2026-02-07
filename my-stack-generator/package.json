@@ -12,10 +12,9 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "test": "node test-validation.js"
+    "test": "node test-validation.js && node test-package-name.js"
   },
   "dependencies": {
-    "cross-spawn": "^7.0.6",
-    "validate-npm-package-name": "^7.0.2"
+    "cross-spawn": "^7.0.6"
   }
 }

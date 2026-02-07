@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import validatePkgName from 'validate-npm-package-name';
+import { builtinModules } from 'module';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -65,7 +65,7 @@ export function validateProjectName(name) {
   if (!cachedRealCwd) {
     cachedRealCwd = fs.realpathSync(process.cwd());
   }
-  const root = path.resolve(process.cwd(), name);
+  const root = path.resolve(cachedRealCwd, name);
   const relative = path.relative(cachedRealCwd, root);
 
   if (relative.startsWith('..') || path.isAbsolute(relative)) {
@@ -78,12 +78,14 @@ export function validateProjectName(name) {
 /**
  * Sanitizes and validates the npm package name.
  */
-function sanitizePackageName(name) {
+export function sanitizePackageName(name) {
   const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
-  const validation = validatePkgName(sanitized);
-  if (!validation.validForNewPackages) {
-    throw new Error(`Invalid package name: "${sanitized}". npm names must be lowercase, URL-friendly, and not reserved.`);
-  }
+
+  if (sanitized.length === 0) throw new Error("Package name cannot be empty");
+  if (sanitized.length > 214) throw new Error("Package name too long");
+  if (['node_modules', 'favicon.ico'].includes(sanitized)) throw new Error("Reserved package name");
+  if (builtinModules.includes(sanitized)) throw new Error("Reserved package name");
+
   return sanitized;
 }
 
