@@ -109,6 +109,7 @@ async function main() {
 
   console.log("\n--- 🚀 MYSTACK GENERATOR V1.2.0 ---");
 
+  let success = false;
   try {
     // 1. Project Name
     let projectName = '';
@@ -205,7 +206,11 @@ async function main() {
     }
     // Now we own the directory
     currentRoot = root;
-    await Promise.all(folders.map(folder => fs.promises.mkdir(path.join(root, folder), { recursive: true })));
+
+    // Create folders
+    const folderResults = await Promise.allSettled(folders.map(folder => fs.promises.mkdir(path.join(root, folder), { recursive: true })));
+    const folderFailed = folderResults.find(r => r.status === 'rejected');
+    if (folderFailed) throw folderFailed.reason;
 
     // File templates
     const files = {
@@ -472,10 +477,12 @@ export const getSupabase = () => {
       files['.env.example'] = `VITE_SUPABASE_URL=\nVITE_SUPABASE_ANON_KEY=`;
     }
 
-    // Optimization: Write files concurrently
-    await Promise.all(Object.entries(files).map(([filePath, content]) =>
+    // Optimization: Write files concurrently - await all settled to avoid file handles remaining on error
+    const fileResults = await Promise.allSettled(Object.entries(files).map(([filePath, content]) =>
       fs.promises.writeFile(path.join(root, filePath), content)
     ));
+    const fileFailed = fileResults.find(r => r.status === 'rejected');
+    if (fileFailed) throw fileFailed.reason;
 
     const install = await askQuestion(`\n📦 Do you want to install dependencies with ${pm}? (Y/n) `);
     if (install.trim().toLowerCase() !== 'n') {
@@ -498,12 +505,9 @@ export const getSupabase = () => {
         console.log(`  cd ${projectName}`);
         console.log(`  ${pm === 'npm' ? 'npm run dev' : pm + ' dev'}`);
         console.log(`\n💡 Don't forget to configure your .env file based on .env.example`);
+        success = true;
       } catch (e) {
-        console.error(`\n❌ Installation failed. Cleaning up...`);
-        if (fs.existsSync(root)) {
-          fs.rmSync(root, { recursive: true, force: true });
-        }
-        console.error(`Project folder removed due to installation failure.`);
+        console.error(`\n❌ Installation failed.`);
         throw e;
       }
     } else {
@@ -513,12 +517,16 @@ export const getSupabase = () => {
       console.log(`  ${pm} install`);
       console.log(`  ${pm === 'npm' ? 'npm run dev' : pm + ' dev'}`);
       console.log(`\n💡 Don't forget to configure your .env file based on .env.example`);
+      success = true;
     }
 
   } catch (error) {
     console.error(`\n❌ Error: ${error.message}`);
-    cleanup();
+    process.exitCode = 1;
   } finally {
+    if (!success) {
+      cleanup();
+    }
     rl.close();
   }
 }
