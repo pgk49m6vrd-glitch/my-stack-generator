@@ -22,3 +22,8 @@
 **Vulnerability:** `npm install` and `pnpm install` were run with `--no-audit`, hiding potential supply chain vulnerabilities from the user during project creation.
 **Learning:** Prioritizing speed or reduced noise over security visibility creates a false sense of safety. Users should be aware of vulnerabilities in their new project's dependency tree immediately.
 **Prevention:** Do not disable default security checks (like `npm audit`) in tooling unless there is a critical technical blocker.
+
+## 2025-02-21 - The "No" Trap in CLI Prompts
+**Vulnerability:** The CLI asked `(Y/n)` but only checked `input !== 'n'` to skip installation. Typing "no" (a common user behavior) resulted in `true` for the condition, forcing dependency installation against user intent.
+**Learning:** Checking for negative input in boolean CLI prompts must be robust. Users expect "no", "No", "NO", and "n" to all mean "false". Failing to respect this can lead to unintended execution of third-party code (post-install scripts).
+**Prevention:** Normalize inputs (trim, lowercase) and check against a list of negative values (`['n', 'no']`) rather than a single character inequality.
