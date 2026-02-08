@@ -357,6 +357,7 @@ Built with **My Stack Generator**.
   <meta property="og:description" content="Built with React, Tailwind v4 and ${backend.charAt(0).toUpperCase() + backend.slice(1)}" />
 
   <title>${projectName}</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ws: wss: ${backend === 'firebase' ? 'https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net' : 'https://*.supabase.co'};" />
 </head>
 <body class="bg-slate-900">
   <div id="root"></div>
@@ -478,7 +479,7 @@ export const getSupabase = () => {
     ));
 
     const install = await askQuestion(`\n📦 Do you want to install dependencies with ${pm}? (Y/n) `);
-    if (install.trim().toLowerCase() !== 'n') {
+    if (!['n', 'no'].includes(install.trim().toLowerCase())) {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
         await new Promise((resolve, reject) => {
