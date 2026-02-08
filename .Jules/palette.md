@@ -13,3 +13,7 @@
 ## 2025-10-26 - Dark Mode Completeness
 **Learning:** A dark mode app with default white scrollbars and blue selection breaks immersion.
 **Action:** Style `::selection` and `::-webkit-scrollbar` to match the theme for a "native-like" feel in web apps.
+
+## 2025-10-27 - CLI Input Traps & Feedback
+**Learning:** When a CLI prompt defaults to "Yes", explicitly typing "no" should never result in "Yes". This "No Trap" erodes trust.
+**Action:** Always check for both single-letter ('n') and full-word ('no', 'false') negative inputs in boolean prompts.

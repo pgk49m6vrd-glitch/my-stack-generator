@@ -42,23 +42,23 @@ const RESERVED_NAMES = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$/i;
 const VALID_NAME_REGEX = /^[a-zA-Z0-9_.-]+$/;
 let cachedRealCwd;
 
-export function validateProjectName(name) {
-  if (!name || name.trim() === '') return false;
+export function getProjectNameValidationError(name) {
+  if (!name || name.trim() === '') return "Project name cannot be empty.";
 
   // Length check to prevent DoS/filesystem errors
-  if (name.length > 214) return false;
+  if (name.length > 214) return "Project name must be 214 characters or fewer.";
 
   // Refuse . and ..
-  if (name === '.' || name === '..') return false;
+  if (name === '.' || name === '..') return "Project name cannot be '.' or '..'.";
 
   // Windows reserved names
-  if (RESERVED_NAMES.test(name)) return false;
+  if (RESERVED_NAMES.test(name)) return `Project name "${name}" is a reserved Windows filename.`;
 
   // Names ending in space or dot (Windows issues)
-  if (name.endsWith(' ') || name.endsWith('.')) return false;
+  if (name.endsWith(' ') || name.endsWith('.')) return "Project name cannot end with a space or period.";
 
   // Whitelist: letters, numbers, hyphens, underscores, dots
-  if (!VALID_NAME_REGEX.test(name)) return false;
+  if (!VALID_NAME_REGEX.test(name)) return "Project name can only contain letters, numbers, hyphens, underscores, and periods.";
 
   // Path resolution check to prevent path traversal
   // Cache realCwd to avoid repeated fs calls
@@ -69,10 +69,14 @@ export function validateProjectName(name) {
   const relative = path.relative(cachedRealCwd, root);
 
   if (relative.startsWith('..') || path.isAbsolute(relative)) {
-    return false;
+    return "Project name cannot navigate outside the current directory.";
   }
 
-  return true;
+  return null;
+}
+
+export function validateProjectName(name) {
+  return getProjectNameValidationError(name) === null;
 }
 
 /**
@@ -115,10 +119,12 @@ async function main() {
     while (true) {
       projectName = await askQuestion("👉 What is your project name? (default: my-awesome-project) ");
       projectName = projectName.trim() || 'my-awesome-project';
-      if (validateProjectName(projectName)) {
+
+      const validationError = getProjectNameValidationError(projectName);
+      if (!validationError) {
         break;
       }
-      console.log("❌ Invalid project name. Must be 1-214 characters, avoid reserved names, ending with space/dot, or special characters.");
+      console.log(`❌ Invalid project name: ${validationError}`);
     }
 
     // 2. Package Manager Selection
@@ -478,7 +484,9 @@ export const getSupabase = () => {
     ));
 
     const install = await askQuestion(`\n📦 Do you want to install dependencies with ${pm}? (Y/n) `);
-    if (install.trim().toLowerCase() !== 'n') {
+    const answer = install.trim().toLowerCase();
+
+    if (answer !== 'n' && answer !== 'no') {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
         await new Promise((resolve, reject) => {
