@@ -90,13 +90,30 @@ function sanitizePackageName(name) {
 /**
  * Checks if a package manager is available in the system.
  */
-function checkPackageManager(pm) {
-  try {
-    const result = spawn.sync(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
-    return result.status === 0;
-  } catch (e) {
-    return false;
+const pmChecks = new Map();
+
+function startPackageManagerChecks() {
+  ['npm', 'pnpm', 'bun'].forEach(pm => {
+    pmChecks.set(pm, new Promise(resolve => {
+      const child = spawn(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
+      child.on('close', (code) => resolve(code === 0));
+      child.on('error', () => resolve(false));
+    }));
+  });
+}
+
+// Start checks immediately to reduce perceived latency
+startPackageManagerChecks();
+
+async function checkPackageManager(pm) {
+  if (pmChecks.has(pm)) {
+    return pmChecks.get(pm);
   }
+  return new Promise(resolve => {
+    const child = spawn(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
+    child.on('close', (code) => resolve(code === 0));
+    child.on('error', () => resolve(false));
+  });
 }
 
 async function main() {
@@ -140,7 +157,8 @@ async function main() {
       }
 
       if (pm) {
-        if (!checkPackageManager(pm)) {
+        const isAvailable = await checkPackageManager(pm);
+        if (!isAvailable) {
           console.error(`\n❌ Error: ${pm} is not installed or not available in your PATH.`);
           pm = ""; // Reset to re-ask
           continue;
