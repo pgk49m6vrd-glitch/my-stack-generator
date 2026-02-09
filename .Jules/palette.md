@@ -13,3 +13,7 @@
 ## 2025-10-26 - Dark Mode Completeness
 **Learning:** A dark mode app with default white scrollbars and blue selection breaks immersion.
 **Action:** Style `::selection` and `::-webkit-scrollbar` to match the theme for a "native-like" feel in web apps.
+
+## 2025-10-27 - Specific Error Feedback
+**Learning:** Generic "invalid input" messages frustrate users by forcing them to guess the rules. Specific, actionable error messages (e.g., "cannot contain spaces") guide users to the solution immediately.
+**Action:** Always refactor validation logic to return specific error strings instead of boolean values, and display them in the UI/CLI.
