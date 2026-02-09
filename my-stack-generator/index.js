@@ -90,13 +90,13 @@ function sanitizePackageName(name) {
 /**
  * Checks if a package manager is available in the system.
  */
-function checkPackageManager(pm) {
-  try {
-    const result = spawn.sync(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
-    return result.status === 0;
-  } catch (e) {
-    return false;
-  }
+export function checkPackageManager(pm) {
+  return new Promise((resolve) => {
+    const child = spawn(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
+    child.unref();
+    child.on('close', (code, signal) => resolve(code === 0 && signal === null));
+    child.on('error', () => resolve(false));
+  });
 }
 
 async function main() {
@@ -108,6 +108,13 @@ async function main() {
   }
 
   console.log("\n--- 🚀 MYSTACK GENERATOR V1.2.0 ---");
+
+  // Pre-check package managers in parallel to avoid blocking the UI later
+  const pmChecks = {
+    npm: checkPackageManager('npm'),
+    pnpm: checkPackageManager('pnpm'),
+    bun: checkPackageManager('bun')
+  };
 
   try {
     // 1. Project Name
@@ -140,7 +147,8 @@ async function main() {
       }
 
       if (pm) {
-        if (!checkPackageManager(pm)) {
+        const isAvailable = await (pmChecks[pm] || checkPackageManager(pm));
+        if (!isAvailable) {
           console.error(`\n❌ Error: ${pm} is not installed or not available in your PATH.`);
           pm = ""; // Reset to re-ask
           continue;

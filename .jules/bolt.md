@@ -9,3 +9,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2025-02-18 - Synchronous IO in Validation Loops
 **Learning:** Including synchronous file system calls (like `fs.realpathSync`) inside validation functions used in interactive loops creates unnecessary blocking overhead.
 **Action:** Cache static environment values (like CWD) and hoist regex patterns to module scope to ensure validation logic remains CPU-bound only.
+
+## 2026-02-05 - Async Process Checks
+**Learning:** Pre-checking external command availability in parallel (using `child_process.spawn`) significantly reduced perceived CLI latency (~1.5s -> 0ms perceived). However, spawned child processes keep the Node.js event loop alive.
+**Action:** Use `child.unref()` on background verification processes so they don't block the main process from exiting if unselected checks are still pending.
