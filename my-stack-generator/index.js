@@ -207,6 +207,14 @@ async function main() {
     currentRoot = root;
     await Promise.all(folders.map(folder => fs.promises.mkdir(path.join(root, folder), { recursive: true })));
 
+    // CSP Configuration
+    let csp = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'";
+    if (backend === 'firebase') {
+      csp += " https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net wss://*.firebaseio.com";
+    } else {
+      csp += " https://*.supabase.co wss://*.supabase.co";
+    }
+
     // File templates
     const files = {
       'vite.config.js': `import { defineConfig } from 'vite'
@@ -349,6 +357,7 @@ Built with **My Stack Generator**.
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Modern web application built with ${projectName}" />
   <meta name="theme-color" content="#0f172a" />
+  <meta http-equiv="Content-Security-Policy" content="${csp}" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
 
   <!-- Open Graph / Facebook -->

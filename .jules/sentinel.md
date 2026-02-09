@@ -22,3 +22,8 @@
 **Vulnerability:** `npm install` and `pnpm install` were run with `--no-audit`, hiding potential supply chain vulnerabilities from the user during project creation.
 **Learning:** Prioritizing speed or reduced noise over security visibility creates a false sense of safety. Users should be aware of vulnerabilities in their new project's dependency tree immediately.
 **Prevention:** Do not disable default security checks (like `npm audit`) in tooling unless there is a critical technical blocker.
+
+## 2025-02-21 - Content Security Policy in Generator Templates
+**Vulnerability:** Default templates (e.g. Vite React) often ship without CSP, leaving new projects vulnerable to XSS by default.
+**Learning:** Security headers like CSP are often an afterthought. Generators can enforce security by default by injecting a tailored CSP based on the chosen stack (Firebase/Supabase).
+**Prevention:** Include a strict-by-default CSP meta tag in generated `index.html` that whitelists known backend services.
