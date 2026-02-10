@@ -13,3 +13,7 @@
 ## 2025-10-26 - Dark Mode Completeness
 **Learning:** A dark mode app with default white scrollbars and blue selection breaks immersion.
 **Action:** Style `::selection` and `::-webkit-scrollbar` to match the theme for a "native-like" feel in web apps.
+
+## 2025-10-27 - Actionable CLI Validation
+**Learning:** Generic "invalid input" messages in CLI tools frustrate users. Specific error messages (e.g., "cannot be empty" vs "invalid name") guide users to the solution immediately.
+**Action:** Replace boolean validation checks with functions that return specific error strings or null.
