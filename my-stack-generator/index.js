@@ -90,16 +90,25 @@ function sanitizePackageName(name) {
 /**
  * Checks if a package manager is available in the system.
  */
-function checkPackageManager(pm) {
-  try {
-    const result = spawn.sync(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
-    return result.status === 0;
-  } catch (e) {
-    return false;
-  }
+export function checkPackageManager(pm) {
+  return new Promise((resolve) => {
+    const child = spawn(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
+    child.on('close', (code) => resolve(code === 0));
+    child.on('error', () => resolve(false));
+    // Unref the child process so it doesn't prevent the main process from exiting
+    // if the user finishes before the check completes (e.g. unselected PMs).
+    child.unref();
+  });
 }
 
 async function main() {
+  // ⚡ Bolt Optimization: Start checks in background
+  const pmChecks = {
+    npm: checkPackageManager('npm'),
+    pnpm: checkPackageManager('pnpm'),
+    bun: checkPackageManager('bun')
+  };
+
   // Node version check
   const nodeVersionMajor = parseInt(process.versions.node.split('.')[0], 10);
   if (nodeVersionMajor < 18) {
@@ -140,7 +149,7 @@ async function main() {
       }
 
       if (pm) {
-        if (!checkPackageManager(pm)) {
+        if (!await pmChecks[pm]) {
           console.error(`\n❌ Error: ${pm} is not installed or not available in your PATH.`);
           pm = ""; // Reset to re-ask
           continue;
