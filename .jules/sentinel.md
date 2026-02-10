@@ -22,3 +22,8 @@
 **Vulnerability:** `npm install` and `pnpm install` were run with `--no-audit`, hiding potential supply chain vulnerabilities from the user during project creation.
 **Learning:** Prioritizing speed or reduced noise over security visibility creates a false sense of safety. Users should be aware of vulnerabilities in their new project's dependency tree immediately.
 **Prevention:** Do not disable default security checks (like `npm audit`) in tooling unless there is a critical technical blocker.
+
+## 2025-02-21 - Secure Defaults in Generators
+**Vulnerability:** Generated applications often lack security headers, leaving new projects vulnerable by default.
+**Learning:** Generators have a unique opportunity to enforce "Secure by Default" by including a baseline CSP.
+**Prevention:** Include a permissive but effective Content Security Policy (CSP) meta tag in generated HTML templates.
