@@ -15,15 +15,30 @@ const rl = readline.createInterface({
 const askQuestion = (query) => new Promise((resolve) => rl.question(query, resolve));
 
 let currentRoot = '';
+let currentCleanupMarker = '';
 
 const cleanup = () => {
-  if (currentRoot && fs.existsSync(currentRoot)) {
-    try {
-      fs.rmSync(currentRoot, { recursive: true, force: true });
-      console.log(`\n🧹 Cleaned up: ${currentRoot}`);
-    } catch (e) {
-      // Ignore cleanup errors
+  if (!currentRoot || !fs.existsSync(currentRoot)) return;
+
+  try {
+    const realCwd = cachedRealCwd || fs.realpathSync(process.cwd());
+    const realRoot = fs.realpathSync(currentRoot);
+    const markerPath = currentCleanupMarker || path.join(realRoot, '.mystack-generator.tmp');
+    const relative = path.relative(realCwd, realRoot);
+
+    // Security guard: only delete directories created by this run within cwd.
+    if (relative.startsWith('..') || path.isAbsolute(relative) || !fs.existsSync(markerPath)) {
+      console.warn(`\n⚠️  Skipped unsafe cleanup path: ${currentRoot}`);
+      return;
     }
+
+    fs.rmSync(realRoot, { recursive: true, force: true });
+    console.log(`\n🧹 Cleaned up: ${realRoot}`);
+  } catch (e) {
+    // Ignore cleanup errors
+  } finally {
+    currentRoot = '';
+    currentCleanupMarker = '';
   }
 };
 
@@ -205,6 +220,8 @@ async function main() {
     }
     // Now we own the directory
     currentRoot = root;
+    currentCleanupMarker = path.join(root, '.mystack-generator.tmp');
+    await fs.promises.writeFile(currentCleanupMarker, 'Temporary scaffolding marker.\n', { flag: 'wx' });
     await Promise.all(folders.map(folder => fs.promises.mkdir(path.join(root, folder), { recursive: true })));
 
     // File templates
@@ -493,6 +510,9 @@ export const getSupabase = () => {
           });
           child.on('error', reject);
         });
+        await fs.promises.unlink(currentCleanupMarker).catch(() => {});
+        currentCleanupMarker = '';
+        currentRoot = '';
         console.log(`\n✅ Done! Project created in ./${projectName}`);
         console.log(`\n🚀 Get started:`);
         console.log(`  cd ${projectName}`);
@@ -500,13 +520,14 @@ export const getSupabase = () => {
         console.log(`\n💡 Don't forget to configure your .env file based on .env.example`);
       } catch (e) {
         console.error(`\n❌ Installation failed. Cleaning up...`);
-        if (fs.existsSync(root)) {
-          fs.rmSync(root, { recursive: true, force: true });
-        }
+        cleanup();
         console.error(`Project folder removed due to installation failure.`);
         throw e;
       }
     } else {
+      await fs.promises.unlink(currentCleanupMarker).catch(() => {});
+      currentCleanupMarker = '';
+      currentRoot = '';
       console.log(`\n✅ Done! Project created in ./${projectName}`);
       console.log(`\n🚀 Next steps:`);
       console.log(`  cd ${projectName}`);
