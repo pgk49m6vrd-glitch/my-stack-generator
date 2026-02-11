@@ -16,6 +16,7 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 let currentRoot = '';
 let currentCleanupMarker = '';
+let cachedRealCwd;
 
 const cleanup = () => {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
@@ -58,6 +59,29 @@ const VALID_NAME_REGEX = /^[a-zA-Z0-9_.-]+$/;
 
 export function validateProjectName(name) {
   return getProjectNameValidationError(name) === null;
+}
+
+/**
+ * Resolves user input for package manager choice.
+ * Accepts numbers (1, 2, 3), names (npm, pnpm, bun), or empty (default npm).
+ */
+export function resolvePackageManager(input) {
+  const normalized = input.trim().toLowerCase();
+  if (normalized === '1' || normalized === '' || normalized === 'npm') return 'npm';
+  if (normalized === '2' || normalized === 'pnpm') return 'pnpm';
+  if (normalized === '3' || normalized === 'bun') return 'bun';
+  return null;
+}
+
+/**
+ * Resolves user input for backend choice.
+ * Accepts numbers (1, 2), names (firebase, supabase), or empty (default firebase).
+ */
+export function resolveBackend(input) {
+  const normalized = input.trim().toLowerCase();
+  if (normalized === '1' || normalized === '' || normalized === 'firebase') return 'firebase';
+  if (normalized === '2' || normalized === 'supabase') return 'supabase';
+  return null;
 }
 
 function getProjectNameValidationError(name) {
@@ -149,16 +173,8 @@ async function main() {
       console.log("1. npm");
       console.log("2. pnpm");
       console.log("3. bun");
-      let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
-      pmChoice = pmChoice.trim();
-
-      if (pmChoice === "1" || pmChoice === "") {
-        pm = "npm";
-      } else if (pmChoice === "2") {
-        pm = "pnpm";
-      } else if (pmChoice === "3") {
-        pm = "bun";
-      }
+      const pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
+      pm = resolvePackageManager(pmChoice);
 
       if (pm) {
         if (!checkPackageManager(pm)) {
@@ -178,14 +194,10 @@ async function main() {
       console.log("\n🔥 Which back-end do you prefer?");
       console.log("1. Firebase");
       console.log("2. Supabase");
-      let backendChoice = await askQuestion("Your Choice (1 or 2) [default: 1]: ");
-      backendChoice = backendChoice.trim();
+      const backendChoice = await askQuestion("Your Choice (1 or 2) [default: 1]: ");
+      backend = resolveBackend(backendChoice);
 
-      if (backendChoice === "1" || backendChoice === "") {
-        backend = "firebase";
-        break;
-      } else if (backendChoice === "2") {
-        backend = "supabase";
+      if (backend) {
         break;
       } else {
         console.log("⚠️  Invalid choice. Please select 1 or 2.");

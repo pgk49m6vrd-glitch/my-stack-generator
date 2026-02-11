@@ -17,3 +17,7 @@
 ## 2026-02-11 - Specific Validation Beats Generic Errors
 **Learning:** In this CLI generator, a single generic "invalid project name" message hides the exact fix and increases retry loops.
 **Action:** Prefer field-level validation messages that explain the exact constraint (length, characters, reserved names, path safety).
+
+## 2026-02-11 - Flexible CLI Inputs
+**Learning:** Users often type the option name (e.g., "pnpm") instead of the number in CLI prompts, causing friction when rejected.
+**Action:** Implement "fuzzy" resolution that accepts both numbers and case-insensitive names for smoother interaction.
