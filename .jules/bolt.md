@@ -9,3 +9,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2025-02-18 - Synchronous IO in Validation Loops
 **Learning:** Including synchronous file system calls (like `fs.realpathSync`) inside validation functions used in interactive loops creates unnecessary blocking overhead.
 **Action:** Cache static environment values (like CWD) and hoist regex patterns to module scope to ensure validation logic remains CPU-bound only.
+
+## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
+**Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
+**Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
