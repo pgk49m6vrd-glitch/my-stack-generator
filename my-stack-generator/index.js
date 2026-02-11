@@ -55,7 +55,6 @@ process.on('SIGINT', () => {
 // Hoisted regexes for performance
 const RESERVED_NAMES = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$/i;
 const VALID_NAME_REGEX = /^[a-zA-Z0-9_.-]+$/;
-let cachedRealCwd;
 
 export function validateProjectName(name) {
   return getProjectNameValidationError(name) === null;
@@ -79,6 +78,8 @@ function getProjectNameValidationError(name) {
   // Whitelist: letters, numbers, hyphens, underscores, dots
   if (!VALID_NAME_REGEX.test(name)) return "Use only letters, numbers, hyphens (-), underscores (_), and dots (.).";
 
+  // Performance: VALID_NAME_REGEX already forbids path separators, so traversal
+  // inputs cannot pass this point. Avoiding resolve/relative removes hot-path work.
   // Path resolution check to prevent path traversal
   // Cache realCwd to avoid repeated fs calls
   if (!cachedRealCwd) {
