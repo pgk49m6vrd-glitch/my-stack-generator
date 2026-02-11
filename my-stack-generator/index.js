@@ -16,6 +16,7 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 let currentRoot = '';
 let currentCleanupMarker = '';
+let cachedRealCwd;
 
 const cleanup = () => {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
@@ -110,13 +111,24 @@ function sanitizePackageName(name) {
 /**
  * Checks if a package manager is available in the system.
  */
-function checkPackageManager(pm) {
-  try {
-    const result = spawn.sync(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
-    return result.status === 0;
-  } catch (e) {
-    return false;
-  }
+const pmChecks = new Map();
+
+function startPackageManagerCheck(pm) {
+  const p = new Promise((resolve) => {
+    const child = spawn(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
+    child.on('close', (code) => resolve(code === 0));
+    child.on('error', () => resolve(false));
+    child.unref();
+  });
+  pmChecks.set(pm, p);
+}
+
+// Start checks early for common package managers
+['npm', 'pnpm', 'bun'].forEach(startPackageManagerCheck);
+
+async function checkPackageManager(pm) {
+  if (!pmChecks.has(pm)) startPackageManagerCheck(pm);
+  return pmChecks.get(pm);
 }
 
 async function main() {
@@ -161,7 +173,7 @@ async function main() {
       }
 
       if (pm) {
-        if (!checkPackageManager(pm)) {
+        if (!await checkPackageManager(pm)) {
           console.error(`\n❌ Error: ${pm} is not installed or not available in your PATH.`);
           pm = ""; // Reset to re-ask
           continue;
