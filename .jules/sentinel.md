@@ -22,3 +22,8 @@
 **Vulnerability:** `npm install` and `pnpm install` were run with `--no-audit`, hiding potential supply chain vulnerabilities from the user during project creation.
 **Learning:** Prioritizing speed or reduced noise over security visibility creates a false sense of safety. Users should be aware of vulnerabilities in their new project's dependency tree immediately.
 **Prevention:** Do not disable default security checks (like `npm audit`) in tooling unless there is a critical technical blocker.
+
+## 2026-02-11 - Guarded Recursive Cleanup
+**Vulnerability:** Recursive cleanup relied on `currentRoot` alone, so any future bug or state corruption could point cleanup at an unintended directory and remove it with `rmSync(..., { recursive: true, force: true })`.
+**Learning:** Destructive recovery paths need proof-of-ownership, not just a path string assembled earlier in execution.
+**Prevention:** Use a per-run marker file and boundary checks (`realpath` + within-CWD validation) before allowing recursive deletion.
