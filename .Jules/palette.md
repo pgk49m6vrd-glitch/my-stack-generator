@@ -13,3 +13,7 @@
 ## 2025-10-26 - Dark Mode Completeness
 **Learning:** A dark mode app with default white scrollbars and blue selection breaks immersion.
 **Action:** Style `::selection` and `::-webkit-scrollbar` to match the theme for a "native-like" feel in web apps.
+
+## 2026-02-11 - Specific Validation Beats Generic Errors
+**Learning:** In this CLI generator, a single generic "invalid project name" message hides the exact fix and increases retry loops.
+**Action:** Prefer field-level validation messages that explain the exact constraint (length, characters, reserved names, path safety).

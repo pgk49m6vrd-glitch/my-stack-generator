@@ -43,22 +43,26 @@ const VALID_NAME_REGEX = /^[a-zA-Z0-9_.-]+$/;
 let cachedRealCwd;
 
 export function validateProjectName(name) {
-  if (!name || name.trim() === '') return false;
+  return getProjectNameValidationError(name) === null;
+}
+
+function getProjectNameValidationError(name) {
+  if (!name || name.trim() === '') return "Project name cannot be empty.";
 
   // Length check to prevent DoS/filesystem errors
-  if (name.length > 214) return false;
+  if (name.length > 214) return "Project name must be 214 characters or fewer.";
 
   // Refuse . and ..
-  if (name === '.' || name === '..') return false;
+  if (name === '.' || name === '..') return 'Project name cannot be "." or "..".';
 
   // Windows reserved names
-  if (RESERVED_NAMES.test(name)) return false;
+  if (RESERVED_NAMES.test(name)) return "Project name cannot use reserved names like con, prn, aux, nul, com1, or lpt1.";
 
   // Names ending in space or dot (Windows issues)
-  if (name.endsWith(' ') || name.endsWith('.')) return false;
+  if (name.endsWith(' ') || name.endsWith('.')) return "Project name cannot end with a space or dot.";
 
   // Whitelist: letters, numbers, hyphens, underscores, dots
-  if (!VALID_NAME_REGEX.test(name)) return false;
+  if (!VALID_NAME_REGEX.test(name)) return "Use only letters, numbers, hyphens (-), underscores (_), and dots (.).";
 
   // Path resolution check to prevent path traversal
   // Cache realCwd to avoid repeated fs calls
@@ -69,10 +73,10 @@ export function validateProjectName(name) {
   const relative = path.relative(cachedRealCwd, root);
 
   if (relative.startsWith('..') || path.isAbsolute(relative)) {
-    return false;
+    return "Project name must resolve inside the current directory.";
   }
 
-  return true;
+  return null;
 }
 
 /**
@@ -115,10 +119,11 @@ async function main() {
     while (true) {
       projectName = await askQuestion("👉 What is your project name? (default: my-awesome-project) ");
       projectName = projectName.trim() || 'my-awesome-project';
-      if (validateProjectName(projectName)) {
+      const projectNameError = getProjectNameValidationError(projectName);
+      if (!projectNameError) {
         break;
       }
-      console.log("❌ Invalid project name. Must be 1-214 characters, avoid reserved names, ending with space/dot, or special characters.");
+      console.log(`❌ ${projectNameError}`);
     }
 
     // 2. Package Manager Selection
