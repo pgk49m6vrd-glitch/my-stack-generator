@@ -27,3 +27,13 @@
 **Vulnerability:** Recursive cleanup relied on `currentRoot` alone, so any future bug or state corruption could point cleanup at an unintended directory and remove it with `rmSync(..., { recursive: true, force: true })`.
 **Learning:** Destructive recovery paths need proof-of-ownership, not just a path string assembled earlier in execution.
 **Prevention:** Use a per-run marker file and boundary checks (`realpath` + within-CWD validation) before allowing recursive deletion.
+
+## 2026-03-01 - Content Security Policy for Generated Apps
+**Vulnerability:** The generated `index.html` lacked a Content Security Policy (CSP), potentially exposing the application to XSS and other injection attacks if malicious dependencies or scripts were introduced.
+**Learning:** Even starter templates should enforce secure defaults. However, strict CSPs (like blocking `unsafe-inline` or `upgrade-insecure-requests`) can break local development environments (HMR, http://localhost), requiring a balanced approach.
+**Prevention:** Inject a permissive but protective CSP (`script-src 'self' 'unsafe-inline'`) in generated templates to establish a security baseline without hindering the developer experience.
+
+## 2026-03-01 - Undeclared Variables in Strict Mode
+**Vulnerability:** A critical variable `cachedRealCwd` was assigned but never declared, causing the CLI to crash in Strict Mode (ES Modules). This prevented security validation logic from running effectively (denial of service).
+**Learning:** Testing only the "happy path" or not running tests in the actual runtime environment (ESM vs CJS) can hide ReferenceErrors that only appear when specific code paths (like validation failures) are triggered.
+**Prevention:** Ensure all variables are explicitly declared. Run tests that exercise error paths and edge cases to trigger conditional logic where such bugs often hide.
