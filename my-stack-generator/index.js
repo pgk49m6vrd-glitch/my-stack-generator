@@ -14,6 +14,7 @@ const rl = readline.createInterface({
 
 const askQuestion = (query) => new Promise((resolve) => rl.question(query, resolve));
 
+let cachedRealCwd;
 let currentRoot = '';
 let currentCleanupMarker = '';
 
@@ -60,7 +61,35 @@ export function validateProjectName(name) {
   return getProjectNameValidationError(name) === null;
 }
 
-function getProjectNameValidationError(name) {
+export function resolvePackageManager(input) {
+  const choice = input.trim().toLowerCase();
+  if (choice === "1" || choice === "" || choice === "npm") {
+    return "npm";
+  } else if (choice === "2" || choice === "pnpm") {
+    return "pnpm";
+  } else if (choice === "3" || choice === "bun") {
+    return "bun";
+  }
+  return null;
+}
+
+export function resolveBackend(input) {
+  const choice = input.trim().toLowerCase();
+  if (choice === "1" || choice === "" || choice === "firebase") {
+    return "firebase";
+  } else if (choice === "2" || choice === "supabase") {
+    return "supabase";
+  }
+  return null;
+}
+
+export function shouldInstallDependencies(input) {
+  const choice = input.trim().toLowerCase();
+  // Only skip if user explicitly says 'n' or 'no'
+  return !['n', 'no'].includes(choice);
+}
+
+export function getProjectNameValidationError(name) {
   if (!name || name.trim() === '') return "Project name cannot be empty.";
 
   // Length check to prevent DoS/filesystem errors
@@ -150,15 +179,7 @@ async function main() {
       console.log("2. pnpm");
       console.log("3. bun");
       let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
-      pmChoice = pmChoice.trim();
-
-      if (pmChoice === "1" || pmChoice === "") {
-        pm = "npm";
-      } else if (pmChoice === "2") {
-        pm = "pnpm";
-      } else if (pmChoice === "3") {
-        pm = "bun";
-      }
+      pm = resolvePackageManager(pmChoice);
 
       if (pm) {
         if (!checkPackageManager(pm)) {
@@ -179,13 +200,9 @@ async function main() {
       console.log("1. Firebase");
       console.log("2. Supabase");
       let backendChoice = await askQuestion("Your Choice (1 or 2) [default: 1]: ");
-      backendChoice = backendChoice.trim();
+      backend = resolveBackend(backendChoice);
 
-      if (backendChoice === "1" || backendChoice === "") {
-        backend = "firebase";
-        break;
-      } else if (backendChoice === "2") {
-        backend = "supabase";
+      if (backend) {
         break;
       } else {
         console.log("⚠️  Invalid choice. Please select 1 or 2.");
@@ -501,7 +518,7 @@ export const getSupabase = () => {
     ));
 
     const install = await askQuestion(`\n📦 Do you want to install dependencies with ${pm}? (Y/n) `);
-    if (install.trim().toLowerCase() !== 'n') {
+    if (shouldInstallDependencies(install)) {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
         await new Promise((resolve, reject) => {
