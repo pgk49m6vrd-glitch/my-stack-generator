@@ -27,3 +27,7 @@
 **Vulnerability:** Recursive cleanup relied on `currentRoot` alone, so any future bug or state corruption could point cleanup at an unintended directory and remove it with `rmSync(..., { recursive: true, force: true })`.
 **Learning:** Destructive recovery paths need proof-of-ownership, not just a path string assembled earlier in execution.
 **Prevention:** Use a per-run marker file and boundary checks (`realpath` + within-CWD validation) before allowing recursive deletion.
+## 2025-02-18 - Unannounced Variables in CLI Tools
+**Vulnerability:** A missing variable declaration (`cachedRealCwd`) in `index.js` caused `validateProjectName` to throw a `ReferenceError`, potentially crashing the CLI during input validation.
+**Learning:** Implicit globals are strict mode errors in ES modules. Testing CLI inputs that trigger these paths (like specific validation failures) is crucial.
+**Prevention:** Use linting (e.g., ESLint) in the CI pipeline to catch `no-undef` errors.
