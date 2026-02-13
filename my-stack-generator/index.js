@@ -16,6 +16,7 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 let currentRoot = '';
 let currentCleanupMarker = '';
+let cachedRealCwd;
 
 const cleanup = () => {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
@@ -119,6 +120,21 @@ function checkPackageManager(pm) {
   }
 }
 
+export function resolvePackageManager(choice) {
+  const c = choice.trim().toLowerCase();
+  if (c === '1' || c === '' || c === 'npm') return 'npm';
+  if (c === '2' || c === 'pnpm') return 'pnpm';
+  if (c === '3' || c === 'bun') return 'bun';
+  return null;
+}
+
+export function resolveBackend(choice) {
+  const c = choice.trim().toLowerCase();
+  if (c === '1' || c === '' || c === 'firebase') return 'firebase';
+  if (c === '2' || c === 'supabase') return 'supabase';
+  return null;
+}
+
 async function main() {
   // Node version check
   const nodeVersionMajor = parseInt(process.versions.node.split('.')[0], 10);
@@ -150,15 +166,8 @@ async function main() {
       console.log("2. pnpm");
       console.log("3. bun");
       let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
-      pmChoice = pmChoice.trim();
 
-      if (pmChoice === "1" || pmChoice === "") {
-        pm = "npm";
-      } else if (pmChoice === "2") {
-        pm = "pnpm";
-      } else if (pmChoice === "3") {
-        pm = "bun";
-      }
+      pm = resolvePackageManager(pmChoice);
 
       if (pm) {
         if (!checkPackageManager(pm)) {
@@ -179,13 +188,10 @@ async function main() {
       console.log("1. Firebase");
       console.log("2. Supabase");
       let backendChoice = await askQuestion("Your Choice (1 or 2) [default: 1]: ");
-      backendChoice = backendChoice.trim();
 
-      if (backendChoice === "1" || backendChoice === "") {
-        backend = "firebase";
-        break;
-      } else if (backendChoice === "2") {
-        backend = "supabase";
+      backend = resolveBackend(backendChoice);
+
+      if (backend) {
         break;
       } else {
         console.log("⚠️  Invalid choice. Please select 1 or 2.");
