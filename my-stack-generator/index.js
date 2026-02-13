@@ -7,6 +7,8 @@ import readline from 'readline';
 import { fileURLToPath } from 'url';
 import validatePkgName from 'validate-npm-package-name';
 
+let cachedRealCwd;
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -367,6 +369,7 @@ Built with **My Stack Generator**.
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
