@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2026-02-13 - Optimizing Interactive CLI Latency
+**Learning:** Pre-computing external command checks (like `npm --version`) in the background while the user is typing can significantly improve perceived performance in interactive CLIs.
+**Action:** Use "fire-and-forget" async checks with result caching for any environment validation steps that don't depend on user input, but ensure to handle cache invalidation for retry scenarios.

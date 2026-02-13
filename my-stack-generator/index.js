@@ -16,6 +16,7 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 let currentRoot = '';
 let currentCleanupMarker = '';
+let cachedRealCwd;
 
 const cleanup = () => {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
@@ -108,15 +109,30 @@ function sanitizePackageName(name) {
 }
 
 /**
- * Checks if a package manager is available in the system.
+ * Checks if a package manager is available in the system (Async).
  */
-function checkPackageManager(pm) {
-  try {
-    const result = spawn.sync(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
-    return result.status === 0;
-  } catch (e) {
-    return false;
-  }
+function checkPackageManagerAsync(pm) {
+  return new Promise((resolve) => {
+    let timeout;
+    try {
+      const child = spawn(pm, ['--version'], { stdio: 'ignore' });
+      child.on('close', (code) => {
+        clearTimeout(timeout);
+        resolve(code === 0);
+      });
+      child.on('error', () => {
+        clearTimeout(timeout);
+        resolve(false);
+      });
+      // Safety timeout: 5s
+      timeout = setTimeout(() => {
+        child.kill();
+        resolve(false);
+      }, 5000);
+    } catch (e) {
+      resolve(false);
+    }
+  });
 }
 
 async function main() {
@@ -128,6 +144,13 @@ async function main() {
   }
 
   console.log("\n--- 🚀 MYSTACK GENERATOR V1.2.0 ---");
+
+  // Performance: Start checking package managers immediately in background
+  const pmChecks = {
+    npm: checkPackageManagerAsync('npm'),
+    pnpm: checkPackageManagerAsync('pnpm'),
+    bun: checkPackageManagerAsync('bun'),
+  };
 
   try {
     // 1. Project Name
@@ -161,8 +184,17 @@ async function main() {
       }
 
       if (pm) {
-        if (!checkPackageManager(pm)) {
+        // Performance: Use pre-computed result or fall back to on-demand check
+        let checkPromise = pmChecks[pm];
+        if (!checkPromise) {
+          checkPromise = checkPackageManagerAsync(pm);
+        }
+        const isAvailable = await checkPromise;
+
+        if (!isAvailable) {
           console.error(`\n❌ Error: ${pm} is not installed or not available in your PATH.`);
+          // Invalidate cache so user can retry
+          delete pmChecks[pm];
           pm = ""; // Reset to re-ask
           continue;
         }
