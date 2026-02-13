@@ -17,3 +17,7 @@
 ## 2026-02-11 - Specific Validation Beats Generic Errors
 **Learning:** In this CLI generator, a single generic "invalid project name" message hides the exact fix and increases retry loops.
 **Action:** Prefer field-level validation messages that explain the exact constraint (length, characters, reserved names, path safety).
+
+## 2026-03-12 - Cognitive Mapping in CLI Choices
+**Learning:** Forcing users to translate their intent (e.g., "npm") into a numeric code (e.g., "1") adds unnecessary cognitive friction in interactive CLIs.
+**Action:** Accept both the name (case-insensitive) and the numeric index for selection prompts to support natural user input.
