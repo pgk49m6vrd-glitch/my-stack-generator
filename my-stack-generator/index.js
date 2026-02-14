@@ -16,6 +16,7 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 let currentRoot = '';
 let currentCleanupMarker = '';
+let cachedRealCwd;
 
 const cleanup = () => {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
@@ -108,15 +109,14 @@ function sanitizePackageName(name) {
 }
 
 /**
- * Checks if a package manager is available in the system.
+ * Checks if a package manager is available in the system asynchronously.
  */
-function checkPackageManager(pm) {
-  try {
-    const result = spawn.sync(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
-    return result.status === 0;
-  } catch (e) {
-    return false;
-  }
+function checkPackageManagerAsync(pm) {
+  return new Promise((resolve) => {
+    const child = spawn(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
+    child.on('error', () => resolve(false));
+    child.on('close', (code) => resolve(code === 0));
+  });
 }
 
 async function main() {
@@ -126,6 +126,13 @@ async function main() {
     console.error(`\n❌ Error: Node.js version 18 or higher is required. You are using ${process.versions.node}.`);
     process.exit(1);
   }
+
+  // Fire-and-forget checks for package managers to speed up interaction
+  const pmChecks = {
+    npm: checkPackageManagerAsync('npm'),
+    pnpm: checkPackageManagerAsync('pnpm'),
+    bun: checkPackageManagerAsync('bun')
+  };
 
   console.log("\n--- 🚀 MYSTACK GENERATOR V1.2.0 ---");
 
@@ -161,8 +168,16 @@ async function main() {
       }
 
       if (pm) {
-        if (!checkPackageManager(pm)) {
+        // Use cached check or start a new one if missing (e.g. after retry)
+        if (!pmChecks[pm]) {
+          pmChecks[pm] = checkPackageManagerAsync(pm);
+        }
+
+        const isAvailable = await pmChecks[pm];
+
+        if (!isAvailable) {
           console.error(`\n❌ Error: ${pm} is not installed or not available in your PATH.`);
+          delete pmChecks[pm]; // Invalidate cache so retry triggers a fresh check
           pm = ""; // Reset to re-ask
           continue;
         }
