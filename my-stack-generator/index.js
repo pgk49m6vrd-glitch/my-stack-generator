@@ -16,6 +16,7 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 let currentRoot = '';
 let currentCleanupMarker = '';
+let cachedRealCwd;
 
 const cleanup = () => {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
@@ -166,6 +167,7 @@ async function main() {
           pm = ""; // Reset to re-ask
           continue;
         }
+        console.log(`✔ Selected: ${pm}`);
         break;
       } else {
         console.log("⚠️  Invalid choice. Please select 1, 2, or 3.");
@@ -183,9 +185,11 @@ async function main() {
 
       if (backendChoice === "1" || backendChoice === "") {
         backend = "firebase";
+        console.log(`✔ Selected: Firebase`);
         break;
       } else if (backendChoice === "2") {
         backend = "supabase";
+        console.log(`✔ Selected: Supabase`);
         break;
       } else {
         console.log("⚠️  Invalid choice. Please select 1 or 2.");
@@ -383,6 +387,7 @@ Built with **My Stack Generator**.
 </head>
 <body class="bg-slate-900">
   <div id="root"></div>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>`,
