@@ -27,3 +27,13 @@
 **Vulnerability:** Recursive cleanup relied on `currentRoot` alone, so any future bug or state corruption could point cleanup at an unintended directory and remove it with `rmSync(..., { recursive: true, force: true })`.
 **Learning:** Destructive recovery paths need proof-of-ownership, not just a path string assembled earlier in execution.
 **Prevention:** Use a per-run marker file and boundary checks (`realpath` + within-CWD validation) before allowing recursive deletion.
+
+## 2026-05-20 - Missing Content Security Policy in Templates
+**Vulnerability:** Generated starter templates often lack a Content Security Policy (CSP), leaving new projects vulnerable to XSS and data injection by default.
+**Learning:** Developers often prioritize "getting it working" over security in starter templates, assuming users will add security later. This is a dangerous default.
+**Prevention:** Include a strict-but-workable CSP (allowing HMR/localhost) in all generated HTML templates to establish a "secure by default" posture.
+
+## 2026-05-20 - Implicit Global Variable Crash
+**Vulnerability:** A critical variable (`cachedRealCwd`) used in security cleanup logic was not declared, causing a ReferenceError that crashed the tool and bypassed the cleanup mechanism on failure.
+**Learning:** Implicit globals or missing declarations in error handling paths can mask critical failures. Linting tools (ESLint) should be configured to catch `no-undef`.
+**Prevention:** Ensure all variables, especially those in error handlers or cleanup routines, are properly declared and initialized. Use `strict mode` (which modules imply) and run linters.
