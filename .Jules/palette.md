@@ -17,3 +17,7 @@
 ## 2026-02-11 - Specific Validation Beats Generic Errors
 **Learning:** In this CLI generator, a single generic "invalid project name" message hides the exact fix and increases retry loops.
 **Action:** Prefer field-level validation messages that explain the exact constraint (length, characters, reserved names, path safety).
+
+## 2026-02-15 - Immediate Confirmation in CLI
+**Learning:** In interactive CLIs, immediate visual confirmation (e.g., "✔ Selected: npm") after a user choice reduces uncertainty and provides a reassuring feedback loop.
+**Action:** Add explicit confirmation messages after critical selection steps in CLI tools.
