@@ -7,6 +7,8 @@ import readline from 'readline';
 import { fileURLToPath } from 'url';
 import validatePkgName from 'validate-npm-package-name';
 
+let cachedRealCwd;
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -107,16 +109,24 @@ function sanitizePackageName(name) {
   return sanitized;
 }
 
-/**
- * Checks if a package manager is available in the system.
- */
-function checkPackageManager(pm) {
-  try {
-    const result = spawn.sync(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
-    return result.status === 0;
-  } catch (e) {
-    return false;
-  }
+function checkPackageManagerAsync(pm) {
+  return new Promise((resolve) => {
+    const child = spawn(pm, ['--version'], { stdio: 'ignore' });
+    const timeout = setTimeout(() => {
+      child.kill();
+      resolve(false);
+    }, 5000);
+
+    child.on('close', (code) => {
+      clearTimeout(timeout);
+      resolve(code === 0);
+    });
+
+    child.on('error', () => {
+      clearTimeout(timeout);
+      resolve(false);
+    });
+  });
 }
 
 async function main() {
@@ -126,6 +136,13 @@ async function main() {
     console.error(`\n❌ Error: Node.js version 18 or higher is required. You are using ${process.versions.node}.`);
     process.exit(1);
   }
+
+  // Start background checks immediately (fire and forget)
+  const pmChecks = {
+    npm: checkPackageManagerAsync('npm'),
+    pnpm: checkPackageManagerAsync('pnpm'),
+    bun: checkPackageManagerAsync('bun')
+  };
 
   console.log("\n--- 🚀 MYSTACK GENERATOR V1.2.0 ---");
 
@@ -161,7 +178,8 @@ async function main() {
       }
 
       if (pm) {
-        if (!checkPackageManager(pm)) {
+        const isAvailable = await (pmChecks[pm] || checkPackageManagerAsync(pm));
+        if (!isAvailable) {
           console.error(`\n❌ Error: ${pm} is not installed or not available in your PATH.`);
           pm = ""; // Reset to re-ask
           continue;
