@@ -16,6 +16,7 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 let currentRoot = '';
 let currentCleanupMarker = '';
+let cachedRealCwd;
 
 const cleanup = () => {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
@@ -171,6 +172,7 @@ async function main() {
         console.log("⚠️  Invalid choice. Please select 1, 2, or 3.");
       }
     }
+    console.log(`✔ Selected: ${pm}`);
 
     // 3. Backend Choice
     let backend = "";
@@ -191,6 +193,7 @@ async function main() {
         console.log("⚠️  Invalid choice. Please select 1 or 2.");
       }
     }
+    console.log(`✔ Selected: ${backend === 'firebase' ? 'Firebase' : 'Supabase'}`);
 
     const root = path.join(process.cwd(), projectName);
     // Do not set currentRoot here to avoid cleaning up existing directories if we fail before creation.
