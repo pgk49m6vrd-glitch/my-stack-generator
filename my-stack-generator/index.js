@@ -16,6 +16,7 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 let currentRoot = '';
 let currentCleanupMarker = '';
+let cachedRealCwd;
 
 const cleanup = () => {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
@@ -274,6 +275,18 @@ function App() {
           React + Tailwind V4 + ${backend.charAt(0).toUpperCase() + backend.slice(1)} Stack operational.
         </p>
 
+        <div className="mb-8">
+          <a
+            href="https://react.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-500 transition-colors font-semibold text-white shadow-lg hover:shadow-blue-500/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+            aria-label="Read React documentation (opens in new tab)"
+          >
+            Get Started
+          </a>
+        </div>
+
         <div className="px-6 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white/90 inline-block shadow-xl forced-colors:text-[CanvasText]">
           Feature-Based Architecture ready
         </div>
@@ -382,6 +395,11 @@ Built with **My Stack Generator**.
   <title>${projectName}</title>
 </head>
 <body class="bg-slate-900">
+  <noscript>
+    <div style="padding: 20px; text-align: center; color: white; background-color: #ef4444; font-family: sans-serif; font-weight: bold;">
+      ⚠️ You need to enable JavaScript to run this app.
+    </div>
+  </noscript>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
