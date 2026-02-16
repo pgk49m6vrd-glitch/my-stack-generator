@@ -16,6 +16,7 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 let currentRoot = '';
 let currentCleanupMarker = '';
+let cachedRealCwd;
 
 const cleanup = () => {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
@@ -108,18 +109,36 @@ function sanitizePackageName(name) {
 }
 
 /**
- * Checks if a package manager is available in the system.
+ * Checks if a package manager is available in the system asynchronously.
  */
-function checkPackageManager(pm) {
-  try {
-    const result = spawn.sync(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
-    return result.status === 0;
-  } catch (e) {
-    return false;
-  }
+function checkPackageManagerAsync(pm) {
+  return new Promise((resolve) => {
+    const child = spawn(pm, ['--version'], { stdio: 'ignore' });
+    const timeout = setTimeout(() => {
+      child.kill();
+      resolve(false);
+    }, 2000);
+
+    child.on('close', (code) => {
+      clearTimeout(timeout);
+      resolve(code === 0);
+    });
+
+    child.on('error', () => {
+      clearTimeout(timeout);
+      resolve(false);
+    });
+  });
 }
 
 async function main() {
+  // Fire off package manager checks in parallel
+  const pmChecks = {
+    npm: checkPackageManagerAsync('npm'),
+    pnpm: checkPackageManagerAsync('pnpm'),
+    bun: checkPackageManagerAsync('bun'),
+  };
+
   // Node version check
   const nodeVersionMajor = parseInt(process.versions.node.split('.')[0], 10);
   if (nodeVersionMajor < 18) {
@@ -161,8 +180,17 @@ async function main() {
       }
 
       if (pm) {
-        if (!checkPackageManager(pm)) {
+        const checkPromise = pmChecks[pm] || checkPackageManagerAsync(pm);
+        const isAvailable = await checkPromise;
+
+        if (!isAvailable) {
           console.error(`\n❌ Error: ${pm} is not installed or not available in your PATH.`);
+          // If the check failed, we might want to re-check if they try again?
+          // But for now, let's assume if it failed once, it's not installed.
+          // Or we could re-trigger the check?
+          // Since checkPackageManagerAsync is cheap, we could re-run it if they try again.
+          // But to keep it simple and fast, we use the cached promise.
+          // If they install it while the CLI is running, they need to restart the CLI.
           pm = ""; // Reset to re-ask
           continue;
         }
