@@ -17,3 +17,7 @@
 ## 2026-02-11 - Specific Validation Beats Generic Errors
 **Learning:** In this CLI generator, a single generic "invalid project name" message hides the exact fix and increases retry loops.
 **Action:** Prefer field-level validation messages that explain the exact constraint (length, characters, reserved names, path safety).
+
+## 2026-02-16 - Empty State Guidance
+**Learning:** A generated "Hello World" app should guide the user on *next steps* (e.g. read docs), not just display a success message.
+**Action:** Include actionable links (docs, tutorials) in the default App component.
