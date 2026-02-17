@@ -16,6 +16,7 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 let currentRoot = '';
 let currentCleanupMarker = '';
+let cachedRealCwd;
 
 const cleanup = () => {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
@@ -382,6 +383,12 @@ Built with **My Stack Generator**.
   <title>${projectName}</title>
 </head>
 <body class="bg-slate-900">
+  <noscript>
+    <div style="font-family: sans-serif; padding: 2rem; text-align: center; color: #fca5a5; background-color: #450a0a; border: 1px solid #7f1d1d; margin: 2rem; border-radius: 0.5rem;">
+      <strong>JavaScript Required</strong><br/>
+      This application requires JavaScript to function. Please enable it in your browser settings.
+    </div>
+  </noscript>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
