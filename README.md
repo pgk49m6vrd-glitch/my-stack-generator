@@ -136,7 +136,8 @@ Your Choice (1 or 2) [default: 1]:
 📦 Do you want to install dependencies with [npm/pnpm/bun]? (Y/n)
 ```
 
-- **Answer "Y" (Yes)**: The generator will automatically download and install all necessary libraries. This step is required for the project to run. **Note:** If installation fails, the project folder will be automatically cleaned up.
+- **Answer "Y" (Yes)**: The generator will automatically download and install all necessary libraries. This step is required for the project to run. 
+**Note:** If installation fails, the project folder will be automatically cleaned up.
 - **Answer "n" (No)**: The script will only create the project structure and files. You will need to run the install command manually later.
 
 ---
