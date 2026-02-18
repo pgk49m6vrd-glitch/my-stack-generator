@@ -16,6 +16,7 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 let currentRoot = '';
 let currentCleanupMarker = '';
+let cachedRealCwd;
 
 const cleanup = () => {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
@@ -109,14 +110,40 @@ function sanitizePackageName(name) {
 
 /**
  * Checks if a package manager is available in the system.
+ * Uses a cache to avoid redundant checks and allow parallel execution.
  */
+const pmAvailability = new Map();
+
 function checkPackageManager(pm) {
-  try {
-    const result = spawn.sync(pm, ['--version'], { stdio: 'ignore', timeout: 5000 });
-    return result.status === 0;
-  } catch (e) {
-    return false;
+  if (pmAvailability.has(pm)) {
+    return pmAvailability.get(pm);
   }
+
+  const checkPromise = new Promise((resolve) => {
+    try {
+      const child = spawn(pm, ['--version'], { stdio: 'ignore' });
+
+      const timeout = setTimeout(() => {
+        child.kill();
+        resolve(false);
+      }, 5000);
+
+      child.on('close', (code) => {
+        clearTimeout(timeout);
+        resolve(code === 0);
+      });
+
+      child.on('error', () => {
+        clearTimeout(timeout);
+        resolve(false);
+      });
+    } catch (e) {
+      resolve(false);
+    }
+  });
+
+  pmAvailability.set(pm, checkPromise);
+  return checkPromise;
 }
 
 async function main() {
@@ -128,6 +155,9 @@ async function main() {
   }
 
   console.log("\n--- 🚀 MYSTACK GENERATOR V1.2.0 ---");
+
+  // Pre-check package managers in background to avoid blocking later
+  ['npm', 'pnpm', 'bun'].forEach((pm) => checkPackageManager(pm));
 
   try {
     // 1. Project Name
@@ -161,7 +191,8 @@ async function main() {
       }
 
       if (pm) {
-        if (!checkPackageManager(pm)) {
+        const isAvailable = await checkPackageManager(pm);
+        if (!isAvailable) {
           console.error(`\n❌ Error: ${pm} is not installed or not available in your PATH.`);
           pm = ""; // Reset to re-ask
           continue;
