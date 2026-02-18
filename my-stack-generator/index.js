@@ -259,7 +259,10 @@ async function main() {
     currentRoot = root;
     currentCleanupMarker = path.join(root, '.mystack-generator.tmp');
     await fs.promises.writeFile(currentCleanupMarker, 'Temporary scaffolding marker.\n', { flag: 'wx' });
-    await Promise.all(folders.map(folder => fs.promises.mkdir(path.join(root, folder), { recursive: true })));
+
+    // Optimization: Start creating folders immediately.
+    // We don't await here so we can write root files in parallel.
+    const folderCreationPromise = Promise.all(folders.map(folder => fs.promises.mkdir(path.join(root, folder), { recursive: true })));
 
     // File templates
     // CSP Note:
@@ -531,10 +534,31 @@ export const getSupabase = () => {
       files['.env.example'] = `VITE_SUPABASE_URL=\nVITE_SUPABASE_ANON_KEY=`;
     }
 
-    // Optimization: Write files concurrently
-    await Promise.all(Object.entries(files).map(([filePath, content]) =>
+    // Optimization: Write files concurrently.
+    // We split files into root files (which can be written immediately alongside folder creation)
+    // and nested files (which must wait for folder creation to complete).
+    const rootFiles = [];
+    const nestedFiles = [];
+
+    for (const [filePath, content] of Object.entries(files)) {
+      if (filePath.includes('/') || filePath.includes(path.sep)) {
+        nestedFiles.push([filePath, content]);
+      } else {
+        rootFiles.push([filePath, content]);
+      }
+    }
+
+    const rootFileCreationPromise = Promise.all(rootFiles.map(([filePath, content]) =>
       fs.promises.writeFile(path.join(root, filePath), content)
     ));
+
+    const nestedFileCreationPromise = folderCreationPromise.then(() =>
+      Promise.all(nestedFiles.map(([filePath, content]) =>
+        fs.promises.writeFile(path.join(root, filePath), content)
+      ))
+    );
+
+    await Promise.all([rootFileCreationPromise, nestedFileCreationPromise]);
 
     const install = await askQuestion(`\n📦 Do you want to install dependencies with ${pm}? (Y/n) `);
     if (install.trim().toLowerCase() !== 'n') {

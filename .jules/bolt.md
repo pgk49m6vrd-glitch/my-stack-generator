@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2026-02-18 - Parallel File I/O
+**Learning:** Waiting for all directory structures to be created before writing any files introduces unnecessary latency. Root-level files can be written concurrently with subfolder creation, as they depend only on the project root which is created first.
+**Action:** Split file creation into independent batches (root vs nested) and execute them in parallel where dependencies allow, overlapping I/O operations for faster scaffolding.
