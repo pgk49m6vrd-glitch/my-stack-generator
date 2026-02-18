@@ -17,3 +17,7 @@
 ## 2026-02-11 - Specific Validation Beats Generic Errors
 **Learning:** In this CLI generator, a single generic "invalid project name" message hides the exact fix and increases retry loops.
 **Action:** Prefer field-level validation messages that explain the exact constraint (length, characters, reserved names, path safety).
+
+## 2026-02-18 - Non-JS Fallbacks in Generators
+**Learning:** Modern JS-heavy app generators often neglect non-JS fallbacks, leaving a blank screen.
+**Action:** Always include a styled <noscript> tag in index.html for basic accessibility.

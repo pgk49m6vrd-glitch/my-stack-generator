@@ -418,6 +418,12 @@ Built with **My Stack Generator**.
   <title>${projectName}</title>
 </head>
 <body class="bg-slate-900">
+  <noscript>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; color: #e2e8f0; font-family: sans-serif; text-align: center;">
+      <h1 style="font-size: 2rem; margin-bottom: 1rem;">JavaScript Required</h1>
+      <p style="font-size: 1.125rem;">This application requires JavaScript to run. Please enable it in your browser settings.</p>
+    </div>
+  </noscript>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
