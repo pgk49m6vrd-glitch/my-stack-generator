@@ -46,5 +46,4 @@ if (failed > 0) {
   process.exit(1);
 } else {
   console.log('\n✨ All tests passed!');
-  process.exit(0);
 }

@@ -27,3 +27,8 @@
 **Vulnerability:** Recursive cleanup relied on `currentRoot` alone, so any future bug or state corruption could point cleanup at an unintended directory and remove it with `rmSync(..., { recursive: true, force: true })`.
 **Learning:** Destructive recovery paths need proof-of-ownership, not just a path string assembled earlier in execution.
 **Prevention:** Use a per-run marker file and boundary checks (`realpath` + within-CWD validation) before allowing recursive deletion.
+
+## 2026-02-21 - CLI Side-Effect Isolation
+**Vulnerability:** Difficulty in testing security-critical functions (like input sanitization) due to side-effects at module top-level (e.g., opening stdin).
+**Learning:** CLI tools often initialize interactive elements immediately. This prevents test runners from importing specific functions without triggering the interactive mode or hanging the process.
+**Prevention:** Wrap all CLI initialization logic (readline, process listeners) in an execution guard (`if (process.argv[1] === ...)`) and export pure functions for testing.
