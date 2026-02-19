@@ -79,19 +79,10 @@ function getProjectNameValidationError(name) {
   // Whitelist: letters, numbers, hyphens, underscores, dots
   if (!VALID_NAME_REGEX.test(name)) return "Use only letters, numbers, hyphens (-), underscores (_), and dots (.).";
 
-  // Performance: VALID_NAME_REGEX already forbids path separators, so traversal
-  // inputs cannot pass this point. Avoiding resolve/relative removes hot-path work.
-  // Path resolution check to prevent path traversal
-  // Cache realCwd to avoid repeated fs calls
-  if (!cachedRealCwd) {
-    cachedRealCwd = fs.realpathSync(process.cwd());
-  }
-  const root = path.resolve(process.cwd(), name);
-  const relative = path.relative(cachedRealCwd, root);
-
-  if (relative.startsWith('..') || path.isAbsolute(relative)) {
-    return "Project name must resolve inside the current directory.";
-  }
+  // Note: path.resolve/path.relative checks are redundant here because:
+  // 1. VALID_NAME_REGEX forbids separators (/ and \), preventing traversal.
+  // 2. '.' and '..' are explicitly rejected above.
+  // 3. Absolute paths are impossible without separators.
 
   return null;
 }

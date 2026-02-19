@@ -20,6 +20,9 @@ const testCases = [
   { name: '../outside', expected: false },
   { name: '/absolute', expected: false },
   { name: 'a'.repeat(215), expected: false },
+  // These are valid according to regex (no path separators) and should not be blocked
+  { name: '...', expected: false }, // Ends with dot, so invalid on Windows
+  { name: '..foo', expected: true },
 ];
 
 console.log('🧪 Running Project Name Validation Tests...\n');
