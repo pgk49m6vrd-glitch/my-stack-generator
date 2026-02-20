@@ -7,10 +7,7 @@ import readline from 'readline';
 import { fileURLToPath } from 'url';
 import validatePkgName from 'validate-npm-package-name';
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+let rl;
 
 const askQuestion = (query) => new Promise((resolve) => rl.question(query, resolve));
 
@@ -42,12 +39,6 @@ const cleanup = () => {
     currentCleanupMarker = '';
   }
 };
-
-process.on('SIGINT', () => {
-  cleanup();
-  rl.close();
-  process.exit(1);
-});
 
 /**
  * Validates the project name against Windows reserved names,
@@ -99,7 +90,7 @@ function getProjectNameValidationError(name) {
 /**
  * Sanitizes and validates the npm package name.
  */
-function sanitizePackageName(name) {
+export function sanitizePackageName(name) {
   const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
   const validation = validatePkgName(sanitized);
   if (!validation.validForNewPackages) {
@@ -587,5 +578,16 @@ export const getSupabase = () => {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  process.on('SIGINT', () => {
+    cleanup();
+    rl.close();
+    process.exit(1);
+  });
+
   main();
 }

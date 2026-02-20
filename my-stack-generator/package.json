@@ -12,7 +12,7 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "test": "node test-validation.js"
+    "test": "node test-validation.js && node test-sanitization.js"
   },
   "dependencies": {
     "cross-spawn": "^7.0.6",
