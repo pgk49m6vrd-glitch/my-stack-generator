@@ -179,16 +179,8 @@ async function main() {
       console.log("1. npm");
       console.log("2. pnpm");
       console.log("3. bun");
-      let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
-      pmChoice = pmChoice.trim();
-
-      if (pmChoice === "1" || pmChoice === "") {
-        pm = "npm";
-      } else if (pmChoice === "2") {
-        pm = "pnpm";
-      } else if (pmChoice === "3") {
-        pm = "bun";
-      }
+      let pmChoice = await askQuestion("Your Choice (1, 2, 3 or name) [default: 1]: ");
+      pm = parsePackageManagerChoice(pmChoice);
 
       if (pm) {
         const isAvailable = await checkPackageManager(pm);
@@ -199,7 +191,7 @@ async function main() {
         }
         break;
       } else {
-        console.log("⚠️  Invalid choice. Please select 1, 2, or 3.");
+        console.log("⚠️  Invalid choice. Please select 1, 2, 3, or type the name.");
       }
     }
 
@@ -209,17 +201,13 @@ async function main() {
       console.log("\n🔥 Which back-end do you prefer?");
       console.log("1. Firebase");
       console.log("2. Supabase");
-      let backendChoice = await askQuestion("Your Choice (1 or 2) [default: 1]: ");
-      backendChoice = backendChoice.trim();
+      let backendChoice = await askQuestion("Your Choice (1, 2 or name) [default: 1]: ");
+      backend = parseBackendChoice(backendChoice);
 
-      if (backendChoice === "1" || backendChoice === "") {
-        backend = "firebase";
-        break;
-      } else if (backendChoice === "2") {
-        backend = "supabase";
+      if (backend) {
         break;
       } else {
-        console.log("⚠️  Invalid choice. Please select 1 or 2.");
+        console.log("⚠️  Invalid choice. Please select 1, 2, or type the name.");
       }
     }
 
@@ -584,6 +572,21 @@ export const getSupabase = () => {
   } finally {
     rl.close();
   }
+}
+
+export function parsePackageManagerChoice(input) {
+  const normalized = input.trim().toLowerCase();
+  if (normalized === '1' || normalized === '' || normalized === 'npm') return 'npm';
+  if (normalized === '2' || normalized === 'pnpm') return 'pnpm';
+  if (normalized === '3' || normalized === 'bun') return 'bun';
+  return null;
+}
+
+export function parseBackendChoice(input) {
+  const normalized = input.trim().toLowerCase();
+  if (normalized === '1' || normalized === '' || normalized === 'firebase') return 'firebase';
+  if (normalized === '2' || normalized === 'supabase') return 'supabase';
+  return null;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
