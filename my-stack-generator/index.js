@@ -391,6 +391,12 @@ Built with **My Stack Generator**.
 - **Styling**: Tailwind CSS v4
 - **Backend**: ${backend === 'firebase' ? 'Firebase' : 'Supabase'}
 
+## 🛡️ Security
+
+- **CSP**: The \`index.html\` includes a Content Security Policy. Adjust it as needed for production.
+- **Backend**: Ensure you configure Security Rules (Firebase) or RLS (Supabase) to protect your data.
+- **Environment**: Never commit your \`.env\` file.
+
 ## 📂 Project Structure
 
 - \`src/features/\`: Domain-specific features (components, hooks, services).
@@ -402,7 +408,7 @@ Built with **My Stack Generator**.
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https: ws: wss:; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https: ws: wss:; object-src 'none'; base-uri 'self';">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -483,6 +489,7 @@ Built with **My Stack Generator**.
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+// ⚠️ IMPORTANT: Make sure to configure Firebase Security Rules to protect your data!
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -514,6 +521,7 @@ export const getFirebaseDb = () => getFirestore(getFirebaseApp());
     } else {
       files['src/lib/supabase.config.js'] = `import { createClient } from '@supabase/supabase-js';
 
+// ⚠️ IMPORTANT: Enable Row Level Security (RLS) in your Supabase tables!
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -537,7 +545,7 @@ export const getSupabase = () => {
     ));
 
     const install = await askQuestion(`\n📦 Do you want to install dependencies with ${pm}? (Y/n) `);
-    if (install.trim().toLowerCase() !== 'n') {
+    if (!['n', 'no'].includes(install.trim().toLowerCase())) {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
         await new Promise((resolve, reject) => {
