@@ -17,3 +17,7 @@
 ## 2026-02-11 - Specific Validation Beats Generic Errors
 **Learning:** In this CLI generator, a single generic "invalid project name" message hides the exact fix and increases retry loops.
 **Action:** Prefer field-level validation messages that explain the exact constraint (length, characters, reserved names, path safety).
+
+## 2026-03-01 - In-App Guidance for Generators
+**Learning:** Starter templates often leave users stranded with a "it works!" screen but no clear next step.
+**Action:** Embed direct, context-aware documentation links (e.g., Firebase vs Supabase) in the generated UI to bridge the gap between creation and development.

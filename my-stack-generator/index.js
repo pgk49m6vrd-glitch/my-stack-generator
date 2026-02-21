@@ -309,6 +309,25 @@ function App() {
           React + Tailwind V4 + ${backend.charAt(0).toUpperCase() + backend.slice(1)} Stack operational.
         </p>
 
+        <div className="flex flex-wrap gap-4 justify-center mb-8">
+          <a
+            href="${backend === 'firebase' ? 'https://firebase.google.com/docs' : 'https://supabase.com/docs'}"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+          >
+            ${backend === 'firebase' ? 'Firebase Docs' : 'Supabase Docs'} ↗
+          </a>
+          <a
+            href="https://tailwindcss.com/docs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 rounded-full font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+          >
+            Tailwind Docs ↗
+          </a>
+        </div>
+
         <div className="px-6 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white/90 inline-block shadow-xl forced-colors:text-[CanvasText]">
           Feature-Based Architecture ready
         </div>
