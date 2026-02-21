@@ -27,3 +27,8 @@
 **Vulnerability:** Recursive cleanup relied on `currentRoot` alone, so any future bug or state corruption could point cleanup at an unintended directory and remove it with `rmSync(..., { recursive: true, force: true })`.
 **Learning:** Destructive recovery paths need proof-of-ownership, not just a path string assembled earlier in execution.
 **Prevention:** Use a per-run marker file and boundary checks (`realpath` + within-CWD validation) before allowing recursive deletion.
+
+## 2026-02-23 - The "No" Trap in CLI Prompts
+**Vulnerability:** The CLI checked `if (input !== 'n')` to confirm installation, causing "no" (and typos) to default to "yes", potentially running unwanted scripts.
+**Learning:** Default-allow logic in critical prompts (like running code) is risky. Users expect explicit confirmation or rejection.
+**Prevention:** Use allowlists for sensitive actions (`['y', 'yes'].includes(input)`) or explicit denylists that cover common variations (`['n', 'no']`) when defaulting to safe behavior.
