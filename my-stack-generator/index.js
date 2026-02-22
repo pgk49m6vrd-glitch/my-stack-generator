@@ -271,12 +271,21 @@ async function main() {
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     tailwindcss(),
+    command === 'build' && {
+      name: 'html-transform',
+      transformIndexHtml(html) {
+        return html.replace(
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval';",
+          "script-src 'self' 'unsafe-inline';"
+        );
+      },
+    },
   ],
-})`,
+}))`,
 
       'src/App.jsx': `import React from 'react';
 
