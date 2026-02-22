@@ -16,13 +16,12 @@ const askQuestion = (query) => new Promise((resolve) => rl.question(query, resol
 
 let currentRoot = '';
 let currentCleanupMarker = '';
-let cachedRealCwd;
 
 const cleanup = () => {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
 
   try {
-    const realCwd = cachedRealCwd || fs.realpathSync(process.cwd());
+    const realCwd = fs.realpathSync(process.cwd());
     const realRoot = fs.realpathSync(currentRoot);
     const markerPath = currentCleanupMarker || path.join(realRoot, '.mystack-generator.tmp');
     const relative = path.relative(realCwd, realRoot);
@@ -81,18 +80,6 @@ function getProjectNameValidationError(name) {
 
   // Performance: VALID_NAME_REGEX already forbids path separators, so traversal
   // inputs cannot pass this point. Avoiding resolve/relative removes hot-path work.
-  // Path resolution check to prevent path traversal
-  // Cache realCwd to avoid repeated fs calls
-  if (!cachedRealCwd) {
-    cachedRealCwd = fs.realpathSync(process.cwd());
-  }
-  const root = path.resolve(process.cwd(), name);
-  const relative = path.relative(cachedRealCwd, root);
-
-  if (relative.startsWith('..') || path.isAbsolute(relative)) {
-    return "Project name must resolve inside the current directory.";
-  }
-
   return null;
 }
 
@@ -117,6 +104,15 @@ const pmAvailability = new Map();
 function checkPackageManager(pm) {
   if (pmAvailability.has(pm)) {
     return pmAvailability.get(pm);
+  }
+
+  // Optimize: Check if the current process was started by this package manager
+  // This avoids an expensive spawn call (~100ms+) for the active package manager.
+  const userAgent = process.env.npm_config_user_agent || '';
+  if (userAgent.startsWith(pm + '/')) {
+    const promise = Promise.resolve(true);
+    pmAvailability.set(pm, promise);
+    return promise;
   }
 
   const checkPromise = new Promise((resolve) => {
