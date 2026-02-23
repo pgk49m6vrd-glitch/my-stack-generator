@@ -119,6 +119,15 @@ function checkPackageManager(pm) {
     return pmAvailability.get(pm);
   }
 
+  // Optimization: Detect the active package manager from environment to avoid spawning a check process.
+  // This saves ~200ms of startup time by skipping 'npm --version' (or others) if already active.
+  const userAgent = process.env.npm_config_user_agent || '';
+  if (userAgent.startsWith(pm + '/')) {
+    const p = Promise.resolve(true);
+    pmAvailability.set(pm, p);
+    return p;
+  }
+
   const checkPromise = new Promise((resolve) => {
     try {
       const child = spawn(pm, ['--version'], { stdio: 'ignore' });
