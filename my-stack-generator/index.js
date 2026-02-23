@@ -271,12 +271,26 @@ async function main() {
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-export default defineConfig({
+// Plugin to remove unsafe-eval from CSP in production
+const htmlTransform = () => {
+  return {
+    name: 'html-transform',
+    transformIndexHtml(html) {
+      return html.replace(
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval';",
+        "script-src 'self';"
+      );
+    }
+  }
+}
+
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     tailwindcss(),
+    ...(command === 'build' ? [htmlTransform()] : []),
   ],
-})`,
+}))`,
 
       'src/App.jsx': `import React from 'react';
 
