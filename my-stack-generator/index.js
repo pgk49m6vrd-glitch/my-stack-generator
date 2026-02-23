@@ -419,6 +419,14 @@ Built with **My Stack Generator**.
 </head>
 <body class="bg-slate-900">
   <div id="root"></div>
+  <noscript>
+    <div class="fixed inset-0 flex items-center justify-center bg-slate-900 text-slate-200 z-50">
+      <div class="text-center space-y-4 p-6">
+        <h1 class="text-3xl font-bold">JavaScript Required</h1>
+        <p class="text-lg opacity-90">Please enable JavaScript to run this application.</p>
+      </div>
+    </div>
+  </noscript>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>`,
