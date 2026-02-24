@@ -119,6 +119,14 @@ function checkPackageManager(pm) {
     return pmAvailability.get(pm);
   }
 
+  // Optimization: If running via that package manager, we know it exists.
+  const userAgent = process.env.npm_config_user_agent || '';
+  if (userAgent.startsWith(pm + '/')) {
+    const p = Promise.resolve(true);
+    pmAvailability.set(pm, p);
+    return p;
+  }
+
   const checkPromise = new Promise((resolve) => {
     try {
       const child = spawn(pm, ['--version'], { stdio: 'ignore' });

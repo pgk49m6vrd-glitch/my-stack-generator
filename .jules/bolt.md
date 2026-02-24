@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2026-02-24 - Package Manager Startup Check Optimization
+**Learning:** Spawning a child process (`npm --version`) to check package manager availability takes significant time (~150ms). Checking the `process.env.npm_config_user_agent` environment variable is instantaneous (< 1ms).
+**Action:** Always check the execution context via environment variables before resorting to expensive `spawn` calls for availability checks.
