@@ -271,12 +271,35 @@ async function main() {
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-export default defineConfig({
+// Define a simple inline plugin to strip unsafe CSP directives in production
+const htmlPlugin = () => {
+  return {
+    name: 'html-transform',
+    transformIndexHtml() {
+      // In production, we inject a second CSP meta tag. Browsers apply the intersection
+      // of all policies, so this stricter policy will override any 'unsafe-inline' or
+      // 'unsafe-eval' directives from the base policy.
+      return [
+        {
+          tag: 'meta',
+          attrs: {
+            'http-equiv': 'Content-Security-Policy',
+            content: "script-src 'self'; connect-src 'self' https:;"
+          },
+          injectTo: 'head',
+        },
+      ]
+    },
+  }
+}
+
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     tailwindcss(),
+    command === 'build' && htmlPlugin(),
   ],
-})`,
+}))`,
 
       'src/App.jsx': `import React from 'react';
 
