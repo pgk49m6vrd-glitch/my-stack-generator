@@ -109,6 +109,33 @@ function sanitizePackageName(name) {
 }
 
 /**
+ * Parses the user's choice for package manager.
+ * Supports numeric inputs (1, 2, 3) and string inputs (npm, pnpm, bun).
+ */
+export function parsePackageManagerChoice(input) {
+  const choice = input.trim().toLowerCase();
+
+  if (choice === '1' || choice === 'npm' || choice === '') return 'npm';
+  if (choice === '2' || choice === 'pnpm') return 'pnpm';
+  if (choice === '3' || choice === 'bun') return 'bun';
+
+  return null;
+}
+
+/**
+ * Parses the user's choice for backend.
+ * Supports numeric inputs (1, 2) and string inputs (firebase, supabase).
+ */
+export function parseBackendChoice(input) {
+  const choice = input.trim().toLowerCase();
+
+  if (choice === '1' || choice === 'firebase' || choice === '') return 'firebase';
+  if (choice === '2' || choice === 'supabase') return 'supabase';
+
+  return null;
+}
+
+/**
  * Checks if a package manager is available in the system.
  * Uses a cache to avoid redundant checks and allow parallel execution.
  */
@@ -179,16 +206,9 @@ async function main() {
       console.log("1. npm");
       console.log("2. pnpm");
       console.log("3. bun");
-      let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
-      pmChoice = pmChoice.trim();
+      const pmInput = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
 
-      if (pmChoice === "1" || pmChoice === "") {
-        pm = "npm";
-      } else if (pmChoice === "2") {
-        pm = "pnpm";
-      } else if (pmChoice === "3") {
-        pm = "bun";
-      }
+      pm = parsePackageManagerChoice(pmInput);
 
       if (pm) {
         const isAvailable = await checkPackageManager(pm);
@@ -199,7 +219,7 @@ async function main() {
         }
         break;
       } else {
-        console.log("⚠️  Invalid choice. Please select 1, 2, or 3.");
+        console.log("⚠️  Invalid choice. Please select 1, 2, or 3 (or type npm/pnpm/bun).");
       }
     }
 
@@ -209,17 +229,14 @@ async function main() {
       console.log("\n🔥 Which back-end do you prefer?");
       console.log("1. Firebase");
       console.log("2. Supabase");
-      let backendChoice = await askQuestion("Your Choice (1 or 2) [default: 1]: ");
-      backendChoice = backendChoice.trim();
+      const backendInput = await askQuestion("Your Choice (1 or 2) [default: 1]: ");
 
-      if (backendChoice === "1" || backendChoice === "") {
-        backend = "firebase";
-        break;
-      } else if (backendChoice === "2") {
-        backend = "supabase";
+      backend = parseBackendChoice(backendInput);
+
+      if (backend) {
         break;
       } else {
-        console.log("⚠️  Invalid choice. Please select 1 or 2.");
+        console.log("⚠️  Invalid choice. Please select 1 or 2 (or type firebase/supabase).");
       }
     }
 
@@ -423,9 +440,18 @@ Built with **My Stack Generator**.
 </body>
 </html>`,
 
-      '.gitignore': `node_modules\ndist\n.env\n.env.local\n.DS_Store`,
+      '.gitignore': `node_modules
+dist
+.env
+.env.local
+.DS_Store`,
 
-      '.ai-stack-instructions.md': `# Technical Stack\n\n- React + Vite\n- Tailwind V4\n- ${backend.charAt(0).toUpperCase() + backend.slice(1)}\n- Package Manager: ${pm}`,
+      '.ai-stack-instructions.md': `# Technical Stack
+
+- React + Vite
+- Tailwind V4
+- ${backend.charAt(0).toUpperCase() + backend.slice(1)}
+- Package Manager: ${pm}`,
 
       'public/favicon.svg': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🚀</text></svg>`,
 
@@ -510,7 +536,12 @@ const getFirebaseApp = () => {
 export const getFirebaseAuth = () => getAuth(getFirebaseApp());
 export const getFirebaseDb = () => getFirestore(getFirebaseApp());
 `;
-      files['.env.example'] = `VITE_FIREBASE_API_KEY=\nVITE_FIREBASE_AUTH_DOMAIN=\nVITE_FIREBASE_PROJECT_ID=\nVITE_FIREBASE_STORAGE_BUCKET=\nVITE_FIREBASE_MESSAGING_ID=\nVITE_FIREBASE_APP_ID=`;
+      files['.env.example'] = `VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_ID=
+VITE_FIREBASE_APP_ID=`;
     } else {
       files['src/lib/supabase.config.js'] = `import { createClient } from '@supabase/supabase-js';
 
@@ -528,7 +559,8 @@ export const getSupabase = () => {
   return client;
 };
 `;
-      files['.env.example'] = `VITE_SUPABASE_URL=\nVITE_SUPABASE_ANON_KEY=`;
+      files['.env.example'] = `VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=`;
     }
 
     // Optimization: Write files concurrently
@@ -537,7 +569,10 @@ export const getSupabase = () => {
     ));
 
     const install = await askQuestion(`\n📦 Do you want to install dependencies with ${pm}? (Y/n) `);
-    if (install.trim().toLowerCase() !== 'n') {
+    const installChoice = install.trim().toLowerCase();
+
+    // Fix: "No Trap". Check against "n" AND "no".
+    if (installChoice !== 'n' && installChoice !== 'no') {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
         await new Promise((resolve, reject) => {
