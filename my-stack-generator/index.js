@@ -114,9 +114,18 @@ function sanitizePackageName(name) {
  */
 const pmAvailability = new Map();
 
-function checkPackageManager(pm) {
+export function checkPackageManager(pm) {
   if (pmAvailability.has(pm)) {
     return pmAvailability.get(pm);
+  }
+
+  // Optimization: Check for active package manager from environment
+  // This avoids spawning a process if we are already running inside that PM
+  const userAgent = process.env.npm_config_user_agent;
+  if (userAgent && userAgent.startsWith(`${pm}/`)) {
+    const checkPromise = Promise.resolve(true);
+    pmAvailability.set(pm, checkPromise);
+    return checkPromise;
   }
 
   const checkPromise = new Promise((resolve) => {
