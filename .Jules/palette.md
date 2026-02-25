@@ -17,3 +17,7 @@
 ## 2026-02-11 - Specific Validation Beats Generic Errors
 **Learning:** In this CLI generator, a single generic "invalid project name" message hides the exact fix and increases retry loops.
 **Action:** Prefer field-level validation messages that explain the exact constraint (length, characters, reserved names, path safety).
+
+## 2026-02-25 - Onboarding UX for Generated Apps
+**Learning:** Developers are users too; generated "Hello World" screens are more valuable as dashboards with direct documentation links than as static splash screens.
+**Action:** Transform empty states in generated boilerplate into actionable "Next Steps" navigation.

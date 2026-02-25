@@ -312,6 +312,35 @@ function App() {
         <div className="px-6 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white/90 inline-block shadow-xl forced-colors:text-[CanvasText]">
           Feature-Based Architecture ready
         </div>
+
+        <nav className="mt-12 flex justify-center gap-6 text-sm font-medium text-slate-400" aria-label="Documentation">
+          <a
+            href="https://tailwindcss.com/docs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-cyan-400 transition-colors focus-visible:text-cyan-400 focus-visible:outline-none"
+          >
+            Tailwind CSS
+          </a>
+          <span aria-hidden="true" className="opacity-50">•</span>
+          <a
+            href="https://react.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-blue-400 transition-colors focus-visible:text-blue-400 focus-visible:outline-none"
+          >
+            React
+          </a>
+          <span aria-hidden="true" className="opacity-50">•</span>
+          <a
+            href="${backend === 'firebase' ? "https://firebase.google.com/docs" : "https://supabase.com/docs"}"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-green-400 transition-colors focus-visible:text-green-400 focus-visible:outline-none"
+          >
+            ${backend === 'firebase' ? 'Firebase' : 'Supabase'}
+          </a>
+        </nav>
       </div>
     </main>
   );
