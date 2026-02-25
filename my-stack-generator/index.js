@@ -271,11 +271,28 @@ async function main() {
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
+export default defineConfig(({ command }) => {
+  const config = {
+    plugins: [
+      react(),
+      tailwindcss(),
+    ],
+  };
+
+  if (command === 'build') {
+    config.plugins.push({
+      name: 'html-transform',
+      transformIndexHtml(html) {
+        // Enhance security by removing 'unsafe-inline' and 'unsafe-eval' from CSP in production
+        return html.replace(
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval';",
+          "script-src 'self';"
+        );
+      }
+    });
+  }
+
+  return config;
 })`,
 
       'src/App.jsx': `import React from 'react';
