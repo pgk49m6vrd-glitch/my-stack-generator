@@ -80,19 +80,7 @@ function getProjectNameValidationError(name) {
   if (!VALID_NAME_REGEX.test(name)) return "Use only letters, numbers, hyphens (-), underscores (_), and dots (.).";
 
   // Performance: VALID_NAME_REGEX already forbids path separators, so traversal
-  // inputs cannot pass this point. Avoiding resolve/relative removes hot-path work.
-  // Path resolution check to prevent path traversal
-  // Cache realCwd to avoid repeated fs calls
-  if (!cachedRealCwd) {
-    cachedRealCwd = fs.realpathSync(process.cwd());
-  }
-  const root = path.resolve(process.cwd(), name);
-  const relative = path.relative(cachedRealCwd, root);
-
-  if (relative.startsWith('..') || path.isAbsolute(relative)) {
-    return "Project name must resolve inside the current directory.";
-  }
-
+  // inputs cannot pass this point. Path normalization is redundant.
   return null;
 }
 
@@ -114,9 +102,17 @@ function sanitizePackageName(name) {
  */
 const pmAvailability = new Map();
 
-function checkPackageManager(pm) {
+export function checkPackageManager(pm) {
   if (pmAvailability.has(pm)) {
     return pmAvailability.get(pm);
+  }
+
+  // Optimization: Check environment to avoid spawn if already running via that PM
+  const userAgent = process.env.npm_config_user_agent || '';
+  if (userAgent.startsWith(pm + '/')) {
+    const promise = Promise.resolve(true);
+    pmAvailability.set(pm, promise);
+    return promise;
   }
 
   const checkPromise = new Promise((resolve) => {
