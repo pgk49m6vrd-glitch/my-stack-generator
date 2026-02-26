@@ -309,8 +309,37 @@ function App() {
           React + Tailwind V4 + ${backend.charAt(0).toUpperCase() + backend.slice(1)} Stack operational.
         </p>
 
-        <div className="px-6 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white/90 inline-block shadow-xl forced-colors:text-[CanvasText]">
+        <div className="px-6 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white/90 inline-block shadow-xl forced-colors:text-[CanvasText] mb-8">
           Feature-Based Architecture ready
+        </div>
+
+        <div className="flex gap-4 justify-center items-center">
+          <a
+            href="https://react.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2"
+          >
+            React Docs
+          </a>
+          <span className="text-slate-600" aria-hidden="true">|</span>
+          <a
+            href="https://tailwindcss.com/docs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2"
+          >
+            Tailwind Docs
+          </a>
+          <span className="text-slate-600" aria-hidden="true">|</span>
+          <a
+            href="${backend === 'firebase' ? 'https://firebase.google.com/docs' : 'https://supabase.com/docs'}"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2"
+          >
+            ${backend === 'firebase' ? 'Firebase' : 'Supabase'} Docs
+          </a>
         </div>
       </div>
     </main>
