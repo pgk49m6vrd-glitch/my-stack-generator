@@ -275,10 +275,13 @@ export default defineConfig(({ command }) => ({
       name: 'html-transform',
       transformIndexHtml(html) {
         if (command === 'build') {
-          return html.replace(
-            /script-src 'self' 'unsafe-inline' 'unsafe-eval';?/,
-            "script-src 'self';"
-          );
+          return html.replace(/script-src [^;]+;?/, (match) => {
+            return match
+              .replace(/'unsafe-inline'/g, '')
+              .replace(/'unsafe-eval'/g, '')
+              .replace(/\\s+/g, ' ')
+              .trim();
+          });
         }
       },
     },
