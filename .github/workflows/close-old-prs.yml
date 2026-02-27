@@ -2,7 +2,7 @@ name: Close old PRs
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs every day at midnight (UTC)
+    - cron: '55 15 * * *'  # Runs every day at 15:55 UTC
 
 permissions:
   pull-requests: write
