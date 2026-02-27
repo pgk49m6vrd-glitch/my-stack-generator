@@ -17,3 +17,7 @@
 ## 2026-02-11 - Specific Validation Beats Generic Errors
 **Learning:** In this CLI generator, a single generic "invalid project name" message hides the exact fix and increases retry loops.
 **Action:** Prefer field-level validation messages that explain the exact constraint (length, characters, reserved names, path safety).
+
+## 2026-02-23 - Zero-Click Resources
+**Learning:** Starter templates often leave users at a "now what?" state.
+**Action:** Embed direct links to documentation for the chosen stack in the initial UI.
