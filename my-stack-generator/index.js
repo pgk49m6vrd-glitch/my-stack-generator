@@ -117,7 +117,19 @@ export function checkPackageManager(pm) {
 
   const checkPromise = new Promise((resolve) => {
     try {
-      const child = spawn(pm, ['--version'], { stdio: 'ignore' });
+      // Security: strict allowlist for package managers to prevent command injection
+      if (!/^[a-z0-9-]+$/.test(pm)) {
+        return resolve(false);
+      }
+
+      // Optimization: use 'command -v' (Unix) or 'where' (Windows) which is much faster
+      // than spawning the package manager process itself just to check version.
+      const isWin = process.platform === 'win32';
+      const cmd = isWin ? 'where' : 'command';
+      const args = isWin ? [pm] : ['-v', pm];
+      const options = { stdio: 'ignore', shell: !isWin };
+
+      const child = spawn(cmd, args, options);
 
       const timeout = setTimeout(() => {
         child.kill();
