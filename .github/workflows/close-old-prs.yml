@@ -1,0 +1,58 @@
+name: Close old PRs and delete branch
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Tous les jours à 2h00 UTC
+  workflow_dispatch: # Permet un lancement manuel
+
+jobs:
+  close_old_prs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Close PRs older than 7 days and delete their branches
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const daysThreshold = 7;
+            const mainBranchName = 'main';
+            const now = new Date();
+
+            // Récupération des PR ouvertes
+            const prs = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open'
+            });
+
+            for (const pr of prs.data) {
+              const created = new Date(pr.created_at);
+              const ageDays = (now - created) / (1000 * 60 * 60 * 24);
+              const branch = pr.head.ref;
+
+              // Vérifie si la branche est différente de main et si la PR a plus de 7 jours
+              if (ageDays > daysThreshold && branch !== mainBranchName) {
+                // Ferme la pull request
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pr.number,
+                  state: 'closed'
+                });
+
+                // Supprime la branche
+                try {
+                  await github.rest.git.deleteRef({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    ref: `heads/${branch}`
+                  });
+                  console.log(`Branche ${branch} supprimée.`);
+                } catch (e) {
+                  console.log(`Impossible de supprimer la branche ${branch}: ${e.message}`);
+                }
+              }
+            }
