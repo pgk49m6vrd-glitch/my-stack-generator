@@ -2,7 +2,7 @@ name: Close old PRs and delete branch
 
 on:
   schedule:
-    - cron: '0 2 * * *' # Tous les jours à 2h00 UTC
+    - cron: '15 15 * * *'
   workflow_dispatch: # Permet un lancement manuel
 
 jobs:
