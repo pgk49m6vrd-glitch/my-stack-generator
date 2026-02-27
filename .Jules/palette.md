@@ -21,3 +21,7 @@
 ## 2026-02-23 - Zero-Click Resources
 **Learning:** Starter templates often leave users at a "now what?" state.
 **Action:** Embed direct links to documentation for the chosen stack in the initial UI.
+
+## 2026-03-01 - Graceful Degradation
+**Learning:** Single Page Applications (SPAs) show a blank white screen when JavaScript fails or is disabled, confusing users.
+**Action:** Always include a styled `<noscript>` fallback in the `index.html` template that matches the app's theme.

@@ -1,0 +1,8 @@
+
+--- 🚀 MYSTACK GENERATOR V1.2.0 ---
+👉 What is your project name? (default: my-awesome-project)
+📦 Which package manager do you prefer?
+1. npm
+2. pnpm
+3. bun
+Your Choice (1, 2 or 3) [default: 1]:
