@@ -335,32 +335,44 @@ function App() {
           Feature-Based Architecture ready
         </div>
 
-        <div className="flex gap-4 justify-center items-center">
+        <div className="flex flex-wrap gap-4 justify-center items-center">
           <a
             href="https://react.dev"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2"
+            className="group flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2"
           >
             React Docs
+            <span className="sr-only">(opens in a new tab)</span>
+            <svg className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
           </a>
-          <span className="text-slate-600" aria-hidden="true">|</span>
+          <span className="text-slate-600 hidden sm:inline" aria-hidden="true">|</span>
           <a
             href="https://tailwindcss.com/docs"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2"
+            className="group flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2"
           >
             Tailwind Docs
+            <span className="sr-only">(opens in a new tab)</span>
+            <svg className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
           </a>
-          <span className="text-slate-600" aria-hidden="true">|</span>
+          <span className="text-slate-600 hidden sm:inline" aria-hidden="true">|</span>
           <a
             href="${backend === 'firebase' ? 'https://firebase.google.com/docs' : 'https://supabase.com/docs'}"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2"
+            className="group flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2"
           >
             ${backend === 'firebase' ? 'Firebase' : 'Supabase'} Docs
+            <span className="sr-only">(opens in a new tab)</span>
+            <svg className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
           </a>
         </div>
       </div>
