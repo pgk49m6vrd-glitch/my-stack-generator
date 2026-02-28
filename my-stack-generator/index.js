@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
-import spawn from 'cross-spawn';
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import validatePkgName from 'validate-npm-package-name';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -87,7 +85,8 @@ function getProjectNameValidationError(name) {
 /**
  * Sanitizes and validates the npm package name.
  */
-function sanitizePackageName(name) {
+async function sanitizePackageName(name) {
+  const { default: validatePkgName } = await import('validate-npm-package-name');
   const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
   const validation = validatePkgName(sanitized);
   if (!validation.validForNewPackages) {
@@ -115,8 +114,9 @@ export function checkPackageManager(pm) {
     return promise;
   }
 
-  const checkPromise = new Promise((resolve) => {
+  const checkPromise = new Promise(async (resolve) => {
     try {
+      const { default: spawn } = await import('cross-spawn');
       // Security: strict allowlist for package managers to prevent command injection
       if (!/^[a-z0-9-]+$/.test(pm)) {
         return resolve(false);
@@ -519,7 +519,7 @@ Built with **My Stack Generator**.
       }, null, 2),
 
       'package.json': JSON.stringify({
-        name: sanitizePackageName(projectName),
+        name: await sanitizePackageName(projectName),
         private: true,
         version: "1.0.0",
         type: "module",
@@ -601,6 +601,7 @@ export const getSupabase = () => {
     if (install.trim().toLowerCase() !== 'n') {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
+        const { default: spawn } = await import('cross-spawn');
         await new Promise((resolve, reject) => {
           const args = ['install'];
           if (pm === 'npm') {
