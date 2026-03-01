@@ -25,3 +25,7 @@
 ## 2026-03-01 - Graceful Degradation
 **Learning:** Single Page Applications (SPAs) show a blank white screen when JavaScript fails or is disabled, confusing users.
 **Action:** Always include a styled `<noscript>` fallback in the `index.html` template that matches the app's theme.
+
+## 2026-03-01 - External Links Require Context
+**Learning:** `target="_blank"` links break user expectations if clicked without warning, and lack context for screen readers if only styled visually.
+**Action:** Always include a visual icon for sighted users, `sr-only` text (e.g., "opens in a new tab") for screen readers, and `rel="noopener noreferrer"` for security/performance on external links.
