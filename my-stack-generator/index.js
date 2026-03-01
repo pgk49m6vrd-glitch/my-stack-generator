@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
-import spawn from 'cross-spawn';
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import validatePkgName from 'validate-npm-package-name';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -87,8 +85,10 @@ function getProjectNameValidationError(name) {
 /**
  * Sanitizes and validates the npm package name.
  */
-function sanitizePackageName(name) {
+async function sanitizePackageName(name) {
   const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
+  // Optimization: dynamically import validate-npm-package-name to avoid blocking CLI startup
+  const { default: validatePkgName } = await import('validate-npm-package-name');
   const validation = validatePkgName(sanitized);
   if (!validation.validForNewPackages) {
     throw new Error(`Invalid package name: "${sanitized}". npm names must be lowercase, URL-friendly, and not reserved.`);
@@ -115,40 +115,43 @@ export function checkPackageManager(pm) {
     return promise;
   }
 
-  const checkPromise = new Promise((resolve) => {
-    try {
-      // Security: strict allowlist for package managers to prevent command injection
-      if (!/^[a-z0-9-]+$/.test(pm)) {
-        return resolve(false);
+  // Optimization: dynamically import cross-spawn to avoid blocking CLI startup
+  const checkPromise = import('cross-spawn').then(({ default: spawn }) => {
+    return new Promise((resolve) => {
+      try {
+        // Security: strict allowlist for package managers to prevent command injection
+        if (!/^[a-z0-9-]+$/.test(pm)) {
+          return resolve(false);
+        }
+
+        // Optimization: use 'command -v' (Unix) or 'where' (Windows) which is much faster
+        // than spawning the package manager process itself just to check version.
+        const isWin = process.platform === 'win32';
+        const cmd = isWin ? 'where' : 'command';
+        const args = isWin ? [pm] : ['-v', pm];
+        const options = { stdio: 'ignore', shell: !isWin };
+
+        const child = spawn(cmd, args, options);
+
+        const timeout = setTimeout(() => {
+          child.kill();
+          resolve(false);
+        }, 5000);
+
+        child.on('close', (code) => {
+          clearTimeout(timeout);
+          resolve(code === 0);
+        });
+
+        child.on('error', () => {
+          clearTimeout(timeout);
+          resolve(false);
+        });
+      } catch (e) {
+        resolve(false);
       }
-
-      // Optimization: use 'command -v' (Unix) or 'where' (Windows) which is much faster
-      // than spawning the package manager process itself just to check version.
-      const isWin = process.platform === 'win32';
-      const cmd = isWin ? 'where' : 'command';
-      const args = isWin ? [pm] : ['-v', pm];
-      const options = { stdio: 'ignore', shell: !isWin };
-
-      const child = spawn(cmd, args, options);
-
-      const timeout = setTimeout(() => {
-        child.kill();
-        resolve(false);
-      }, 5000);
-
-      child.on('close', (code) => {
-        clearTimeout(timeout);
-        resolve(code === 0);
-      });
-
-      child.on('error', () => {
-        clearTimeout(timeout);
-        resolve(false);
-      });
-    } catch (e) {
-      resolve(false);
-    }
-  });
+    });
+  }).catch(() => false);
 
   pmAvailability.set(pm, checkPromise);
   return checkPromise;
@@ -519,7 +522,7 @@ Built with **My Stack Generator**.
       }, null, 2),
 
       'package.json': JSON.stringify({
-        name: sanitizePackageName(projectName),
+        name: await sanitizePackageName(projectName),
         private: true,
         version: "1.0.0",
         type: "module",
@@ -601,6 +604,7 @@ export const getSupabase = () => {
     if (install.trim().toLowerCase() !== 'n') {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
+        const { default: spawn } = await import('cross-spawn');
         await new Promise((resolve, reject) => {
           const args = ['install'];
           if (pm === 'npm') {
