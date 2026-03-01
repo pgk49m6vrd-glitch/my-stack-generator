@@ -484,7 +484,7 @@ Built with **My Stack Generator**.
 </body>
 </html>`,
 
-      '.gitignore': `node_modules\ndist\n.env\n.env.local\n.DS_Store`,
+      '.gitignore': `node_modules\ndist\n.env\n.env.*\n!.env.example\n.DS_Store`,
 
       '.ai-stack-instructions.md': `# Technical Stack\n\n- React + Vite\n- Tailwind V4\n- ${backend.charAt(0).toUpperCase() + backend.slice(1)}\n- Package Manager: ${pm}`,
 
