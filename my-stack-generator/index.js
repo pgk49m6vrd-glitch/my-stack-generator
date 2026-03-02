@@ -471,6 +471,7 @@ Built with **My Stack Generator**.
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Modern web application built with ${projectName}" />
   <meta name="theme-color" content="#0f172a" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
 
   <!-- Open Graph / Facebook -->
