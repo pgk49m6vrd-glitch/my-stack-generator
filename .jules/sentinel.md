@@ -27,3 +27,8 @@
 **Vulnerability:** Recursive cleanup relied on `currentRoot` alone, so any future bug or state corruption could point cleanup at an unintended directory and remove it with `rmSync(..., { recursive: true, force: true })`.
 **Learning:** Destructive recovery paths need proof-of-ownership, not just a path string assembled earlier in execution.
 **Prevention:** Use a per-run marker file and boundary checks (`realpath` + within-CWD validation) before allowing recursive deletion.
+
+## 2025-02-21 - Wildcard Environment Exclusions in Project Templates
+**Vulnerability:** Generated `.gitignore` only blocked specific environments (`.env`, `.env.local`), leaving custom environments like `.env.production` or `.env.staging` vulnerable to accidental commit if a developer created them locally.
+**Learning:** Hardcoded exclude lists for configuration files fail when users naturally extend naming conventions.
+**Prevention:** Always use wildcard patterns (`.env.*`) with explicit opt-in exceptions (`!.env.example`) to create a secure-by-default posture for secrets.
