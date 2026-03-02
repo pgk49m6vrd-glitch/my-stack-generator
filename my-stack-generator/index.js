@@ -340,27 +340,39 @@ function App() {
             href="https://react.dev"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2"
+            className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2 inline-flex items-center gap-1"
           >
             React Docs
+            <span className="sr-only">(opens in a new tab)</span>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
           </a>
           <span className="text-slate-600" aria-hidden="true">|</span>
           <a
             href="https://tailwindcss.com/docs"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2"
+            className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2 inline-flex items-center gap-1"
           >
             Tailwind Docs
+            <span className="sr-only">(opens in a new tab)</span>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
           </a>
           <span className="text-slate-600" aria-hidden="true">|</span>
           <a
             href="${backend === 'firebase' ? 'https://firebase.google.com/docs' : 'https://supabase.com/docs'}"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2"
+            className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2 inline-flex items-center gap-1"
           >
             ${backend === 'firebase' ? 'Firebase' : 'Supabase'} Docs
+            <span className="sr-only">(opens in a new tab)</span>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
           </a>
         </div>
       </div>
