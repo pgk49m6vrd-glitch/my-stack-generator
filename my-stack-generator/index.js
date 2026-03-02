@@ -170,23 +170,37 @@ async function main() {
   try {
     // 1. Project Name
     let projectName = '';
+    let root = '';
     while (true) {
       projectName = await askQuestion("👉 What is your project name? (default: my-awesome-project) ");
       projectName = projectName.trim() || 'my-awesome-project';
       const projectNameError = getProjectNameValidationError(projectName);
-      if (!projectNameError) {
-        break;
+      if (projectNameError) {
+        console.log(`❌ ${projectNameError}`);
+        continue;
       }
-      console.log(`❌ ${projectNameError}`);
+
+      root = path.join(process.cwd(), projectName);
+      if (fs.existsSync(root)) {
+        console.log(`❌ Error: Directory "${projectName}" already exists.`);
+        continue;
+      }
+
+      break;
     }
+
+    // Pre-resolve availability for package manager choices
+    const npmAvailable = await checkPackageManager('npm');
+    const pnpmAvailable = await checkPackageManager('pnpm');
+    const bunAvailable = await checkPackageManager('bun');
 
     // 2. Package Manager Selection
     let pm = "";
     while (true) {
       console.log("\n📦 Which package manager do you prefer?");
-      console.log("1. npm");
-      console.log("2. pnpm");
-      console.log("3. bun");
+      console.log(`1. npm${npmAvailable ? '' : ' (not installed)'}`);
+      console.log(`2. pnpm${pnpmAvailable ? '' : ' (not installed)'}`);
+      console.log(`3. bun${bunAvailable ? '' : ' (not installed)'}`);
       let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
       pmChoice = pmChoice.trim();
 
@@ -231,13 +245,7 @@ async function main() {
       }
     }
 
-    const root = path.join(process.cwd(), projectName);
     // Do not set currentRoot here to avoid cleaning up existing directories if we fail before creation.
-
-    if (fs.existsSync(root)) {
-      console.log(`❌ Error: Directory "${projectName}" already exists.`);
-      return;
-    }
 
     console.log(`\n✨ Starting setup with ${pm} and ${backend}...`);
 
