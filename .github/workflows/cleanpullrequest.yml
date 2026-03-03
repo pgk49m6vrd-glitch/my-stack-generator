@@ -33,6 +33,3 @@ jobs:
             gh pr close $pr --delete-branch || gh pr close $pr
           done
         shell: bash
-
-      - name: Liste des PR restantes
-        run: gh pr list
