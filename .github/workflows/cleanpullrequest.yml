@@ -12,6 +12,9 @@ jobs:
   clean-old-prs:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Fermer les pull requests plus vieilles que X jours
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
