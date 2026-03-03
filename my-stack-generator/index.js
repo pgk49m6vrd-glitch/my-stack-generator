@@ -85,9 +85,30 @@ function getProjectNameValidationError(name) {
 }
 
 /**
+ * Parses and normalizes the package manager choice.
+ */
+export function parsePackageManagerChoice(choice) {
+  const normalized = choice.trim().toLowerCase();
+  if (normalized === "1" || normalized === "npm" || normalized === "") return "npm";
+  if (normalized === "2" || normalized === "pnpm") return "pnpm";
+  if (normalized === "3" || normalized === "bun") return "bun";
+  return null;
+}
+
+/**
+ * Parses and normalizes the backend choice.
+ */
+export function parseBackendChoice(choice) {
+  const normalized = choice.trim().toLowerCase();
+  if (normalized === "1" || normalized === "firebase" || normalized === "") return "firebase";
+  if (normalized === "2" || normalized === "supabase") return "supabase";
+  return null;
+}
+
+/**
  * Sanitizes and validates the npm package name.
  */
-function sanitizePackageName(name) {
+export function sanitizePackageName(name) {
   const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
   const validation = validatePkgName(sanitized);
   if (!validation.validForNewPackages) {
@@ -187,16 +208,8 @@ async function main() {
       console.log("1. npm");
       console.log("2. pnpm");
       console.log("3. bun");
-      let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
-      pmChoice = pmChoice.trim();
-
-      if (pmChoice === "1" || pmChoice === "") {
-        pm = "npm";
-      } else if (pmChoice === "2") {
-        pm = "pnpm";
-      } else if (pmChoice === "3") {
-        pm = "bun";
-      }
+      let pmChoice = await askQuestion("Your Choice (1, 2 or 3) (or type the name) [default: 1]: ");
+      pm = parsePackageManagerChoice(pmChoice);
 
       if (pm) {
         const isAvailable = await checkPackageManager(pm);
@@ -207,7 +220,7 @@ async function main() {
         }
         break;
       } else {
-        console.log("⚠️  Invalid choice. Please select 1, 2, or 3.");
+        console.log("⚠️  Invalid choice. Please select 1, 2, 3, or type the name.");
       }
     }
 
@@ -217,17 +230,13 @@ async function main() {
       console.log("\n🔥 Which back-end do you prefer?");
       console.log("1. Firebase");
       console.log("2. Supabase");
-      let backendChoice = await askQuestion("Your Choice (1 or 2) [default: 1]: ");
-      backendChoice = backendChoice.trim();
+      let backendChoice = await askQuestion("Your Choice (1 or 2) (or type the name) [default: 1]: ");
+      backend = parseBackendChoice(backendChoice);
 
-      if (backendChoice === "1" || backendChoice === "") {
-        backend = "firebase";
-        break;
-      } else if (backendChoice === "2") {
-        backend = "supabase";
+      if (backend) {
         break;
       } else {
-        console.log("⚠️  Invalid choice. Please select 1 or 2.");
+        console.log("⚠️  Invalid choice. Please select 1, 2, or type the name.");
       }
     }
 

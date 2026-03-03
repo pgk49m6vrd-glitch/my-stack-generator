@@ -29,3 +29,7 @@
 ## 2026-03-01 - External Links Require Context
 **Learning:** `target="_blank"` links break user expectations if clicked without warning, and lack context for screen readers if only styled visually.
 **Action:** Always include a visual icon for sighted users, `sr-only` text (e.g., "opens in a new tab") for screen readers, and `rel="noopener noreferrer"` for security/performance on external links.
+
+## 2026-03-03 - Flexible CLI Inputs
+**Learning:** Mixed formats (strings or numbers) in CLI prompts reduce cognitive load and prevent frustrating 'invalid choice' errors when users naturally type the tool name.
+**Action:** Always parse and normalize CLI inputs to accept case-insensitive string values in addition to numeric choices.
