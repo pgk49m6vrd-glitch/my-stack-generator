@@ -1,0 +1,35 @@
+name: Delete Old Pull Requests
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'Supprimer les pull requests datant de plus de X jours'
+        required: true
+        default: '30'
+
+jobs:
+  clean-old-prs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fermer les pull requests plus vieilles que X jours
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DAYS: ${{ github.event.inputs.days }}
+        run: |
+          echo "Recherche et fermeture des pull requests plus vieilles que $DAYS jours..."
+          since=$(date -d "-$DAYS days" --iso-8601=seconds)
+          prs=$(gh pr list --state open --json number,createdAt --jq ".[] | select(.createdAt < \"$since\") | .number")
+          if [ -z "$prs" ]; then
+            echo "Aucune pull request à fermer."
+            exit 0
+          fi
+
+          for pr in $prs; do
+            echo "Fermeture de la PR #$pr..."
+            gh pr close $pr --delete-branch || gh pr close $pr
+          done
+        shell: bash
+
+      - name: Liste des PR restantes
+        run: gh pr list
