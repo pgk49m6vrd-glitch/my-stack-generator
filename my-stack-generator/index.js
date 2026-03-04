@@ -129,7 +129,9 @@ export function checkPackageManager(pm) {
       const args = isWin ? [pm] : ['-v', pm];
       const options = { stdio: 'ignore', shell: !isWin };
 
-      const child = spawn(cmd, args, options);
+      const child = isWin
+        ? spawn(cmd, args, options)
+        : spawn(`${cmd} ${args.join(' ')}`, [], options);
 
       const timeout = setTimeout(() => {
         child.kill();
