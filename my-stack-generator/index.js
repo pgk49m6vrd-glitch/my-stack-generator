@@ -162,7 +162,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("\n--- 🚀 MYSTACK GENERATOR V1.2.0 ---");
+  console.log("\n--- 🚀 MYSTACK GENERATOR V2.0.0 ---");
 
   // Pre-check package managers in background to avoid blocking later
   ['npm', 'pnpm', 'bun'].forEach((pm) => checkPackageManager(pm));
