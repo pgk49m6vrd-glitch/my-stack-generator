@@ -37,3 +37,7 @@
 ## 2026-03-02 - Contextualizing Unavailable CLI Options
 **Learning:** Presenting options in a CLI that are fundamentally impossible to choose (like uninstalled package managers) without indicating their unavailability leads to immediate failure and user frustration.
 **Action:** Add visual cues like `(not installed)` directly in the prompt for unavailable options to steer users toward successful paths before they make a choice.
+
+## 2026-03-03 - Semantic Navigation for Link Groups
+**Learning:** Using generic wrappers (like `div`) with text separators (like `|`) for grouped links reduces screen reader context and causes layout overflow on mobile screens when flex children wrap unpredictably.
+**Action:** Always wrap grouped external or internal links in a `<nav aria-label="...">` and use semantic list elements (`<ul>`, `<li>`). This provides proper grouping context for assistive technologies and allows predictable responsive behaviors (like stacking links with `flex-col sm:flex-row`).
