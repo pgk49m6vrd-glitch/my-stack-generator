@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
-import spawn from 'cross-spawn';
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import validatePkgName from 'validate-npm-package-name';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -87,7 +85,8 @@ function getProjectNameValidationError(name) {
 /**
  * Sanitizes and validates the npm package name.
  */
-function sanitizePackageName(name) {
+async function sanitizePackageName(name) {
+  const { default: validatePkgName } = await import('validate-npm-package-name');
   const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
   const validation = validatePkgName(sanitized);
   if (!validation.validForNewPackages) {
@@ -115,40 +114,44 @@ export function checkPackageManager(pm) {
     return promise;
   }
 
-  const checkPromise = new Promise((resolve) => {
+  const checkPromise = (async () => {
     try {
       // Security: strict allowlist for package managers to prevent command injection
       if (!/^[a-z0-9-]+$/.test(pm)) {
-        return resolve(false);
+        return false;
       }
 
-      // Optimization: use 'command -v' (Unix) or 'where' (Windows) which is much faster
-      // than spawning the package manager process itself just to check version.
-      const isWin = process.platform === 'win32';
-      const cmd = isWin ? 'where' : 'command';
-      const args = isWin ? [pm] : ['-v', pm];
-      const options = { stdio: 'ignore', shell: !isWin };
+      const { default: spawn } = await import('cross-spawn');
 
-      const child = spawn(cmd, args, options);
+      return new Promise((resolve) => {
+        // Optimization: use 'command -v' (Unix) or 'where' (Windows) which is much faster
+        // than spawning the package manager process itself just to check version.
+        const isWin = process.platform === 'win32';
+        const cmd = isWin ? 'where' : 'sh';
+        const args = isWin ? [pm] : ['-c', `command -v ${pm}`];
+        const options = { stdio: 'ignore', shell: false };
 
-      const timeout = setTimeout(() => {
-        child.kill();
-        resolve(false);
-      }, 5000);
+        const child = spawn(cmd, args, options);
 
-      child.on('close', (code) => {
-        clearTimeout(timeout);
-        resolve(code === 0);
-      });
+        const timeout = setTimeout(() => {
+          child.kill();
+          resolve(false);
+        }, 5000);
 
-      child.on('error', () => {
-        clearTimeout(timeout);
-        resolve(false);
+        child.on('close', (code) => {
+          clearTimeout(timeout);
+          resolve(code === 0);
+        });
+
+        child.on('error', () => {
+          clearTimeout(timeout);
+          resolve(false);
+        });
       });
     } catch (e) {
-      resolve(false);
+      return false;
     }
-  });
+  })();
 
   pmAvailability.set(pm, checkPromise);
   return checkPromise;
@@ -198,16 +201,16 @@ async function main() {
     let pm = "";
     while (true) {
       console.log("\n📦 Which package manager do you prefer?");
-      console.log(`1. npm${npmAvailable ? '' : ' (not installed)'}`);
-      console.log(`2. pnpm${pnpmAvailable ? '' : ' (not installed)'}`);
+      console.log(`1. pnpm${pnpmAvailable ? '' : ' (not installed)'}`);
+      console.log(`2. npm${npmAvailable ? '' : ' (not installed)'}`);
       console.log(`3. bun${bunAvailable ? '' : ' (not installed)'}`);
       let pmChoice = await askQuestion("Your Choice (1, 2 or 3) [default: 1]: ");
       pmChoice = pmChoice.trim();
 
       if (pmChoice === "1" || pmChoice === "") {
-        pm = "npm";
-      } else if (pmChoice === "2") {
         pm = "pnpm";
+      } else if (pmChoice === "2") {
+        pm = "npm";
       } else if (pmChoice === "3") {
         pm = "bun";
       }
@@ -480,7 +483,6 @@ Built with **My Stack Generator**.
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Modern web application built with ${projectName}" />
   <meta name="theme-color" content="#0f172a" />
-  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
 
   <!-- Open Graph / Facebook -->
@@ -561,6 +563,26 @@ Built with **My Stack Generator**.
       }, null, 2)
     };
 
+    files['package.json'] = JSON.stringify({
+      name: await sanitizePackageName(projectName),
+      private: true,
+      version: "1.0.0",
+      type: "module",
+      engines: { "node": ">=18.0.0" },
+      scripts: { "dev": "vite", "build": "vite build", "preview": "vite preview" },
+      dependencies: {
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        ...(backend === 'firebase' ? { "firebase": "^12.8.0" } : { "@supabase/supabase-js": "^2.48.1" })
+      },
+      devDependencies: {
+        "vite": "^6.0.0",
+        "@vitejs/plugin-react": "^5.0.0",
+        "tailwindcss": "^4.0.0",
+        "@tailwindcss/vite": "^4.0.0"
+      }
+    }, null, 2);
+
     if (backend === 'firebase') {
       files['src/lib/firebase.config.js'] = `import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
@@ -623,6 +645,7 @@ export const getSupabase = () => {
     if (install.trim().toLowerCase() !== 'n') {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
+        const { default: spawn } = await import('cross-spawn');
         await new Promise((resolve, reject) => {
           const args = ['install'];
           if (pm === 'npm') {
