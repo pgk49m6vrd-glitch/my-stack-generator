@@ -669,6 +669,17 @@ export const getSupabase = () => {
   }
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+let isMain = false;
+if (process.argv[1]) {
+  try {
+    isMain = fs.realpathSync(process.argv[1]) === fileURLToPath(import.meta.url);
+  } catch (e) {
+    if (e.code !== 'ENOENT') {
+      console.error(`Error resolving script path: ${e.message}`);
+    }
+  }
+}
+
+if (isMain) {
   main();
 }
