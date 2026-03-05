@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
-import spawn from 'cross-spawn';
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import validatePkgName from 'validate-npm-package-name';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -89,9 +87,8 @@ function getProjectNameValidationError(name) {
  */
 function sanitizePackageName(name) {
   const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
-  const validation = validatePkgName(sanitized);
-  if (!validation.validForNewPackages) {
-    throw new Error(`Invalid package name: "${sanitized}". npm names must be lowercase, URL-friendly, and not reserved.`);
+  if (!sanitized) {
+    throw new Error("Package name cannot be empty.");
   }
   return sanitized;
 }
@@ -129,24 +126,26 @@ export function checkPackageManager(pm) {
       const args = isWin ? [pm] : ['-v', pm];
       const options = { stdio: 'ignore', shell: !isWin };
 
-      const child = isWin
-        ? spawn(cmd, args, options)
-        : spawn(`${cmd} ${args.join(' ')}`, [], options);
+      import('cross-spawn').then(({ default: spawn }) => {
+        const child = isWin
+          ? spawn(cmd, args, options)
+          : spawn(`${cmd} ${args.join(' ')}`, [], options);
 
-      const timeout = setTimeout(() => {
-        child.kill();
-        resolve(false);
-      }, 5000);
+        const timeout = setTimeout(() => {
+          child.kill();
+          resolve(false);
+        }, 5000);
 
-      child.on('close', (code) => {
-        clearTimeout(timeout);
-        resolve(code === 0);
-      });
+        child.on('close', (code) => {
+          clearTimeout(timeout);
+          resolve(code === 0);
+        });
 
-      child.on('error', () => {
-        clearTimeout(timeout);
-        resolve(false);
-      });
+        child.on('error', () => {
+          clearTimeout(timeout);
+          resolve(false);
+        });
+      }).catch(() => resolve(false));
     } catch (e) {
       resolve(false);
     }
@@ -278,6 +277,13 @@ async function main() {
     currentCleanupMarker = path.join(root, '.mystack-generator.tmp');
     await fs.promises.writeFile(currentCleanupMarker, 'Temporary scaffolding marker.\n', { flag: 'wx' });
     await Promise.all(folders.map(folder => fs.promises.mkdir(path.join(root, folder), { recursive: true })));
+
+    const sanitizedPkgName = sanitizePackageName(projectName);
+    const { default: validatePkgName } = await import('validate-npm-package-name');
+    const pkgValidation = validatePkgName(sanitizedPkgName);
+    if (!pkgValidation.validForNewPackages) {
+      throw new Error(`Invalid package name: "${sanitizedPkgName}". npm names must be lowercase, URL-friendly, and not reserved.`);
+    }
 
     // File templates
     // CSP Note:
@@ -543,7 +549,7 @@ Built with **My Stack Generator**.
       }, null, 2),
 
       'package.json': JSON.stringify({
-        name: sanitizePackageName(projectName),
+        name: sanitizedPkgName,
         private: true,
         version: "1.0.0",
         type: "module",
@@ -625,6 +631,7 @@ export const getSupabase = () => {
     if (install.trim().toLowerCase() !== 'n') {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
+        const { default: spawn } = await import('cross-spawn');
         await new Promise((resolve, reject) => {
           const args = ['install'];
           if (pm === 'npm') {
