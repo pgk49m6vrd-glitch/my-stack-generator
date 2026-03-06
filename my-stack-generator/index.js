@@ -475,14 +475,14 @@ Built with **My Stack Generator**.
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https: ws: wss:; object-src 'none'; base-uri 'self';">
+  <!-- Added form-action 'none' as a defense-in-depth security measure against unauthorized form submissions -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https: ws: wss:; object-src 'none'; base-uri 'self'; form-action 'none';">
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Modern web application built with ${projectName}" />
   <meta name="theme-color" content="#0f172a" />
-  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
 
   <!-- Open Graph / Facebook -->

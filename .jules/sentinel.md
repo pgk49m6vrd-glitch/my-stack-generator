@@ -36,3 +36,8 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+
+## 2026-03-03 - Form Action Restriction in CSP
+**Vulnerability:** Default CSP lacks `form-action` restrictions, potentially allowing an attacker to exfiltrate data or submit forms to malicious external endpoints if they manage to inject a `<form>` element into the application.
+**Learning:** `form-action` is not covered by `default-src` in Content Security Policies. Omitting it leaves applications open to unauthorized form submission attacks.
+**Prevention:** Explicitly set `form-action 'none';` (or explicitly define allowed endpoints) in the CSP meta tag or headers to prevent form-based data exfiltration.
