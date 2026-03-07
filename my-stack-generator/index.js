@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import spawn from 'cross-spawn';
+
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import validatePkgName from 'validate-npm-package-name';
+
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -87,8 +87,10 @@ function getProjectNameValidationError(name) {
 /**
  * Sanitizes and validates the npm package name.
  */
-function sanitizePackageName(name) {
+async function sanitizePackageName(name) {
   const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
+  // Lazy load heavy dependency to improve TTFP (Time to First Prompt)
+  const { default: validatePkgName } = await import('validate-npm-package-name');
   const validation = validatePkgName(sanitized);
   if (!validation.validForNewPackages) {
     throw new Error(`Invalid package name: "${sanitized}". npm names must be lowercase, URL-friendly, and not reserved.`);
@@ -129,24 +131,27 @@ export function checkPackageManager(pm) {
       const args = isWin ? [pm] : ['-v', pm];
       const options = { stdio: 'ignore', shell: !isWin };
 
-      const child = isWin
-        ? spawn(cmd, args, options)
-        : spawn(`${cmd} ${args.join(' ')}`, [], options);
+      // Lazy load heavy dependency to improve TTFP
+      import('cross-spawn').then(({ default: spawn }) => {
+        const child = isWin
+          ? spawn(cmd, args, options)
+          : spawn(`${cmd} ${args.join(' ')}`, [], options);
 
-      const timeout = setTimeout(() => {
-        child.kill();
-        resolve(false);
-      }, 5000);
+        const timeout = setTimeout(() => {
+          child.kill();
+          resolve(false);
+        }, 5000);
 
-      child.on('close', (code) => {
-        clearTimeout(timeout);
-        resolve(code === 0);
-      });
+        child.on('close', (code) => {
+          clearTimeout(timeout);
+          resolve(code === 0);
+        });
 
-      child.on('error', () => {
-        clearTimeout(timeout);
-        resolve(false);
-      });
+        child.on('error', () => {
+          clearTimeout(timeout);
+          resolve(false);
+        });
+      }).catch(() => resolve(false));
     } catch (e) {
       resolve(false);
     }
@@ -543,7 +548,7 @@ Built with **My Stack Generator**.
       }, null, 2),
 
       'package.json': JSON.stringify({
-        name: sanitizePackageName(projectName),
+        name: await sanitizePackageName(projectName),
         private: true,
         version: "1.0.0",
         type: "module",
@@ -625,6 +630,8 @@ export const getSupabase = () => {
     if (install.trim().toLowerCase() !== 'n') {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
+        // Lazy load heavy dependency to improve TTFP
+        const { default: spawn } = await import('cross-spawn');
         await new Promise((resolve, reject) => {
           const args = ['install'];
           if (pm === 'npm') {
