@@ -32,7 +32,13 @@
 **Vulnerability:** Generated `.gitignore` only blocked specific environments (`.env`, `.env.local`), leaving custom environments like `.env.production` or `.env.staging` vulnerable to accidental commit if a developer created them locally.
 **Learning:** Hardcoded exclude lists for configuration files fail when users naturally extend naming conventions.
 **Prevention:** Always use wildcard patterns (`.env.*`) with explicit opt-in exceptions (`!.env.example`) to create a secure-by-default posture for secrets.
+
 ## 2026-03-03 - Referrer-Policy Meta Tag
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+
+## 2026-03-05 - Missing form-action CSP Directive
+**Vulnerability:** The default CSP lacked the `form-action` directive, leaving the door open for unauthorized form submissions if an attacker were to inject a form into the page.
+**Learning:** The `form-action` directive is crucial for Defense in Depth. Even if a site doesn't legitimately use forms, explicitly disallowing them via `form-action 'none'` mitigates risks from XSS payloads that attempt data exfiltration via `<form>`.
+**Prevention:** Always explicitly define `form-action 'none'` in the Content Security Policy for applications that don't rely on traditional form submissions, or restrict it to trusted origins if they do.
