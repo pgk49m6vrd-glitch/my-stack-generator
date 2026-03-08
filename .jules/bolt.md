@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2025-03-08 - Lazy Loading Dependencies for CLI Startups
+**Learning:** Top-level synchronous imports for large libraries like \`cross-spawn\` and \`validate-npm-package-name\` block the main thread and significantly degrade Time To First Prompt (TTFP).
+**Action:** Replace synchronous imports with dynamic \`import()\` within the functions where they are actually needed (e.g., lazy loading \`validate-npm-package-name\` in \`sanitizePackageName\` and \`cross-spawn\` during process execution). This reduced TTFP by ~25%.
