@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
-import spawn from 'cross-spawn';
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import validatePkgName from 'validate-npm-package-name';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -87,8 +85,10 @@ function getProjectNameValidationError(name) {
 /**
  * Sanitizes and validates the npm package name.
  */
-function sanitizePackageName(name) {
+export async function sanitizePackageName(name) {
   const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
+  // Performance optimization: dynamically import validate-npm-package-name to reduce initial startup time
+  const { default: validatePkgName } = await import('validate-npm-package-name');
   const validation = validatePkgName(sanitized);
   if (!validation.validForNewPackages) {
     throw new Error(`Invalid package name: "${sanitized}". npm names must be lowercase, URL-friendly, and not reserved.`);
@@ -115,11 +115,11 @@ export function checkPackageManager(pm) {
     return promise;
   }
 
-  const checkPromise = new Promise((resolve) => {
+  const checkPromise = (async () => {
     try {
       // Security: strict allowlist for package managers to prevent command injection
       if (!/^[a-z0-9-]+$/.test(pm)) {
-        return resolve(false);
+        return false;
       }
 
       // Optimization: use 'command -v' (Unix) or 'where' (Windows) which is much faster
@@ -129,28 +129,33 @@ export function checkPackageManager(pm) {
       const args = isWin ? [pm] : ['-v', pm];
       const options = { stdio: 'ignore', shell: !isWin };
 
-      const child = isWin
-        ? spawn(cmd, args, options)
-        : spawn(`${cmd} ${args.join(' ')}`, [], options);
+      // Performance optimization: dynamically import cross-spawn to reduce initial startup time
+      const { default: spawn } = await import('cross-spawn');
 
-      const timeout = setTimeout(() => {
-        child.kill();
-        resolve(false);
-      }, 5000);
+      return await new Promise((resolve) => {
+        const child = isWin
+          ? spawn(cmd, args, options)
+          : spawn(`${cmd} ${args.join(' ')}`, [], options);
 
-      child.on('close', (code) => {
-        clearTimeout(timeout);
-        resolve(code === 0);
-      });
+        const timeout = setTimeout(() => {
+          child.kill();
+          resolve(false);
+        }, 5000);
 
-      child.on('error', () => {
-        clearTimeout(timeout);
-        resolve(false);
+        child.on('close', (code) => {
+          clearTimeout(timeout);
+          resolve(code === 0);
+        });
+
+        child.on('error', () => {
+          clearTimeout(timeout);
+          resolve(false);
+        });
       });
     } catch (e) {
-      resolve(false);
+      return false;
     }
-  });
+  })();
 
   pmAvailability.set(pm, checkPromise);
   return checkPromise;
@@ -543,7 +548,7 @@ Built with **My Stack Generator**.
       }, null, 2),
 
       'package.json': JSON.stringify({
-        name: sanitizePackageName(projectName),
+        name: await sanitizePackageName(projectName),
         private: true,
         version: "1.0.0",
         type: "module",
@@ -625,6 +630,8 @@ export const getSupabase = () => {
     if (install.trim().toLowerCase() !== 'n') {
       console.log(`\n📦 Installing dependencies with ${pm}...`);
       try {
+        // Performance optimization: dynamically import cross-spawn to reduce initial startup time
+        const { default: spawn } = await import('cross-spawn');
         await new Promise((resolve, reject) => {
           const args = ['install'];
           if (pm === 'npm') {
