@@ -284,6 +284,7 @@ async function main() {
     // - script-src 'unsafe-inline' 'unsafe-eval': Required for Vite development and HMR.
     // - style-src 'unsafe-inline': Required for Vite to inject styles.
     // - connect-src: Allows connection to the chosen backend (Firebase/Supabase).
+    // - form-action 'none': Prevents unauthorized form submissions as a security enhancement.
     const files = {
       'vite.config.js': `import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
@@ -475,14 +476,13 @@ Built with **My Stack Generator**.
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https: ws: wss:; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https: ws: wss:; object-src 'none'; base-uri 'self'; form-action 'none';">
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Modern web application built with ${projectName}" />
   <meta name="theme-color" content="#0f172a" />
-  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
 
   <!-- Open Graph / Facebook -->
