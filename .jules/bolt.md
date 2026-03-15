@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2026-03-15 - Optimize CLI startup performance with dynamic imports
+**Learning:** Statically importing heavy dependencies like `cross-spawn` and `validate-npm-package-name` at the top of a CLI script significantly degrades the "time to first prompt" performance, even if those functions are only used later in the execution.
+**Action:** Replace static imports with dynamic imports (`await import(...)`) for heavy dependencies, loading them exactly where they are needed. This prevents the event loop from being blocked by module resolution during startup.
