@@ -36,3 +36,8 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+
+## 2026-03-16 - Securing SPAs with CSP form-action
+**Vulnerability:** Unauthorized form submissions in Single Page Applications (SPAs).
+**Learning:** SPAs typically handle form submissions via JavaScript and APIs. Leaving native form actions enabled allows potential exploitation where an attacker could trick the application into submitting data to an unintended endpoint.
+**Prevention:** Add `form-action 'none';` to the Content Security Policy to enforce that native form submissions are disabled, ensuring all submissions must be handled via JavaScript.
