@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2026-03-05 - Concurrent Execution of Pre-initialized Promises
+**Learning:** Sequential `await` statements on Promises that were already started concurrently (e.g., via `forEach` or simple background initialization) still inherently resolve concurrently. However, replacing sequential awaits with `await Promise.all()` guarantees execution in parallel if refactored later, strictly aligns with performance patterns for parallel IO tasks, and makes the concurrent intention clear to other developers.
+**Action:** Use `Promise.all` directly when resolving multiple independent Promises instead of awaiting them sequentially to clarify intent and prevent accidental sequential blocking if the Promises are ever instantiated inline.
