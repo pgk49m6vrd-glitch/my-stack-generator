@@ -191,10 +191,12 @@ async function main() {
       break;
     }
 
-    // Pre-resolve availability for package manager choices
-    const npmAvailable = await checkPackageManager('npm');
-    const pnpmAvailable = await checkPackageManager('pnpm');
-    const bunAvailable = await checkPackageManager('bun');
+    // Pre-resolve availability for package manager choices in parallel
+    const [npmAvailable, pnpmAvailable, bunAvailable] = await Promise.all([
+      checkPackageManager('npm'),
+      checkPackageManager('pnpm'),
+      checkPackageManager('bun')
+    ]);
 
     // 2. Package Manager Selection
     let pm = "";
