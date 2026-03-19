@@ -70,14 +70,16 @@ function getProjectNameValidationError(name) {
   // Refuse . and ..
   if (name === '.' || name === '..') return 'Project name cannot be "." or "..".';
 
-  // Windows reserved names
-  if (RESERVED_NAMES.test(name)) return "Project name cannot use reserved names like con, prn, aux, nul, com1, or lpt1.";
-
   // Names ending in space or dot (Windows issues)
   if (name.endsWith(' ') || name.endsWith('.')) return "Project name cannot end with a space or dot.";
 
+  // Performance optimization: Test basic character whitelist before testing reserved names
+  // This avoids testing complex strings against the reserved names regex if they already fail the whitelist
   // Whitelist: letters, numbers, hyphens, underscores, dots
   if (!VALID_NAME_REGEX.test(name)) return "Use only letters, numbers, hyphens (-), underscores (_), and dots (.).";
+
+  // Windows reserved names
+  if (RESERVED_NAMES.test(name)) return "Project name cannot use reserved names like con, prn, aux, nul, com1, or lpt1.";
 
   // Performance: VALID_NAME_REGEX already forbids path separators, so traversal
   // inputs cannot pass this point. Path normalization is redundant.
