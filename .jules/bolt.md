@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## $(date +%Y-%m-%d) - Avoid Micro-Optimizing Cold Paths
+**Learning:** Attempting to optimize CLI input validation (e.g., reordering regex checks in `getProjectNameValidationError`) is a meaningless micro-optimization because it executes on a cold path (once per user prompt). The performance gain is unnoticeable and alters the order of user-facing error messages, introducing regressions in UX.
+**Action:** Focus optimizations only on hot paths (loops, recurring background tasks, network requests) where the impact is measurable and significant. Do not optimize cold paths or single-execution prompt validations.
