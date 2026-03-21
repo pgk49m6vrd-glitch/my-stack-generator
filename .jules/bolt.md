@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2026-02-15 - Concurrent Availability Checks
+**Learning:** Checking system tool availability (e.g., package managers) sequentially with `await` introduces cumulative delay if the background pre-warm is not complete.
+**Action:** Execute system availability checks concurrently using `Promise.all` to ensure fastest resolution regardless of background cache state.
