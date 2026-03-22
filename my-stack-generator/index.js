@@ -595,7 +595,7 @@ const getFirebaseApp = () => {
 export const getFirebaseAuth = () => getAuth(getFirebaseApp());
 export const getFirebaseDb = () => getFirestore(getFirebaseApp());
 `;
-      files['.env.example'] = `VITE_FIREBASE_API_KEY=\nVITE_FIREBASE_AUTH_DOMAIN=\nVITE_FIREBASE_PROJECT_ID=\nVITE_FIREBASE_STORAGE_BUCKET=\nVITE_FIREBASE_MESSAGING_ID=\nVITE_FIREBASE_APP_ID=`;
+      files['.env.example'] = `# SECURITY WARNING: Do NOT commit actual secrets or API keys to this file. Use it only as a template.\n\nVITE_FIREBASE_API_KEY=\nVITE_FIREBASE_AUTH_DOMAIN=\nVITE_FIREBASE_PROJECT_ID=\nVITE_FIREBASE_STORAGE_BUCKET=\nVITE_FIREBASE_MESSAGING_ID=\nVITE_FIREBASE_APP_ID=`;
     } else {
       files['src/lib/supabase.config.js'] = `import { createClient } from '@supabase/supabase-js';
 
@@ -613,7 +613,7 @@ export const getSupabase = () => {
   return client;
 };
 `;
-      files['.env.example'] = `VITE_SUPABASE_URL=\nVITE_SUPABASE_ANON_KEY=`;
+      files['.env.example'] = `# SECURITY WARNING: Do NOT commit actual secrets or API keys to this file. Use it only as a template.\n\nVITE_SUPABASE_URL=\nVITE_SUPABASE_ANON_KEY=`;
     }
 
     // Optimization: Write files concurrently
