@@ -1,0 +1,21 @@
+{
+  "name": "my-stack-generator",
+  "version": "2.0.0",
+  "type": "module",
+  "bin": {
+    "mystack": "./index.js"
+  },
+  "files": [
+    "index.js"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "node test-validation.js"
+  },
+  "dependencies": {
+    "cross-spawn": "^7.0.6",
+    "validate-npm-package-name": "^7.0.2"
+  }
+}

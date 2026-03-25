@@ -71,9 +71,17 @@ Go to the Releases section of this repository and download the file: **my-stack-
 
 After downloading, extract the contents of **my-stack-generator.zip**.
 
-### 3. Link the command to your system
+### 3. Go to the folder
 
-Open your terminal and navigate to the extracted **my-stack-generator** folder. Then, run one of these following commands to register **`mystack`** on your computer:
+Open your terminal and navigate to the extracted **my-stack-generator** folder using the following command (replace `{path-to-my-stack-generator}` with the actual path):
+
+```bash
+cd [path-to-my-stack-generator]/my-stack-generator
+```
+
+### 4. Link the command to your system
+
+Run one of these following commands to register **`mystack`** on your computer:
 
 ```bash
 npm install
