@@ -7,8 +7,22 @@ import readline from 'readline';
 import { fileURLToPath } from 'url';
 
 const require = createRequire(import.meta.url);
-const spawn = require('cross-spawn');
-const validatePkgName = require('validate-npm-package-name');
+let spawn = null;
+let validatePkgName = null;
+
+async function loadDependencies() {
+  try {
+    const spawnModule = await import('cross-spawn');
+    spawn = spawnModule.default || spawnModule;
+    const validateModule = await import('validate-npm-package-name');
+    validatePkgName = validateModule.default || validateModule;
+  } catch (err) {
+    console.error(`\n❌ Error: Failed to load required dependencies.`);
+    console.error(`Please ensure dependencies are properly installed by running 'npm install' or 'bun install' in the CLI directory.`);
+    console.error(`Details: ${err.message}`);
+    process.exit(1);
+  }
+}
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -160,6 +174,8 @@ export function checkPackageManager(pm) {
 }
 
 async function main() {
+  await loadDependencies();
+
   // Node version check
   const nodeVersionMajor = parseInt(process.versions.node.split('.')[0], 10);
   if (nodeVersionMajor < 18) {
