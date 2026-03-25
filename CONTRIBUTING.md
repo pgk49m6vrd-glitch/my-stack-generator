@@ -49,13 +49,137 @@ Now, when you run the `mystack` command anywhere on your machine, it will execut
 
 ### 4. Running the CLI during development
 
-We recommend testing the generator out of the repositorie's clone
+We recommend testing the generator outside the repository's clone:
 
 ```bash
-
 cd .. && cd ..
 mystack
 ```
+
+For quick testing, you can use the non-interactive mode:
+
+```bash
+# Quick test with defaults
+mystack init --yes --name test-project
+
+# Test with TypeScript + features
+mystack init --yes --name test-ts --typescript --features router,zustand
+
+# Preview without creating files
+mystack init --yes --name test --dry-run
+```
+
+### 5. Running tests
+
+```bash
+npm test
+```
+
+This runs the project name validation tests. Always ensure they pass before submitting a PR.
+
+---
+
+## 🏗️ Project Architecture
+
+The CLI follows a modular architecture since v3.0.0:
+
+```
+my-stack-generator/
+├── index.js                  # Entry point (lightweight wrapper)
+├── src/
+│   ├── cli.js                # Commander-based CLI with commands
+│   ├── template-engine.js    # Handlebars engine + precompilation
+│   ├── prompts.js            # Interactive prompt questions
+│   ├── generator.js          # Project generation orchestrator
+│   ├── config.js             # Preset system (~/.mystackrc.json)
+│   ├── utils.js              # Validation, sanitization, PM checks
+│   ├── precompile.js         # Template precompiler script
+│   └── commands/
+│       └── init.js           # `mystack init` command
+├── templates/
+│   ├── base/                 # Core templates (always included)
+│   ├── typescript/           # TypeScript-specific overrides
+│   ├── firebase/             # Firebase backend templates
+│   ├── supabase/             # Supabase backend templates
+│   ├── features/             # Optional feature templates
+│   │   ├── router/           # React Router
+│   │   ├── zustand/          # Zustand state management
+│   │   ├── eslint/           # ESLint + Prettier
+│   │   ├── vitest/           # Vitest + Testing Library
+│   │   ├── auth/             # Auth context + Login form
+│   │   └── shadcn/           # shadcn/ui config
+│   └── compiled/             # Precompiled templates (auto-generated)
+└── test-validation.js        # Validation tests
+```
+
+### Key modules
+
+- **`template-engine.js`** — Central module that loads `.hbs` Handlebars templates, compiles them with context variables (`projectName`, `backend`, `typescript`, etc.), and returns rendered file content. Custom helpers are registered here (`eq`, `capitalizeFirst`, `and`, `includes`, etc.).
+
+- **`generator.js`** — Orchestrates the entire generation: calls the template engine, creates directories, writes files, runs `npm install`, and handles cleanup on failure.
+
+- **`config.js`** — Manages presets (built-in + user-saved in `~/.mystackrc.json`). Handles the config merge priority: preset → CLI flags → interactive prompts.
+
+---
+
+## 📝 Modifying Templates
+
+Templates use [Handlebars](https://handlebarsjs.com/) syntax. All template files are in the `templates/` directory with the `.hbs` extension.
+
+### Template variables
+
+These variables are available in all templates:
+
+| Variable | Type | Example |
+|----------|------|---------|
+| `{{projectName}}` | string | `my-app` |
+| `{{packageName}}` | string | `my-app` |
+| `{{pm}}` | string | `pnpm` |
+| `{{backend}}` | string | `firebase` |
+| `{{typescript}}` | boolean | `true` |
+| `{{features}}` | array | `['router', 'zustand']` |
+| `{{backendCapitalized}}` | string | `Firebase` |
+| `{{backendDocsUrl}}` | string | `https://firebase.google.com/docs` |
+| `{{hasRouter}}` | boolean | `true` |
+| `{{hasZustand}}` | boolean | `false` |
+| `{{hasEslint}}` | boolean | `true` |
+| `{{hasVitest}}` | boolean | `false` |
+| `{{hasAuth}}` | boolean | `true` |
+| `{{hasShadcn}}` | boolean | `false` |
+
+### Custom helpers
+
+| Helper | Usage | Output |
+|--------|-------|--------|
+| `capitalizeFirst` | `{{capitalizeFirst backend}}` | `Firebase` |
+| `eq` | `{{#if (eq backend "firebase")}}` | conditional |
+| `and` | `{{#if (and hasEslint typescript)}}` | conditional |
+| `or` | `{{#if (or hasRouter hasAuth)}}` | conditional |
+| `includes` | `{{#if (includes features "router")}}` | conditional |
+| `devCmd` | `{{devCmd pm}}` | `npm run dev` or `pnpm dev` |
+| `installCmd` | `{{installCmd pm}}` | `npm install` |
+
+### Adding a new template
+
+1. Create your `.hbs` file in the appropriate `templates/` subdirectory.
+2. Register it in `src/template-engine.js` → `renderAllTemplates()`.
+3. If it depends on a new feature, add the feature to `src/prompts.js` → `AVAILABLE_FEATURES`.
+4. Run `npm run build:templates` to precompile all templates.
+5. Test with `mystack init --yes --name test --dry-run` to verify.
+
+### Precompiling templates
+
+For production performance, templates can be precompiled to JavaScript functions:
+
+```bash
+npm run build:templates
+```
+
+This generates `templates/compiled/` with `.js` files. The template engine automatically uses precompiled versions when available, falling back to runtime `.hbs` compilation in development.
+
+> **Note:** The `templates/compiled/` directory is auto-generated. Do not edit files in it manually.
+
+---
 
 ## 🐛 Reporting Issues
 
@@ -80,12 +204,14 @@ We welcome pull requests!
    git checkout -b fix/my-bug-fix
    ```
 2. **Make your changes** and test them locally (see the Local Development Setup section).
-3. **Commit your changes** with a clear and descriptive commit message.
-4. **Push your branch** to your fork or directly to the repository (if you have access).
+3. **Run tests** to ensure nothing is broken: `npm test`
+4. **Precompile templates** if you modified any `.hbs` files: `npm run build:templates`
+5. **Commit your changes** with a clear and descriptive commit message.
+6. **Push your branch** to your fork or directly to the repository (if you have access).
    ```bash
    git push origin feature/my-new-feature
    ```
-5. **Open a Pull Request** on GitHub. Describe what changes you made and why.
+7. **Open a Pull Request** on GitHub. Describe what changes you made and why.
 
 ---
 

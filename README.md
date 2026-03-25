@@ -35,7 +35,18 @@ The goal is to eliminate "setup fatigue." With a single command, you get a produ
 * **Framework:** [React](https://reactjs.org/) (via Vite) for maximum speed.
 * **Styling:** [Tailwind CSS v4](https://tailwindcss.com/) (high-performance engine).
 * **Backend:** [Firebase](https://firebase.google.com/) or [Supabase](https://supabase.com/) pre-configured.
+* **Language:** JavaScript or **TypeScript** (your choice).
 * **Architecture:** Feature-Based Design (Organization by business domains).
+
+### What's new in v3.0.0
+
+* 📘 **TypeScript support** — Generate projects in TypeScript with strict config out of the box.
+* 🧩 **Modular features** — Select optional features (Router, State, Lint, Tests, Auth, UI).
+* 🤖 **Non-interactive mode** — Automate project creation with `--yes` and CLI flags.
+* 📋 **Dry-run mode** — Preview what files will be created without writing anything.
+* 💾 **Presets** — Save and reuse your favorite project configurations.
+* 🔐 **Auth components** — Get a working login form + auth context out of the box.
+* 🎨 **shadcn/ui integration** — Accessible, pre-styled components ready to use.
 
 ---
 
@@ -46,9 +57,11 @@ The generated architecture follows a **Feature-Based** logic. Instead of groupin
 ### Folder structure
 
 * **`src/features/`**: The core of the application. Each folder (e.g., `auth`) contains its own `components`, `hooks`, and `services`.
-* **`src/lib/`**: Centralized configurations (e.g., `firebase.config.js` or `supabase.config.js`).
+* **`src/lib/`**: Centralized configurations (e.g., `firebase.config.ts` or `supabase.config.ts`).
 * **`src/components/`**: Global and reusable UI components (Button, Input, Card).
 * **`src/hooks/`**: Global hooks shared across multiple features.
+* **`src/pages/`**: Route-level page components (when Router feature is selected).
+* **`src/stores/`**: Zustand state stores (when Zustand feature is selected).
 
 ---
 
@@ -65,7 +78,7 @@ Follow these steps to install the command globally on your machine:
 
 ### 1. Download the release
 
-Go to the Releases section of this repository and download the file: **my-stack-generator.zip**. Make sure to choose the latest stable version (currently **1.5.0**).
+Go to the Releases section of this repository and download the file: **my-stack-generator.zip**. Make sure to choose the latest stable version (currently **3.0.0**).
 
 ### 2. Extract the archive
 
@@ -101,46 +114,101 @@ bun link
 
 ## 💻 Usage
 
-To create a new project, simply run the following command:
+### Interactive mode (default)
+
+To create a new project with the interactive wizard, simply run:
 
 ```bash
 mystack
 ```
 
-The terminal will guide you through a few interactive questions:
+The terminal will guide you through these questions:
 
-### 1. Project name
-```plaintext
-👉 What is your project name? (default: my-awesome-project)
+1. **Project name** — Name of your project folder
+2. **Package manager** — npm, pnpm, or bun
+3. **Backend** — Firebase or Supabase
+4. **TypeScript** — Enable TypeScript support (strict config included)
+5. **Features** — Select optional features from the list below
+6. **Install dependencies** — Auto-install or do it later
+
+### 🧩 Available features
+
+When creating a project, you can select any combination of these optional features:
+
+| # | Feature | What it adds |
+|---|---------|-------------|
+| 1 | **React Router** | `react-router-dom`, page components in `src/pages/`, App with `<BrowserRouter>` navigation |
+| 2 | **Zustand** | `zustand` state management, example store in `src/stores/useAppStore.ts` |
+| 3 | **ESLint + Prettier** | `eslint` v9 flat config, `prettier`, scripts `lint` and `format` in package.json |
+| 4 | **Vitest** | `vitest`, `@testing-library/react`, `jsdom`, config file, setup, example test, scripts `test` and `test:ui` |
+| 5 | **Authentication** | Auth context with Firebase/Supabase listener, login form with email/password, `useAuth` hook |
+| 6 | **shadcn/ui** | `components.json` configured, auto-init post-install. Add components with `npx shadcn add button` |
+
+### 🤖 Non-interactive mode (CI/automation)
+
+For automated pipelines, scripts, or CI/CD, use `--yes` to skip all prompts and pass options as flags:
+
+```bash
+# Minimal: generates a default project (npm, Firebase, JS)
+mystack init --yes --name my-app
+
+# Full control: specify everything
+mystack init --yes --name my-saas \
+  --pm pnpm \
+  --backend supabase \
+  --typescript \
+  --features router,zustand,eslint,vitest,auth
+
+# Preview without creating files
+mystack init --yes --name my-app --dry-run
 ```
 
-### 2. Package manager selection
-```plaintext
-📦 Which package manager do you prefer?
-1. npm
-2. pnpm
-3. bun
-Your Choice (1, 2 or 3) [default: 1]:
+**Available flags:**
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `-y, --yes` | Non-interactive mode | `false` |
+| `-n, --name <name>` | Project name | `my-awesome-project` |
+| `--pm <pm>` | Package manager (`npm`, `pnpm`, `bun`) | `npm` |
+| `-b, --backend <backend>` | Backend (`firebase`, `supabase`) | `firebase` |
+| `--typescript` | Enable TypeScript | `false` |
+| `-f, --features <list>` | Comma-separated features | none |
+| `--preset <name>` | Use a named preset | none |
+| `--dry-run` | Show what would be created without writing | `false` |
+
+### 💾 Presets
+
+Presets let you save and reuse your favorite project configuration:
+
+```bash
+# List all available presets
+mystack presets
+
+# Use a built-in preset
+mystack init --yes --preset enterprise --name my-app
 ```
 
-### 3. Backend selection
-```plaintext
-🔥 Which back-end do you prefer?
-1. Firebase
-2. Supabase
-Your Choice (1 or 2) [default: 1]:
-```
+**Built-in presets:**
 
-### 4. Dependency installation
-```plaintext
-📦 Do you want to install dependencies with [npm/pnpm/bun]? (Y/n)
-```
+| Preset | PM | Backend | TypeScript | Features |
+|--------|-----|---------|------------|----------|
+| `default` | npm | Firebase | No | — |
+| `enterprise` | pnpm | Firebase | Yes | router, zustand, eslint, vitest, auth |
+| `minimal` | npm | Firebase | No | — |
+| `fullstack` | pnpm | Supabase | Yes | router, zustand, eslint, vitest, auth, shadcn |
 
-- **Answer "Y" (Yes)**: The generator will automatically download and install all necessary libraries. This step is required for the project to run. 
+---
 
-> **Note:** If installation fails, the project folder will be automatically cleaned up.
+## 📘 TypeScript support
 
-- **Answer "n" (No)**: The script will only create the project structure and files. You will need to run the install command manually later.
+When TypeScript is enabled (via `--typescript` or the interactive prompt), the generated project includes:
+
+- `tsconfig.json` with strict mode and all recommended compiler options
+- `tsconfig.node.json` for Vite configuration
+- `vite.config.ts` instead of `vite.config.js`
+- All source files in `.tsx` / `.ts` format
+- `typescript`, `@types/react`, and `@types/react-dom` as dev dependencies
+- Feature-specific files (stores, auth context, tests) are also fully typed
 
 ---
 
@@ -149,5 +217,6 @@ Automated actions performed by the script:
 * Creation of the complete folder structure.
 * Generation of configuration files (React, Tailwind v4, Firebase or Supabase).
 * Generation of base UX assets (favicon.svg, site.webmanifest).
-* Creation of a modern, accessible home page (App.jsx).
+* Creation of a modern, accessible home page (`App.jsx` or `App.tsx`).
 * Generation of `.env.example` for easy configuration.
+* Optional: TypeScript configuration, Router setup, State management, Linting, Testing, Auth components, shadcn/ui.

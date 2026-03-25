@@ -1,0 +1,3 @@
+{"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "import { create } from 'zustand';\n\nconst useAppStore = create((set) => ({\n  count: 0,\n  increment: () => set((state) => ({ count: state.count + 1 })),\n  decrement: () => set((state) => ({ count: state.count - 1 })),\n  reset: () => set({ count: 0 }),\n}));\n\nexport default useAppStore;\n";
+},"useData":true}

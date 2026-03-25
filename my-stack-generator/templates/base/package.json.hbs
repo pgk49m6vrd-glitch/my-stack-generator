@@ -1,0 +1,44 @@
+{
+  "name": "{{packageName}}",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": { "node": ">=18.0.0" },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"{{#if hasVitest}},
+    "test": "vitest",
+    "test:ui": "vitest --ui"{{/if}}{{#if hasEslint}},
+    "lint": "eslint .",
+    "format": "prettier --write ."{{/if}}
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"{{#if (eq backend "firebase")}},
+    "firebase": "^12.8.0"{{else}},
+    "@supabase/supabase-js": "^2.48.1"{{/if}}{{#if hasRouter}},
+    "react-router-dom": "^7.0.0"{{/if}}{{#if hasZustand}},
+    "zustand": "^5.0.0"{{/if}}
+  },
+  "devDependencies": {
+    "vite": "^6.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/vite": "^4.0.0"{{#if typescript}},
+    "typescript": "^5.7.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"{{/if}}{{#if hasVitest}},
+    "vitest": "^3.0.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "jsdom": "^25.0.0"{{/if}}{{#if hasEslint}},
+    "eslint": "^9.0.0",
+    "@eslint/js": "^9.0.0",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "globals": "^15.0.0",
+    "prettier": "^3.4.0"{{/if}}{{#if (and hasEslint typescript)}},
+    "typescript-eslint": "^8.0.0"{{/if}}
+  }
+}

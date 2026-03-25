@@ -1,0 +1,34 @@
+# {{projectName}}
+
+Built with **My Stack Generator**.
+
+## 🚀 Getting Started
+
+1. **Install dependencies**:
+   ```bash
+   {{installCmd pm}}
+   ```
+
+2. **Start the development server**:
+   ```bash
+   {{devCmd pm}}
+   ```
+
+## 🛠️ Stack
+
+- **Framework**: React + Vite
+- **Styling**: Tailwind CSS v4
+- **Backend**: {{capitalizeFirst backend}}
+{{#if typescript}}- **Language**: TypeScript{{/if}}
+{{#if hasRouter}}- **Routing**: React Router{{/if}}
+{{#if hasZustand}}- **State**: Zustand{{/if}}
+{{#if hasEslint}}- **Linting**: ESLint + Prettier{{/if}}
+{{#if hasVitest}}- **Testing**: Vitest + Testing Library{{/if}}
+
+## 📂 Project Structure
+
+- `src/features/`: Domain-specific features (components, hooks, services).
+- `src/components/`: Shared UI components.
+- `src/lib/`: Backend configuration.
+{{#if hasRouter}}- `src/pages/`: Route-level page components.{{/if}}
+{{#if hasZustand}}- `src/stores/`: Zustand state stores.{{/if}}

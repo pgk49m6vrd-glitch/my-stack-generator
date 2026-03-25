@@ -1,0 +1,3 @@
+{"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "# SECURITY WARNING: Never commit actual secrets to version control.\n# This is a template file. Create a copy named .env and fill in your values.\nVITE_FIREBASE_API_KEY=\nVITE_FIREBASE_AUTH_DOMAIN=\nVITE_FIREBASE_PROJECT_ID=\nVITE_FIREBASE_STORAGE_BUCKET=\nVITE_FIREBASE_MESSAGING_ID=\nVITE_FIREBASE_APP_ID=\n";
+},"useData":true}

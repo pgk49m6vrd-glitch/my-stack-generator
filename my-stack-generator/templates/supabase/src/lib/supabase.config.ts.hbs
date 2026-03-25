@@ -1,0 +1,16 @@
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+
+const supabaseUrl: string = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey: string = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+let client: SupabaseClient;
+
+export const getSupabase = (): SupabaseClient => {
+  if (!client) {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error("Supabase credentials missing. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.");
+    }
+    client = createClient(supabaseUrl, supabaseAnonKey);
+  }
+  return client;
+};

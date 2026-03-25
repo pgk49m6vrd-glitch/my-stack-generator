@@ -1,0 +1,24 @@
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig(({ command }) => ({
+  plugins: [
+    react(),
+    tailwindcss(),
+    {
+      name: 'html-transform',
+      transformIndexHtml(html: string) {
+        if (command === 'build') {
+          return html.replace(/script-src [^;]+;?/, (match: string) => {
+            return match
+              .replace(/'unsafe-inline'/g, '')
+              .replace(/'unsafe-eval'/g, '')
+              .replace(/\s+/g, ' ')
+              .trim();
+          });
+        }
+      },
+    },
+  ],
+}))

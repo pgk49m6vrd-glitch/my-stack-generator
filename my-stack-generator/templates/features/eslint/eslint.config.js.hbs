@@ -1,0 +1,46 @@
+import js from '@eslint/js';
+import globals from 'globals';
+import reactPlugin from 'eslint-plugin-react';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
+{{#if typescript}}
+import tseslint from 'typescript-eslint';
+{{/if}}
+
+{{#if typescript}}
+const fileGlob = '**/*.{js,jsx,ts,tsx}';
+{{else}}
+const fileGlob = '**/*.{js,jsx}';
+{{/if}}
+
+export default [
+  { ignores: ['dist'] },
+  js.configs.recommended,
+{{#if typescript}}
+  ...tseslint.configs.recommended,
+{{/if}}
+  {
+    files: [fileGlob],
+    languageOptions: {
+      ecmaVersion: 2024,
+      globals: {
+        ...globals.browser,
+      },
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
+    },
+    plugins: {
+      'react': reactPlugin,
+      'react-hooks': reactHooksPlugin,
+    },
+    rules: {
+      ...reactPlugin.configs.recommended.rules,
+      ...reactHooksPlugin.configs.recommended.rules,
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
+    },
+    settings: {
+      react: { version: 'detect' },
+    },
+  },
+];

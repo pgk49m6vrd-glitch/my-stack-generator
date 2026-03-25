@@ -1,0 +1,3 @@
+{"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "import { createClient, type SupabaseClient } from '@supabase/supabase-js';\n\nconst supabaseUrl: string = import.meta.env.VITE_SUPABASE_URL;\nconst supabaseAnonKey: string = import.meta.env.VITE_SUPABASE_ANON_KEY;\n\nlet client: SupabaseClient;\n\nexport const getSupabase = (): SupabaseClient => {\n  if (!client) {\n    if (!supabaseUrl || !supabaseAnonKey) {\n      throw new Error(\"Supabase credentials missing. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.\");\n    }\n    client = createClient(supabaseUrl, supabaseAnonKey);\n  }\n  return client;\n};\n";
+},"useData":true}
