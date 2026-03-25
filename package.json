@@ -1,0 +1,6 @@
+{
+  "name": "my-stack-generator-workspace",
+  "private": true,
+  "description": "Root of the my-stack-generator repository",
+  "dependencies": {}
+}
