@@ -49,11 +49,11 @@ Now, when you run the `mystack` command anywhere on your machine, it will execut
 
 ### 4. Running the CLI during development
 
-We recommend creating a `test-project` folder outside of the repository to test the generator:
+We recommend testing the generator out of the repositorie's clone
 
 ```bash
-mkdir ../test-mystack
-cd ../test-mystack
+
+cd .. && cd ..
 mystack
 ```
 
