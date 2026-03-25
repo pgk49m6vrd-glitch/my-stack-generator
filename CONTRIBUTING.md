@@ -14,7 +14,7 @@ Instead of downloading the release, clone the repository using Git:
 
 ```bash
 git clone https://github.com/pgk49m6vrd-glitch/my-stack-generator.git
-cd my-stack-generator
+cd my-stack-generator && cd my-stack-generator
 ```
 
 ### 2. Install dependencies
