@@ -1,11 +1,25 @@
 #!/usr/bin/env node
 
-import spawn from 'cross-spawn';
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-import validatePkgName from 'validate-npm-package-name';
+
+// Use dynamic import to provide better error reporting and potentially bypass static resolution issues in Node 25
+async function loadDependencies() {
+  try {
+    const [{ default: spawn }, { default: validatePkgName }] = await Promise.all([
+      import('cross-spawn'),
+      import('validate-npm-package-name')
+    ]);
+    return { spawn, validatePkgName };
+  } catch (e) {
+    console.error('\n❌ Critical Error: Could not load dependencies.');
+    console.error('This often happens if "npm install" was not run in the generator directory.');
+    console.error('Error details:', e.message);
+    process.exit(1);
+  }
+}
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -87,7 +101,7 @@ function getProjectNameValidationError(name) {
 /**
  * Sanitizes and validates the npm package name.
  */
-function sanitizePackageName(name) {
+function sanitizePackageName(name, validatePkgName) {
   const sanitized = name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+|-+$/g, '');
   const validation = validatePkgName(sanitized);
   if (!validation.validForNewPackages) {
@@ -102,7 +116,7 @@ function sanitizePackageName(name) {
  */
 const pmAvailability = new Map();
 
-export function checkPackageManager(pm) {
+export function checkPackageManager(pm, spawn) {
   if (pmAvailability.has(pm)) {
     return pmAvailability.get(pm);
   }
@@ -164,10 +178,12 @@ async function main() {
     process.exit(1);
   }
 
+  const { spawn, validatePkgName } = await loadDependencies();
+
   console.log("\n--- 🚀 MYSTACK GENERATOR V2.0.0 ---");
 
   // Pre-check package managers in background to avoid blocking later
-  ['npm', 'pnpm', 'bun'].forEach((pm) => checkPackageManager(pm));
+  ['npm', 'pnpm', 'bun'].forEach((pm) => checkPackageManager(pm, spawn));
 
   try {
     // 1. Project Name
@@ -192,9 +208,9 @@ async function main() {
     }
 
     // Pre-resolve availability for package manager choices
-    const npmAvailable = await checkPackageManager('npm');
-    const pnpmAvailable = await checkPackageManager('pnpm');
-    const bunAvailable = await checkPackageManager('bun');
+    const npmAvailable = await checkPackageManager('npm', spawn);
+    const pnpmAvailable = await checkPackageManager('pnpm', spawn);
+    const bunAvailable = await checkPackageManager('bun', spawn);
 
     // 2. Package Manager Selection
     let pm = "";
@@ -215,7 +231,7 @@ async function main() {
       }
 
       if (pm) {
-        const isAvailable = await checkPackageManager(pm);
+        const isAvailable = await checkPackageManager(pm, spawn);
         if (!isAvailable) {
           console.error(`\n❌ Error: ${pm} is not installed or not available in your PATH.`);
           pm = ""; // Reset to re-ask
@@ -280,10 +296,6 @@ async function main() {
     await Promise.all(folders.map(folder => fs.promises.mkdir(path.join(root, folder), { recursive: true })));
 
     // File templates
-    // CSP Note:
-    // - script-src 'unsafe-inline' 'unsafe-eval': Required for Vite development and HMR.
-    // - style-src 'unsafe-inline': Required for Vite to inject styles.
-    // - connect-src: Allows connection to the chosen backend (Firebase/Supabase).
     const files = {
       'vite.config.js': `import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
@@ -542,7 +554,7 @@ Built with **My Stack Generator**.
       }, null, 2),
 
       'package.json': JSON.stringify({
-        name: sanitizePackageName(projectName),
+        name: sanitizePackageName(projectName, validatePkgName),
         private: true,
         version: "1.0.0",
         type: "module",
