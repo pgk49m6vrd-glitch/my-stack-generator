@@ -78,7 +78,7 @@ Follow these steps to install the command globally on your machine:
 
 ### 1. Download the release
 
-Go to the Releases section of this repository and download the file: **my-stack-generator.zip**. Make sure to choose the latest stable version (currently **3.0.0**).
+Go to the Releases section of this repository and download the file: **my-stack-generator.zip**. Make sure to choose the latest stable version (currently **v3.0.0**).
 
 ### 2. Extract the archive
 
