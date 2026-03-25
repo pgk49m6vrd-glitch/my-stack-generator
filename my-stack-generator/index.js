@@ -1,14 +1,11 @@
 #!/usr/bin/env node
 
+import spawn from 'cross-spawn';
 import fs from 'fs';
-import { createRequire } from 'module';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
-
-const require = createRequire(import.meta.url);
-const spawn = require('cross-spawn');
-const validatePkgName = require('validate-npm-package-name');
+import validatePkgName from 'validate-npm-package-name';
 
 const rl = readline.createInterface({
   input: process.stdin,
