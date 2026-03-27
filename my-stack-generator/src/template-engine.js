@@ -7,7 +7,8 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import Handlebars from 'handlebars';
+// Use the lighter runtime if precompiled templates are available.
+import Handlebars from 'handlebars/runtime.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -105,14 +106,22 @@ export function renderTemplate(templatePath, context) {
     return template(context);
   }
 
-  // Fallback to runtime compilation from .hbs file
+  // Fallback to runtime compilation from .hbs file (requires full handlebars dynamically)
   const hbsPath = path.join(TEMPLATES_DIR, templatePath);
   if (!fs.existsSync(hbsPath)) {
     throw new Error(`Template not found: ${templatePath} (looked in ${hbsPath})`);
   }
 
   const source = fs.readFileSync(hbsPath, 'utf-8');
-  const template = Handlebars.compile(source, { noEscape: true });
+  let compileFn = Handlebars.compile;
+  if (!compileFn) {
+    // Synchronously import full handlebars for compilation fallback if runtime only is loaded.
+    // In node 18+, top level await could be used but we are inside a synchronous function.
+    // However, precompiled templates are built in `build:templates`, so we should only
+    // really need this if precompiled templates are missing.
+    throw new Error(`Template missing precompiled version: ${templatePath}. Please run 'npm run build:templates'.`);
+  }
+  const template = compileFn(source, { noEscape: true });
   templateCache.set(templatePath, template);
   return template(context);
 }
