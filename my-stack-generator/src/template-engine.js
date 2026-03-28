@@ -7,8 +7,10 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import Handlebars from 'handlebars';
+import Handlebars from 'handlebars/runtime.js';
+import { createRequire } from 'module';
 
+const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const TEMPLATES_DIR = path.join(__dirname, '..', 'templates');
@@ -112,9 +114,18 @@ export function renderTemplate(templatePath, context) {
   }
 
   const source = fs.readFileSync(hbsPath, 'utf-8');
-  const template = Handlebars.compile(source, { noEscape: true });
-  templateCache.set(templatePath, template);
-  return template(context);
+
+  // Lazy load the full Handlebars compiler only when needed for runtime compilation
+  const FullHandlebars = require('handlebars');
+  const template = FullHandlebars.compile(source, { noEscape: true });
+
+  const boundTemplate = (ctx) => template(ctx, {
+    helpers: Handlebars.helpers,
+    partials: Handlebars.partials,
+  });
+
+  templateCache.set(templatePath, boundTemplate);
+  return boundTemplate(context);
 }
 
 /**
