@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2025-05-22 - Handlebars split-brain instantiation
+**Learning:** Loading `handlebars/runtime.js` separately from the full `handlebars` package creates a 'split brain' scenario. They instantiate separate environments with isolated helper registries. If the full compiler is dynamically required later (e.g., as a fallback for uncompiled `.hbs` files), it will fail to resolve custom helpers registered on the runtime instance.
+**Action:** When lazy-loading the full compiler, explicitly pass the runtime's helpers and partials into the compiled template execution context: `spec(ctx, { helpers: Handlebars.helpers, partials: Handlebars.partials })`. This bridges the environments safely.

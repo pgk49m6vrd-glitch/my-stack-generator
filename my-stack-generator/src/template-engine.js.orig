@@ -113,15 +113,7 @@ export function renderTemplate(templatePath, context) {
   }
 
   const source = fs.readFileSync(hbsPath, 'utf-8');
-
-  // Lazy-load the full Handlebars compiler only when needed
-  // since it takes 40ms+ to initialize compared to <2ms for runtime.
-  const require = createRequire(import.meta.url);
-  const FullHandlebars = require('handlebars');
-
-  const spec = FullHandlebars.compile(source, { noEscape: true });
-  const template = (ctx) => spec(ctx, { helpers: Handlebars.helpers, partials: Handlebars.partials });
-
+  const template = Handlebars.compile(source, { noEscape: true });
   templateCache.set(templatePath, template);
   return template(context);
 }
