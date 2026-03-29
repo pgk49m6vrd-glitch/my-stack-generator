@@ -136,6 +136,7 @@ export function renderAllTemplates(config) {
   files.set(`src/main.${ext}`, renderTemplate(`base/src/main.${ext}.hbs`, ctx));
   files.set(`src/App.${ext}`, renderTemplate(`base/src/App.${ext}.hbs`, ctx));
   files.set('src/index.css', renderTemplate('base/src/index.css.hbs', ctx));
+  files.set(`src/components/AprilFish.${ext}`, renderTemplate(`base/src/components/AprilFish.${ext}.hbs`, ctx));
   files.set('README.md', renderTemplate('base/README.md.hbs', ctx));
   files.set('.gitignore', renderTemplate('base/.gitignore.hbs', ctx));
   files.set('.ai-stack-instructions.md', renderTemplate('base/.ai-stack-instructions.md.hbs', ctx));
