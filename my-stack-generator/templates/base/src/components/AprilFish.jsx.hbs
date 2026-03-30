@@ -126,10 +126,10 @@ const AprilFish = () => {
              {[...Array(6)].map((_, i) => (
                 <div key={i} className="w-3 h-3 bg-white rounded-full 
                 animate-[bounce_2s_ease-in-out_infinite]"
-                style={{
+                  style=\{{
                   backgroundColor: ['#38bdf8', '#818cf8', '#f472b6', '#34d399'][i % 4],
-                  animationDelay: \`\${i * 0.2}s\`,
-                  animationDuration: \`\${1.5 + Math.random()}s\`
+                  animationDelay: `${i * 0.2}s`,
+                  animationDuration: `${1.5 + Math.random()}s`
                 }}></div>
              ))}
           </div>
