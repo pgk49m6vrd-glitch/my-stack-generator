@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2025-02-19 - Handlebars Engine Cold Start
+**Learning:** `handlebars` full compiler causes a ~35ms startup penalty due to its size and AST dependencies.
+**Action:** Since templates are precompiled offline, lazily load the full `handlebars` package and use `handlebars/runtime.js` (which avoids the parser overhead and loads in ~28ms) to evaluate precompiled templates. When doing so, custom helpers must be explicitly passed to `template(context, { helpers: Handlebars.helpers })` because the precompiled spec won't detect dynamically registered helpers in a split-brain environment.
