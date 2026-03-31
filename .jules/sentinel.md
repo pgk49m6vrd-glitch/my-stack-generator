@@ -36,3 +36,7 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+## 2025-03-31 - ESBuild Console Dropping in Production
+**Vulnerability:** Information leakage through `console.log` and `debugger` statements left in production builds.
+**Learning:** Developers often forget to remove debugging statements before committing, which can inadvertently leak sensitive information, state, or application logic details in production environments.
+**Prevention:** Configure build tools (like `esbuild` in Vite) to automatically strip `console` and `debugger` statements from production builds, providing a default-secure environment without affecting developer experience in local development.

@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig(({ command }) => ({
+  // SECURITY: Prevent information leakage in production by dropping console and debugger statements
+  esbuild: {
+    drop: command === 'build' ? ['console', 'debugger'] : [],
+  },
   plugins: [
     react(),
     tailwindcss(),
