@@ -7,7 +7,11 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import Handlebars from 'handlebars';
+import Handlebars from 'handlebars/runtime.js';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+let fullHandlebars;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -101,8 +105,10 @@ export function renderTemplate(templatePath, context) {
     // eslint-disable-next-line no-new-func
     const spec = new Function('return ' + specSource)();
     const template = Handlebars.template(spec);
-    templateCache.set(templatePath, template);
-    return template(context);
+
+    const wrappedTemplate = (ctx) => template(ctx, { helpers: Handlebars.helpers, partials: Handlebars.partials });
+    templateCache.set(templatePath, wrappedTemplate);
+    return wrappedTemplate(context);
   }
 
   // Fallback to runtime compilation from .hbs file
@@ -111,10 +117,13 @@ export function renderTemplate(templatePath, context) {
     throw new Error(`Template not found: ${templatePath} (looked in ${hbsPath})`);
   }
 
+  if (!fullHandlebars) fullHandlebars = require('handlebars');
   const source = fs.readFileSync(hbsPath, 'utf-8');
-  const template = Handlebars.compile(source, { noEscape: true });
-  templateCache.set(templatePath, template);
-  return template(context);
+  const template = fullHandlebars.compile(source, { noEscape: true });
+
+  const wrappedTemplate = (ctx) => template(ctx, { helpers: Handlebars.helpers, partials: Handlebars.partials });
+  templateCache.set(templatePath, wrappedTemplate);
+  return wrappedTemplate(context);
 }
 
 /**
