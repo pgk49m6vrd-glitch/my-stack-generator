@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2024-04-02 - Concurrent Dynamic Module Loading
+**Learning:** Sequential dynamic imports (`await import('A'); await import('B');`) in initialization functions create an unnecessary asynchronous waterfall, increasing module load latency.
+**Action:** Always group independent dynamic imports using `await Promise.all([import('A'), import('B')])` to optimize startup time, especially in CLI "time-to-first-prompt" paths.
