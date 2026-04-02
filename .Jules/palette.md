@@ -37,3 +37,7 @@
 ## 2026-03-02 - Contextualizing Unavailable CLI Options
 **Learning:** Presenting options in a CLI that are fundamentally impossible to choose (like uninstalled package managers) without indicating their unavailability leads to immediate failure and user frustration.
 **Action:** Add visual cues like `(not installed)` directly in the prompt for unavailable options to steer users toward successful paths before they make a choice.
+
+## $(date +%Y-%m-%d) - Replaced unsemantic text separators with list in generated template navigation
+**Learning:** The CLI generated a template with `|` text characters between documentation links inside a generic `div`. These characters create screen reader clutter and the generic wrapper lacks semantic meaning for navigation.
+**Action:** Used semantic `<nav>` and `<ul>`/`<li>` elements for inline links, separating them with CSS layout spacing (`flex gap-4`) instead of decorative text characters.
