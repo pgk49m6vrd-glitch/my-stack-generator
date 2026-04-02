@@ -36,3 +36,7 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+## 2025-02-23 - Esbuild Console and Debugger Stripping
+**Vulnerability:** Accidental leakage of sensitive information (state, API responses, variables) in production environments via `console.log` or `debugger` statements.
+**Learning:** Default Vite setups do not automatically strip console logs and debuggers, meaning any left in the code by developers will make it to production bundles. This is an information exposure risk.
+**Prevention:** Configure esbuild (which Vite uses for minification) to automatically drop 'console' and 'debugger' statements when building for production. This adds a solid defense-in-depth layer to the generated projects.
