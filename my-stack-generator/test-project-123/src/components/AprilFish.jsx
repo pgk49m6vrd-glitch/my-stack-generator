@@ -13,20 +13,20 @@ const AprilFish = () => {
     if (isApril && validDay) {
       // It's April Fool's time! Start the sequence after a tiny delay
       setTimeout(() => setShowEasterEgg(true), 500);
-      
+
       const sequence = async () => {
         setPhase('entering');
         await new Promise((r) => setTimeout(r, 1000));
-        
+
         setPhase('fishing');
         await new Promise((r) => setTimeout(r, 3000)); // 3s of fishing action
-        
+
         setPhase('caught');
         await new Promise((r) => setTimeout(r, 2000)); // 2s of showing the fish out of water
-        
+
         setPhase('done');
       };
-      
+
       sequence();
     }
   }, []);
@@ -35,7 +35,7 @@ const AprilFish = () => {
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center bg-slate-900 overflow-hidden transition-opacity duration-1000 ${phase === 'done' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-      
+
       {/* Dynamic Background with SVG Waves */}
       <div className="absolute inset-0 z-0 flex flex-col justify-end overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-sky-900/40"></div>
@@ -72,24 +72,24 @@ const AprilFish = () => {
           80% { transform: translateY(25px); } /* bite */
         }
       `}</style>
-      
+
       <div className="relative z-10 w-full max-w-2xl h-[500px] flex items-center justify-center">
-        
+
         {/* The Fisherman */}
         <div className={`absolute bottom-32 left-1/4 transition-all duration-1000 ease-out flex flex-col items-center ${
             phase === 'entering' ? 'translate-x-[200%] opacity-0' : 'translate-x-0 opacity-100'
         } animate-[floatFisher_4s_ease-in-out_infinite]`}>
-          
+
           <div className="text-8xl relative z-20">
             {phase === 'caught' ? '👨‍🌾' : '🎣'}
           </div>
-          
+
           {/* A little boat */}
           <div className="w-32 h-10 bg-amber-800 rounded-b-full mt-[-20px] relative z-10 border-t-4 border-amber-900 shadow-xl overflow-hidden">
              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
           </div>
           <div className="absolute bottom-[-10px] w-full h-8 bg-sky-400/30 blur-md rounded-full"></div>
-          
+
           {/* The Fishing Line & Bobber (Visible during fishing) */}
           {phase === 'fishing' && (
             <div className="absolute top-10 left-[80px] w-[200px] h-[150px] origin-top-left animate-[castLine_1s_ease-out_forwards]">
@@ -124,9 +124,9 @@ const AprilFish = () => {
           {/* Confetti particles - basic CSS */}
           <div className="absolute top-0 left-1/2 w-full h-full -translate-x-1/2 flex justify-between px-20 opacity-70">
              {[...Array(6)].map((_, i) => (
-                <div key={i} className="w-3 h-3 bg-white rounded-full 
+                <div key={i} className="w-3 h-3 bg-white rounded-full
                 animate-[bounce_2s_ease-in-out_infinite]"
-                style=\{{
+                style={{
                   backgroundColor: ['#38bdf8', '#818cf8', '#f472b6', '#34d399'][i % 4],
                   animationDelay: \`\${i * 0.2}s\`,
                   animationDuration: \`\${1.5 + Math.random()}s\`

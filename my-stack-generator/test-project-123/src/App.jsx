@@ -24,11 +24,11 @@ function App() {
         </span>
 
         <h1 className="text-5xl md:text-7xl font-black mb-4 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent forced-colors:text-[CanvasText] break-words text-balance max-w-4xl mx-auto">
-          {{projectName}}
+          test-project-123
         </h1>
 
         <p className="text-lg md:text-xl max-w-md mx-auto mb-8 opacity-90 forced-colors:text-[CanvasText]">
-          React + Tailwind V4 + {{capitalizeFirst backend}} Stack operational.
+          React + Tailwind V4 + Firebase Stack operational.
         </p>
 
         <div className="px-6 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white/90 inline-block shadow-xl forced-colors:text-[CanvasText] mb-8">
@@ -67,12 +67,12 @@ function App() {
             </li>
             <li>
               <a
-                href="{{backendDocsUrl}}"
+                href="https://firebase.google.com/docs"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-400 hover:text-blue-300 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2 inline-flex items-center gap-1"
               >
-                {{capitalizeFirst backend}} Docs
+                Firebase Docs
                 <span className="sr-only">(opens in a new tab)</span>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
