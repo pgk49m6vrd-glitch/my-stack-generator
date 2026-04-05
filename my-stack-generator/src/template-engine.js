@@ -7,7 +7,10 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import Handlebars from 'handlebars';
+// ⚡ Bolt Optimization: Use the lighter runtime by default to reduce CLI startup time
+import Handlebars from 'handlebars/runtime.js';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -90,7 +93,7 @@ const templateCache = new Map();
  */
 export function renderTemplate(templatePath, context) {
   if (templateCache.has(templatePath)) {
-    return templateCache.get(templatePath)(context);
+    return templateCache.get(templatePath)(context, { helpers: Handlebars.helpers, partials: Handlebars.partials });
   }
 
   // Try precompiled version first
@@ -102,7 +105,7 @@ export function renderTemplate(templatePath, context) {
     const spec = new Function('return ' + specSource)();
     const template = Handlebars.template(spec);
     templateCache.set(templatePath, template);
-    return template(context);
+    return template(context, { helpers: Handlebars.helpers, partials: Handlebars.partials });
   }
 
   // Fallback to runtime compilation from .hbs file
@@ -111,10 +114,12 @@ export function renderTemplate(templatePath, context) {
     throw new Error(`Template not found: ${templatePath} (looked in ${hbsPath})`);
   }
 
+  // ⚡ Bolt Optimization: Lazy-load the heavy compiler only when falling back to uncompiled templates
+  const FullHandlebars = require('handlebars');
   const source = fs.readFileSync(hbsPath, 'utf-8');
-  const template = Handlebars.compile(source, { noEscape: true });
+  const template = FullHandlebars.compile(source, { noEscape: true });
   templateCache.set(templatePath, template);
-  return template(context);
+  return template(context, { helpers: Handlebars.helpers, partials: Handlebars.partials });
 }
 
 /**
