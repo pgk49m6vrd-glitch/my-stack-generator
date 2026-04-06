@@ -4,7 +4,6 @@
  * Provides built-in presets and merges config layers: preset → rcfile → CLI flags → prompts.
  */
 
-import { cosmiconfig } from 'cosmiconfig';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
@@ -46,6 +45,8 @@ export { PRESETS };
  * Loads the user's saved presets from ~/.mystackrc.json.
  */
 export async function loadUserConfig() {
+  // ⚡ Bolt: Dynamically import heavy cosmiconfig dependency to save ~20ms on CLI load time
+  const { cosmiconfig } = await import('cosmiconfig');
   const explorer = cosmiconfig('mystack');
   try {
     const result = await explorer.search();
