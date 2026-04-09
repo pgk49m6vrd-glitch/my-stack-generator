@@ -37,3 +37,6 @@
 ## 2026-03-02 - Contextualizing Unavailable CLI Options
 **Learning:** Presenting options in a CLI that are fundamentally impossible to choose (like uninstalled package managers) without indicating their unavailability leads to immediate failure and user frustration.
 **Action:** Add visual cues like `(not installed)` directly in the prompt for unavailable options to steer users toward successful paths before they make a choice.
+## 2026-04-09 - Accessible Navigation Lists
+**Learning:** Generic `<div>` containers separating links using decorative `|` text create clutter for screen readers even when `aria-hidden="true"` is applied to the separator.
+**Action:** Use semantic `<nav aria-label="...">` and unordered list (`<ul>`/`<li>`) structures paired with CSS `gap` properties instead of decorative text to group inline navigation links.
