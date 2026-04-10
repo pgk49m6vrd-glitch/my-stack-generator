@@ -36,3 +36,7 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+## 2026-04-10 - Prevent Information Leakage in Production
+**Vulnerability:** Application logs and debugger statements may leak sensitive information in production builds.
+**Learning:** By default, bundlers like Vite/esbuild do not strip console logs or debugger statements, which could expose sensitive logic or data to attackers.
+**Prevention:** Configure esbuild to automatically drop 'console' and 'debugger' statements during production builds.
