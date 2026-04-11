@@ -36,3 +36,7 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+## 2024-04-11 - Command Injection via CLI Arguments
+**Vulnerability:** Command injection when users bypass interactive mode with `-y` and supply arbitrary strings for `--pm` which are passed directly to `spawn()`.
+**Learning:** Non-interactive mode must strictly validate inputs against an allowlist, as it bypasses the validation logic of interactive prompts.
+**Prevention:** Always validate and sanitize all command-line arguments against strict allowlists before passing them to sensitive functions like `spawn()` or `exec()`.

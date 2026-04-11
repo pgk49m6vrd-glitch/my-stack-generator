@@ -53,6 +53,16 @@ export async function initCommand(options = {}) {
       process.exit(1);
     }
 
+    if (!['npm', 'pnpm', 'bun'].includes(config.pm)) {
+      console.error(`\n❌ Error: Invalid package manager "${config.pm}". Must be npm, pnpm, or bun.`);
+      process.exit(1);
+    }
+
+    if (!['firebase', 'supabase'].includes(config.backend)) {
+      console.error(`\n❌ Error: Invalid backend "${config.backend}". Must be firebase or supabase.`);
+      process.exit(1);
+    }
+
     console.log(`\n📋 Configuration:`);
     console.log(`  Name:       ${config.projectName}`);
     console.log(`  PM:         ${config.pm}`);
