@@ -37,7 +37,9 @@ function LoginForm(): React.JSX.Element {
       }
 {{/if}}
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      // Mask raw authentication errors to prevent information leakage
+      console.error('Authentication error:', err);
+      setError('Invalid email or password. Please try again.');
     } finally {
       setLoading(false);
     }

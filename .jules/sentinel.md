@@ -36,3 +36,8 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+
+## 2024-04-12 - Mask Authentication Error Messages
+**Vulnerability:** The `LoginForm` components (`LoginForm.jsx.hbs`, `LoginForm.tsx.hbs`) were directly displaying raw Firebase Auth and Supabase Auth error messages (`err.message`) to the user.
+**Learning:** Exposing raw backend authentication errors can leak sensitive information about the system's state or existence of accounts, posing an information leakage risk.
+**Prevention:** Always mask raw authentication errors and display generic messages like "Invalid email or password" to end users while securely logging the actual error.
