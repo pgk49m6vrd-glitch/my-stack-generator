@@ -6,8 +6,9 @@
  */
 
 import { Command } from 'commander';
-import { initCommand } from './commands/init.js';
-import { listPresets } from './config.js';
+// ⚡ Bolt: Removed eager imports of initCommand and listPresets.
+// They are now dynamically imported inside .action() handlers to avoid
+// top-level synchronous load penalties for simple commands like --help.
 
 const program = new Command();
 
@@ -29,6 +30,8 @@ program
   .option('--preset <preset>', 'Use a named preset (default, enterprise, minimal, fullstack)')
   .option('--dry-run', 'Show what would be generated without writing files', false)
   .action(async (options) => {
+    // ⚡ Bolt: Lazily load the initCommand only when the init action is executed.
+    const { initCommand } = await import('./commands/init.js');
     await initCommand(options);
   });
 
@@ -37,6 +40,8 @@ program
   .command('presets')
   .description('List available presets')
   .action(async () => {
+    // ⚡ Bolt: Lazily load config module to avoid synchronous cosmiconfig load.
+    const { listPresets } = await import('./config.js');
     await listPresets();
   });
 
