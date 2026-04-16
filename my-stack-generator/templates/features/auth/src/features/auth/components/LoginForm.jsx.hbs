@@ -37,7 +37,10 @@ function LoginForm() {
       }
 {{/if}}
     } catch (err) {
-      setError(err.message || 'An error occurred');
+      // Log the raw error internally for debugging
+      console.error('Authentication error:', err);
+      // Mask the error to prevent information leakage to users
+      setError('Authentication failed. Please check your credentials and try again.');
     } finally {
       setLoading(false);
     }
