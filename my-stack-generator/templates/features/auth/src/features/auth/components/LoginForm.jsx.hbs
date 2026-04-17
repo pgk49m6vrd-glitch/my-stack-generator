@@ -37,7 +37,8 @@ function LoginForm() {
       }
 {{/if}}
     } catch (err) {
-      setError(err.message || 'An error occurred');
+      console.error('Authentication error:', err);
+      setError('Invalid email or password. Please try again.');
     } finally {
       setLoading(false);
     }

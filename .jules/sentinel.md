@@ -36,3 +36,8 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+
+## 2026-04-17 - Fix Command Injection in CLI & Info Leakage in Auth
+**Vulnerability:** The CLI lacked validation for user inputs `pm` and `backend` in non-interactive mode, allowing arbitrary command execution during `spawn`, and auth templates returned raw Firebase/Supabase errors directly to the UI.
+**Learning:** Trusting CLI flags implicitly in non-interactive mode bypassing prompts exposes the app to injection via `child_process.spawn`. Raw backend errors often contain implementation details that shouldn't be exposed.
+**Prevention:** Strictly validate external input against allowlists before passing them to internal execution functions or child processes. Always log raw errors internally but display generic, safe messages to end users.
