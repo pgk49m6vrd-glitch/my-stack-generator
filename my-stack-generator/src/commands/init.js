@@ -53,6 +53,19 @@ export async function initCommand(options = {}) {
       process.exit(1);
     }
 
+    // Validate package manager and backend inputs to prevent command injection
+    const validPMs = ['npm', 'pnpm', 'bun'];
+    if (!validPMs.includes(config.pm)) {
+      console.error(`\n❌ Error: Invalid package manager "${config.pm}". Must be one of: ${validPMs.join(', ')}`);
+      process.exit(1);
+    }
+
+    const validBackends = ['firebase', 'supabase'];
+    if (!validBackends.includes(config.backend)) {
+      console.error(`\n❌ Error: Invalid backend "${config.backend}". Must be one of: ${validBackends.join(', ')}`);
+      process.exit(1);
+    }
+
     console.log(`\n📋 Configuration:`);
     console.log(`  Name:       ${config.projectName}`);
     console.log(`  PM:         ${config.pm}`);
