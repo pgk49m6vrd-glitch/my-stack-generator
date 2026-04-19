@@ -37,7 +37,8 @@ function LoginForm(): React.JSX.Element {
       }
 {{/if}}
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Authentication error:', err);
+      setError('Authentication failed. Please check your credentials and try again.');
     } finally {
       setLoading(false);
     }
