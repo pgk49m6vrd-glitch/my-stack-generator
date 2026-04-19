@@ -37,3 +37,7 @@
 ## 2026-03-02 - Contextualizing Unavailable CLI Options
 **Learning:** Presenting options in a CLI that are fundamentally impossible to choose (like uninstalled package managers) without indicating their unavailability leads to immediate failure and user frustration.
 **Action:** Add visual cues like `(not installed)` directly in the prompt for unavailable options to steer users toward successful paths before they make a choice.
+
+## 2026-04-19 - Semantic Navigation Lists
+**Learning:** Separating inline navigation links with generic wrappers and decorative text characters (like '|') clutters the screen reader experience and lacks semantic structure.
+**Action:** Use semantic \`<nav>\` elements containing \`<ul>\` and \`<li>\` lists styled with flexbox gaps and pseudo-elements to provide a clean, accessible navigation experience.
