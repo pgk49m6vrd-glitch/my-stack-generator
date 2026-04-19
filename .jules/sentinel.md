@@ -36,3 +36,8 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+
+## 2025-02-21 - Information Leakage in Auth Errors
+**Vulnerability:** Raw error messages from Firebase/Supabase Auth were exposed to the user interface via `err.message`.
+**Learning:** Exposing raw third-party or backend errors can reveal internal system details or sensitive information to end users.
+**Prevention:** Always mask external error messages with generic, user-friendly text while securely logging the raw error internally for debugging.
