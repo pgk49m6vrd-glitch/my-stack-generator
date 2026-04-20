@@ -36,3 +36,7 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+## 2025-02-23 - Command Injection via Config Fields in CLI Tool
+**Vulnerability:** Command injection in `my-stack-generator` non-interactive mode (`-y`), where malicious input via config fields like `pm` or `backend` could be injected and executed via child process `spawn`.
+**Learning:** CLI tools that accept external configuration (e.g., via non-interactive parameters) and pass them to execution functions (`spawn`/`exec`) without strict validation are susceptible to command injection, even if meant for local use.
+**Prevention:** Always implement strict allowlist validation for configuration fields that define commands or tools (e.g., package managers, backends) before passing them to child process execution functions.

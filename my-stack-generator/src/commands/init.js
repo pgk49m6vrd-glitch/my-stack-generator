@@ -46,6 +46,16 @@ export async function initCommand(options = {}) {
       config.features = config.features.split(',').map(s => s.trim()).filter(Boolean);
     }
 
+    // Validate package manager and backend to prevent injection
+    if (!['npm', 'pnpm', 'bun'].includes(config.pm)) {
+      console.error(`\n❌ Error: Invalid package manager "${config.pm}". Must be npm, pnpm, or bun.`);
+      process.exit(1);
+    }
+    if (!['firebase', 'supabase'].includes(config.backend)) {
+      console.error(`\n❌ Error: Invalid backend "${config.backend}". Must be firebase or supabase.`);
+      process.exit(1);
+    }
+
     // Validate project name
     const nameError = getProjectNameValidationError(config.projectName);
     if (nameError) {
