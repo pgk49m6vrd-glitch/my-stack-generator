@@ -36,3 +36,8 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+
+## 2025-02-23 - Command Injection via CLI Flags
+**Vulnerability:** Command injection in CLI `--pm` flag in non-interactive mode. The `pm` configuration was passed directly to `spawn()` without validation.
+**Learning:** Shell-like arguments in non-interactive modes must still be heavily validated, especially when using raw configurations to spawn new child processes or execute external tools. Trusting the inputs allows an attacker to inject shell metacharacters resulting in arbitrary command execution.
+**Prevention:** Strictly validate external command parameters against hardcoded allowlists (e.g. `['npm', 'pnpm', 'bun']`) before passing them to child process execution functions.
