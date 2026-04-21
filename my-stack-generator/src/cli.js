@@ -6,8 +6,6 @@
  */
 
 import { Command } from 'commander';
-import { initCommand } from './commands/init.js';
-import { listPresets } from './config.js';
 
 const program = new Command();
 
@@ -29,6 +27,7 @@ program
   .option('--preset <preset>', 'Use a named preset (default, enterprise, minimal, fullstack)')
   .option('--dry-run', 'Show what would be generated without writing files', false)
   .action(async (options) => {
+    const { initCommand } = await import('./commands/init.js');
     await initCommand(options);
   });
 
@@ -37,6 +36,7 @@ program
   .command('presets')
   .description('List available presets')
   .action(async () => {
+    const { listPresets } = await import('./config.js');
     await listPresets();
   });
 
