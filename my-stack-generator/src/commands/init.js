@@ -46,6 +46,31 @@ export async function initCommand(options = {}) {
       config.features = config.features.split(',').map(s => s.trim()).filter(Boolean);
     }
 
+    // Validate package manager
+    const validPMs = ['npm', 'pnpm', 'bun'];
+    if (config.pm && !validPMs.includes(config.pm)) {
+      console.error(`\n❌ Error: Invalid package manager "${config.pm}". Must be one of: ${validPMs.join(', ')}.`);
+      process.exit(1);
+    }
+
+    // Validate backend
+    const validBackends = ['firebase', 'supabase'];
+    if (config.backend && !validBackends.includes(config.backend)) {
+      console.error(`\n❌ Error: Invalid backend "${config.backend}". Must be one of: ${validBackends.join(', ')}.`);
+      process.exit(1);
+    }
+
+    // Validate features
+    const validFeatures = ['router', 'zustand', 'eslint', 'vitest', 'auth', 'shadcn'];
+    if (config.features && Array.isArray(config.features)) {
+      for (const feature of config.features) {
+        if (!validFeatures.includes(feature)) {
+          console.error(`\n❌ Error: Invalid feature "${feature}". Valid features are: ${validFeatures.join(', ')}.`);
+          process.exit(1);
+        }
+      }
+    }
+
     // Validate project name
     const nameError = getProjectNameValidationError(config.projectName);
     if (nameError) {
