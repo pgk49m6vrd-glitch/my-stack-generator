@@ -37,3 +37,7 @@
 ## 2026-03-02 - Contextualizing Unavailable CLI Options
 **Learning:** Presenting options in a CLI that are fundamentally impossible to choose (like uninstalled package managers) without indicating their unavailability leads to immediate failure and user frustration.
 **Action:** Add visual cues like `(not installed)` directly in the prompt for unavailable options to steer users toward successful paths before they make a choice.
+
+## 2026-03-02 - Decorative Element Accessibility
+**Learning:** Decorative text characters (like `|` or `/` used as separators in navigation links) are read aloud by screen readers, disrupting the logical flow of the content and making it difficult to understand the structure of the links.
+**Action:** Always use structural, semantic HTML layout techniques (like `<ul>`/`<li>` lists with CSS `gap`) and wrap groups of links in `<nav>` landmarks instead of relying on unsemantic inline characters for visual spacing.
