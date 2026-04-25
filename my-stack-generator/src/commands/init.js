@@ -53,6 +53,20 @@ export async function initCommand(options = {}) {
       process.exit(1);
     }
 
+    // Validate package manager and backend
+    const ALLOWED_PMS = ['npm', 'pnpm', 'bun'];
+    const ALLOWED_BACKENDS = ['firebase', 'supabase'];
+
+    if (!ALLOWED_PMS.includes(config.pm)) {
+      console.error(`\n❌ Error: Invalid package manager "${config.pm}". Allowed values: ${ALLOWED_PMS.join(', ')}`);
+      process.exit(1);
+    }
+
+    if (!ALLOWED_BACKENDS.includes(config.backend)) {
+      console.error(`\n❌ Error: Invalid backend "${config.backend}". Allowed values: ${ALLOWED_BACKENDS.join(', ')}`);
+      process.exit(1);
+    }
+
     console.log(`\n📋 Configuration:`);
     console.log(`  Name:       ${config.projectName}`);
     console.log(`  PM:         ${config.pm}`);
