@@ -53,6 +53,19 @@ export async function initCommand(options = {}) {
       process.exit(1);
     }
 
+    // Security Enhancement: Validate pm and backend inputs against strict allowlists
+    const allowedPMs = ['npm', 'pnpm', 'bun'];
+    if (!allowedPMs.includes(config.pm)) {
+      console.error(`\n❌ Invalid package manager: "${config.pm}". Must be one of: ${allowedPMs.join(', ')}`);
+      process.exit(1);
+    }
+
+    const allowedBackends = ['firebase', 'supabase'];
+    if (!allowedBackends.includes(config.backend)) {
+      console.error(`\n❌ Invalid backend: "${config.backend}". Must be one of: ${allowedBackends.join(', ')}`);
+      process.exit(1);
+    }
+
     console.log(`\n📋 Configuration:`);
     console.log(`  Name:       ${config.projectName}`);
     console.log(`  PM:         ${config.pm}`);
