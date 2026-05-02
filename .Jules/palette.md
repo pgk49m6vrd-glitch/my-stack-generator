@@ -37,3 +37,7 @@
 ## 2026-03-02 - Contextualizing Unavailable CLI Options
 **Learning:** Presenting options in a CLI that are fundamentally impossible to choose (like uninstalled package managers) without indicating their unavailability leads to immediate failure and user frustration.
 **Action:** Add visual cues like `(not installed)` directly in the prompt for unavailable options to steer users toward successful paths before they make a choice.
+
+## 2025-05-24 - Form UX and Accessibility
+**Learning:** Auth forms without autocomplete properties and input disabled states during submission lead to poorer user experience and potential double-submissions. Also, error messages should announce themselves to screen readers.
+**Action:** Always add `autoComplete`, `disabled={loading}` to form inputs, and `role="alert"` to error messages in auth forms.
