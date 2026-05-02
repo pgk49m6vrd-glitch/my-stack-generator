@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2024-05-18 - CLI Startup Time Bottlenecks
+**Learning:** Top-level synchronous static imports of complex logic or large dependencies in a Node.js CLI can significantly slow down basic boot tasks like `--help` or `--version`, because the module tree must be fully parsed before execution.
+**Action:** Use dynamic imports (`await import()`) inside specific command action handlers to ensure that expensive modules are only evaluated when their respective commands are actually invoked.
