@@ -37,3 +37,11 @@
 ## 2026-03-02 - Contextualizing Unavailable CLI Options
 **Learning:** Presenting options in a CLI that are fundamentally impossible to choose (like uninstalled package managers) without indicating their unavailability leads to immediate failure and user frustration.
 **Action:** Add visual cues like `(not installed)` directly in the prompt for unavailable options to steer users toward successful paths before they make a choice.
+
+## 2025-05-23 - Form Error Announcements
+**Learning:** React state-driven error messages are visually apparent but often ignored by screen readers if they lack `role="alert"`. Users relying on assistive tech submit a form and hear nothing, unaware it failed.
+**Action:** Always add `role="alert"` (or `aria-live="assertive"`) to dynamically rendered error message containers in forms.
+
+## 2025-05-23 - Async Action Status Feedback
+**Learning:** Text-only loading states don't provide clear enough feedback for async actions, and disabled buttons without context can leave users confused. Screen readers also need explicit status cues.
+**Action:** Always add visual indicators like a spinner, keep text descriptive ("Processing..."), and include `aria-busy={true}` on loading submit buttons.
