@@ -36,3 +36,7 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+## 2024-05-20 - Unvalidated CLI Inputs Leading to Command Injection
+**Vulnerability:** Untrusted CLI input for `--pm` and `--backend` flags were not validated against an allowlist in non-interactive mode. These values were subsequently passed to `spawn`, which could lead to command injection.
+**Learning:** Always validate untrusted user inputs and CLI arguments against strict allowlists before passing them to OS-level APIs or child processes like `spawn()`, even if they are just configuration options.
+**Prevention:** Implement strict allowlist validation for configuration options, safely handling `undefined` values, and fail securely and loudly by logging an error and exiting (`process.exit(1)`) if invalid input is detected.
