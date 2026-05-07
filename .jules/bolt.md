@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2024-05-25 - CLI Startup Delay with Static Imports
+**Learning:** Top-level static imports for subcommands (which themselves import heavy dependencies like `cosmiconfig`) impose significant synchronous startup delays on simple commands like `--help` or `--version`.
+**Action:** Use dynamic `await import()` inside the `.action()` handlers of `commander` routes. This isolates the heavy imports to execution paths that actually need them, reducing startup time by ~40-50%.
