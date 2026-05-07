@@ -46,6 +46,20 @@ export async function initCommand(options = {}) {
       config.features = config.features.split(',').map(s => s.trim()).filter(Boolean);
     }
 
+    // Security: Prevent command injection from untrusted --pm flag
+    const validPMs = ['npm', 'pnpm', 'bun'];
+    if (config.pm !== undefined && !validPMs.includes(config.pm)) {
+      console.error(`\n❌ Error: Invalid package manager "${config.pm}". Supported options are: ${validPMs.join(', ')}.`);
+      process.exit(1);
+    }
+
+    // Security: Validate backend option against allowlist
+    const validBackends = ['firebase', 'supabase'];
+    if (config.backend !== undefined && !validBackends.includes(config.backend)) {
+      console.error(`\n❌ Error: Invalid backend "${config.backend}". Supported options are: ${validBackends.join(', ')}.`);
+      process.exit(1);
+    }
+
     // Validate project name
     const nameError = getProjectNameValidationError(config.projectName);
     if (nameError) {
