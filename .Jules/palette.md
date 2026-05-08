@@ -37,3 +37,7 @@
 ## 2026-03-02 - Contextualizing Unavailable CLI Options
 **Learning:** Presenting options in a CLI that are fundamentally impossible to choose (like uninstalled package managers) without indicating their unavailability leads to immediate failure and user frustration.
 **Action:** Add visual cues like `(not installed)` directly in the prompt for unavailable options to steer users toward successful paths before they make a choice.
+
+## 2024-05-08 - Accessible Forms during Async Operations
+**Learning:** Users with screen readers need immediate feedback when form submissions fail, and inputs must be locked while async operations are pending to prevent race conditions.
+**Action:** Ensure error messages have `role="alert"`, inputs are `disabled={loading}`, inputs have `aria-invalid` if an error exists, and submit buttons use `aria-busy={loading}` for all async forms.
