@@ -41,6 +41,20 @@ export async function initCommand(options = {}) {
     config.features = config.features || [];
     config.shouldInstall = !options.dryRun; // Don't install on dry-run
 
+    // Security validation: Prevent command injection by validating package manager and backend
+    const ALLOWED_PM = ['npm', 'pnpm', 'bun'];
+    const ALLOWED_BACKEND = ['firebase', 'supabase'];
+
+    if (config.pm !== undefined && !ALLOWED_PM.includes(config.pm)) {
+      console.error(`\n❌ Error: Invalid package manager "${config.pm}". Must be one of: ${ALLOWED_PM.join(', ')}`);
+      process.exit(1);
+    }
+
+    if (config.backend !== undefined && !ALLOWED_BACKEND.includes(config.backend)) {
+      console.error(`\n❌ Error: Invalid backend "${config.backend}". Must be one of: ${ALLOWED_BACKEND.join(', ')}`);
+      process.exit(1);
+    }
+
     // Parse features if passed as string
     if (typeof config.features === 'string') {
       config.features = config.features.split(',').map(s => s.trim()).filter(Boolean);

@@ -36,3 +36,7 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+## 2024-05-08 - Prevent Command Injection in Non-Interactive CLI Modes
+**Vulnerability:** Command injection vulnerability in `my-stack-generator` via the `--pm` CLI flag in non-interactive mode. The input was directly passed to `spawn()` without validation against an allowlist.
+**Learning:** Security validation must be applied not only in interactive prompt modes but also consistently across non-interactive configurations where users directly supply arbitrary input.
+**Prevention:** Always validate all untrusted user inputs (like `--pm` flags) against strict allowlists (e.g., `['npm', 'pnpm', 'bun']`) before passing them to OS-level APIs or child processes like `spawn()`.
