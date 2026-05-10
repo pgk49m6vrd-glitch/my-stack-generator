@@ -36,3 +36,8 @@
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
 **Prevention:** Always include a Referrer-Policy meta tag in the HTML head of generated applications to enforce a secure default policy.
+
+## 2024-05-10 - Command Injection Vulnerability in Non-Interactive Mode
+**Vulnerability:** The CLI takes inputs like `config.pm` (package manager) and `config.backend` from command line arguments in non-interactive mode (`-y`), and directly passes `config.pm` to `spawn()` in `src/generator.js` without validating it against an allowlist.
+**Learning:** Even if interactive prompts restrict choices, non-interactive mode inputs from flags or configuration files must be strictly validated before passing them to OS-level APIs like `spawn` to prevent command injection vulnerabilities.
+**Prevention:** Always validate untrusted user inputs and CLI arguments (like `--pm` flags) against strict allowlists (e.g., `['npm', 'pnpm', 'bun']` for PMs) before execution. Fail securely and loudly by logging an error and exiting the process (`process.exit(1)`).
