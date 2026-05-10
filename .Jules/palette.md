@@ -37,3 +37,6 @@
 ## 2026-03-02 - Contextualizing Unavailable CLI Options
 **Learning:** Presenting options in a CLI that are fundamentally impossible to choose (like uninstalled package managers) without indicating their unavailability leads to immediate failure and user frustration.
 **Action:** Add visual cues like `(not installed)` directly in the prompt for unavailable options to steer users toward successful paths before they make a choice.
+## 2026-05-10 - ARIA roles for dynamic errors
+**Learning:** Dynamic error messages in forms need 'role="alert"' or 'aria-live="assertive"' to be announced by screen readers when they appear.
+**Action:** Always add appropriate ARIA live region roles to error message containers that appear conditionally based on form submission failures.
