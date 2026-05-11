@@ -37,3 +37,6 @@
 ## 2026-03-02 - Contextualizing Unavailable CLI Options
 **Learning:** Presenting options in a CLI that are fundamentally impossible to choose (like uninstalled package managers) without indicating their unavailability leads to immediate failure and user frustration.
 **Action:** Add visual cues like `(not installed)` directly in the prompt for unavailable options to steer users toward successful paths before they make a choice.
+## 2024-06-19 - Improved Screen Reader Support for Auth Forms
+**Learning:** Auth forms missing explicit roles and `aria-live` can leave screen reader users unaware when login/signup async processes fail or occur. Input `aria-invalid` provides immediate contextual feedback.
+**Action:** Always add `role="alert"` and `aria-live="assertive"` to async form error messages, `aria-invalid={!!error}` on inputs, and `aria-live="polite"` inside loading buttons.
