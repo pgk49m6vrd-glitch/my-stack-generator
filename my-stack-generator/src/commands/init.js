@@ -33,6 +33,20 @@ export async function initCommand(options = {}) {
     const preset = options.preset ? await resolvePreset(options.preset) : { ...PRESETS.default };
     config = mergeConfig(preset, options);
 
+    // Security: Validate inputs against allowlists to prevent command injection
+    const allowedPms = ['npm', 'pnpm', 'bun'];
+    const allowedBackends = ['firebase', 'supabase'];
+
+    if (config.pm !== undefined && !allowedPms.includes(config.pm)) {
+      console.error(`\n❌ Error: Invalid package manager "${config.pm}". Allowed values: ${allowedPms.join(', ')}`);
+      process.exit(1);
+    }
+
+    if (config.backend !== undefined && !allowedBackends.includes(config.backend)) {
+      console.error(`\n❌ Error: Invalid backend "${config.backend}". Allowed values: ${allowedBackends.join(', ')}`);
+      process.exit(1);
+    }
+
     // Apply defaults for missing values
     config.projectName = config.projectName || config.name || 'my-awesome-project';
     config.pm = config.pm || 'npm';
