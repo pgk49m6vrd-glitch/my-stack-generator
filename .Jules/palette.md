@@ -37,3 +37,6 @@
 ## 2026-03-02 - Contextualizing Unavailable CLI Options
 **Learning:** Presenting options in a CLI that are fundamentally impossible to choose (like uninstalled package managers) without indicating their unavailability leads to immediate failure and user frustration.
 **Action:** Add visual cues like `(not installed)` directly in the prompt for unavailable options to steer users toward successful paths before they make a choice.
+## 2024-05-17 - Authentication Form Accessibility
+**Learning:** Authentication forms lack `autoComplete` attributes which breaks password managers, and error containers lack `role="alert"` which prevents screen readers from announcing dynamic error states.
+**Action:** Always include appropriate `autoComplete` attributes (like `email`, `current-password`, `new-password`) on authentication inputs, and apply `role="alert"` to dynamically rendered error message containers to ensure form accessibility and usability.
