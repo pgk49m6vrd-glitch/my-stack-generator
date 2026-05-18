@@ -66,6 +66,20 @@ export async function initCommand(options = {}) {
       process.exit(1);
     }
 
+    // Security Validation: Validate package manager and backend against strict allowlists
+    // to prevent command injection and execution of unsupported tools via child processes.
+    const allowedPms = ['npm', 'pnpm', 'bun'];
+    if (config.pm !== undefined && !allowedPms.includes(config.pm)) {
+      console.error(`\n❌ Security Error: Unsupported package manager "${config.pm}". Allowed: ${allowedPms.join(', ')}`);
+      process.exit(1);
+    }
+
+    const allowedBackends = ['firebase', 'supabase'];
+    if (config.backend !== undefined && !allowedBackends.includes(config.backend)) {
+      console.error(`\n❌ Security Error: Unsupported backend "${config.backend}". Allowed: ${allowedBackends.join(', ')}`);
+      process.exit(1);
+    }
+
     console.log(`\n📋 Configuration:`);
     console.log(`  Name:       ${config.projectName}`);
     console.log(`  PM:         ${config.pm}`);
