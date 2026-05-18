@@ -13,3 +13,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-02-11 - Remove Redundant Path Normalization in Name Validation
 **Learning:** In this CLI, `validateProjectName` already rejects separators via `VALID_NAME_REGEX`, so additional `path.resolve/path.relative` checks on every prompt loop iteration were redundant and significantly slower.
 **Action:** Keep traversal protection at the character-policy layer for project names and avoid path normalization in the validator hot path unless allowed characters expand.
+
+## 2024-05-27 - Dynamic Imports for CLI Subcommands
+**Learning:** Top-level synchronous imports for subcommands (and their heavy dependencies like cosmiconfig or inquirer) block the Node.js event loop during initial execution, unnecessarily increasing the time required to print the help menu or start up.
+**Action:** Always use dynamic `await import()` inside the `.action()` handler of CLI commands. This delays the evaluation of heavy modules until the user explicitly requests them, significantly reducing startup time.
