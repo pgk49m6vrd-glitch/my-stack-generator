@@ -52,7 +52,7 @@ export async function loadUserConfig() {
     if (result && result.config) {
       return result.config;
     }
-  } catch (e) {
+  } catch {
     // Config not found or malformed — ignore
   }
   return {};
@@ -67,7 +67,7 @@ export async function savePreset(name, config) {
     if (fs.existsSync(RC_FILE)) {
       existing = JSON.parse(await fs.promises.readFile(RC_FILE, 'utf-8'));
     }
-  } catch (e) {
+  } catch {
     existing = {};
   }
 

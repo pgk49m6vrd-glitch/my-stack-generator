@@ -93,7 +93,6 @@ export function checkPackageManager(pm, spawn) {
 
 let currentRoot = '';
 let currentCleanupMarker = '';
-let cachedRealCwd;
 
 export function setCleanupTarget(root, marker) {
   currentRoot = root;
@@ -109,7 +108,7 @@ export function cleanup() {
   if (!currentRoot || !fs.existsSync(currentRoot)) return;
 
   try {
-    const realCwd = cachedRealCwd || fs.realpathSync(process.cwd());
+    const realCwd = fs.realpathSync(process.cwd());
     const realRoot = fs.realpathSync(currentRoot);
     const markerPath = currentCleanupMarker || path.join(realRoot, '.mystack-generator.tmp');
     const relative = path.relative(realCwd, realRoot);
@@ -121,7 +120,7 @@ export function cleanup() {
 
     fs.rmSync(realRoot, { recursive: true, force: true });
     console.log(`\n🧹 Cleaned up: ${realRoot}`);
-  } catch (e) {
+  } catch {
     // Ignore cleanup errors
   } finally {
     currentRoot = '';

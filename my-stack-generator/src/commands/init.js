@@ -10,6 +10,9 @@ import { runPrompts } from '../prompts.js';
 import { generateProject } from '../generator.js';
 import { resolvePreset, mergeConfig, PRESETS } from '../config.js';
 
+const ALLOWED_PACKAGE_MANAGERS = ['npm', 'pnpm', 'bun'];
+const ALLOWED_BACKENDS = ['firebase', 'supabase'];
+
 /**
  * Executes the init command.
  * @param {object} options - Commander options
@@ -33,16 +36,14 @@ export async function initCommand(options = {}) {
     const preset = options.preset ? await resolvePreset(options.preset) : { ...PRESETS.default };
     config = mergeConfig(preset, options);
 
-    // SECURITY: Validate untrusted CLI inputs against strict allowlists to prevent command injection
-    const allowedPMs = ['npm', 'pnpm', 'bun'];
-    if (config.pm !== undefined && !allowedPMs.includes(config.pm)) {
-      console.error(`\n❌ Error: Invalid package manager "${config.pm}". Allowed values: npm, pnpm, bun`);
+    // Validate untrusted CLI inputs before they can reach child processes or template paths.
+    if (config.pm !== undefined && !ALLOWED_PACKAGE_MANAGERS.includes(config.pm)) {
+      console.error(`\n❌ Security Error: Unsupported package manager "${config.pm}". Allowed: ${ALLOWED_PACKAGE_MANAGERS.join(', ')}`);
       process.exit(1);
     }
 
-    const allowedBackends = ['firebase', 'supabase'];
-    if (config.backend !== undefined && !allowedBackends.includes(config.backend)) {
-      console.error(`\n❌ Error: Invalid backend "${config.backend}". Allowed values: firebase, supabase`);
+    if (config.backend !== undefined && !ALLOWED_BACKENDS.includes(config.backend)) {
+      console.error(`\n❌ Security Error: Unsupported backend "${config.backend}". Allowed: ${ALLOWED_BACKENDS.join(', ')}`);
       process.exit(1);
     }
 
@@ -63,20 +64,6 @@ export async function initCommand(options = {}) {
     const nameError = getProjectNameValidationError(config.projectName);
     if (nameError) {
       console.error(`\n❌ ${nameError}`);
-      process.exit(1);
-    }
-
-    // Security Validation: Validate package manager and backend against strict allowlists
-    // to prevent command injection and execution of unsupported tools via child processes.
-    const allowedPms = ['npm', 'pnpm', 'bun'];
-    if (config.pm !== undefined && !allowedPms.includes(config.pm)) {
-      console.error(`\n❌ Security Error: Unsupported package manager "${config.pm}". Allowed: ${allowedPms.join(', ')}`);
-      process.exit(1);
-    }
-
-    const allowedBackends = ['firebase', 'supabase'];
-    if (config.backend !== undefined && !allowedBackends.includes(config.backend)) {
-      console.error(`\n❌ Security Error: Unsupported backend "${config.backend}". Allowed: ${allowedBackends.join(', ')}`);
       process.exit(1);
     }
 
