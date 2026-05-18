@@ -41,3 +41,7 @@
 **Vulnerability:** Command injection risk via unvalidated `--pm` and `--backend` flags in non-interactive mode.
 **Learning:** CLI parameters that are later passed to OS-level child processes (like `spawn`) must be rigorously validated even when reasonable defaults are provided. In non-interactive modes, validation logic is often accidentally bypassed.
 **Prevention:** Always implement strict allowlists for sensitive CLI arguments before any process execution, failing securely (e.g., `process.exit(1)`) if inputs are out-of-bounds. Safely handle `undefined` cases to preserve legitimate defaults.
+## 2024-05-18 - [Command Injection via Unvalidated CLI Input]
+**Vulnerability:** The CLI accepted any string for the package manager flag (`--pm`) in non-interactive mode, which was directly passed to `spawn()`, leading to potential command injection.
+**Learning:** Even though `spawn()` is used without a shell by default, an attacker could supply an arbitrary binary name. Unvalidated inputs passed to OS-level APIs must be validated safely against allowlists.
+**Prevention:** Always validate untrusted CLI inputs against a strict allowlist before using them in child processes, taking care to safely handle undefined values before default fallbacks.
