@@ -92,9 +92,8 @@ export async function runPrompts(rl) {
   }
 
   // 4. TypeScript (F3)
-  let typescript = false;
   const tsChoice = await askQuestion(rl, "\n📘 Do you want to use TypeScript? (y/N) ");
-  typescript = tsChoice.trim().toLowerCase() === 'y';
+  const typescript = tsChoice.trim().toLowerCase() === 'y';
 
   // 5. Features (F4)
   console.log("\n🧩 Select optional features (comma-separated numbers, or press Enter to skip):");
