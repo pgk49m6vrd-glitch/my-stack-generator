@@ -4,7 +4,6 @@
  */
 
 import readline from 'readline';
-import path from 'path';
 import { loadDependencies, getProjectNameValidationError } from '../utils.js';
 import { runPrompts } from '../prompts.js';
 import { generateProject } from '../generator.js';

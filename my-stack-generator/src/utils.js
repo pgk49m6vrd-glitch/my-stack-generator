@@ -80,7 +80,7 @@ export function checkPackageManager(pm, spawn) {
         clearTimeout(timeout);
         resolve(false);
       });
-    } catch (e) {
+    } catch {
       resolve(false);
     }
   });
