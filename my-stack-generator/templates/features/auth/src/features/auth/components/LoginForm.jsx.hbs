@@ -37,7 +37,9 @@ function LoginForm() {
       }
 {{/if}}
     } catch (err) {
-      setError(err.message || 'An error occurred');
+      // Security: Prevent information leakage (like user enumeration) by using generic error messages
+      console.error('Authentication error:', err);
+      setError(isLogin ? 'Invalid email or password.' : 'Failed to create account. Please try again.');
     } finally {
       setLoading(false);
     }
