@@ -17,3 +17,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-05-16 - CLI Startup Latency
 **Learning:** Synchronous top-level imports of subcommand modules (and their nested dependencies) in the CLI entry point (`src/cli.js`) causes an unnecessary performance penalty during startup, even for simple commands like `--help`.
 **Action:** Use dynamic imports (`await import()`) inside the command `.action()` handlers to defer loading the heavy modules until they are actually executed, decreasing startup time.
+
+## 2024-05-23 - Async File Read Exists Check Overhead
+**Learning:** Using synchronous `fs.existsSync()` before an asynchronous `fs.promises.readFile()` introduces unnecessary event-loop blocking. However, replacing `fs.existsSync()` with a `try-catch` block around `fs.readFileSync()` actually degrades performance on cache misses due to V8 Error object generation overhead.
+**Action:** Avoid redundant `fs.existsSync` checks only for asynchronous file reads. Directly call `fs.promises.readFile` and handle the potential `ENOENT` case within a `try-catch` block.
