@@ -64,9 +64,8 @@ export async function loadUserConfig() {
 export async function savePreset(name, config) {
   let existing = {};
   try {
-    if (fs.existsSync(RC_FILE)) {
-      existing = JSON.parse(await fs.promises.readFile(RC_FILE, 'utf-8'));
-    }
+    // ⚡ Bolt Optimization: Replace synchronous fs.existsSync with a direct try-catch around async fs.promises.readFile to avoid blocking the event loop
+    existing = JSON.parse(await fs.promises.readFile(RC_FILE, 'utf-8'));
   } catch {
     existing = {};
   }
