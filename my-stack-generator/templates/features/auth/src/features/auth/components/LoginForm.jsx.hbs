@@ -37,7 +37,9 @@ function LoginForm() {
       }
 {{/if}}
     } catch (err) {
-      setError(err.message || 'An error occurred');
+      // 🛡️ Sentinel: Prevent user enumeration by displaying a generic error
+      console.error('Authentication error:', err);
+      setError('Authentication failed. Please check your credentials and try again.');
     } finally {
       setLoading(false);
     }
