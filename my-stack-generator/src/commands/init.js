@@ -5,7 +5,7 @@
 
 import readline from 'readline';
 import { loadDependencies, getProjectNameValidationError } from '../utils.js';
-import { runPrompts } from '../prompts.js';
+import { runPrompts, AVAILABLE_FEATURES } from '../prompts.js';
 import { generateProject } from '../generator.js';
 import { resolvePreset, mergeConfig, PRESETS } from '../config.js';
 
@@ -57,6 +57,16 @@ export async function initCommand(options = {}) {
     // Parse features if passed as string
     if (typeof config.features === 'string') {
       config.features = config.features.split(',').map(s => s.trim()).filter(Boolean);
+    }
+
+    // Validate features against allowlist
+    if (config.features && Array.isArray(config.features)) {
+      const allowedFeatures = AVAILABLE_FEATURES.map(f => f.name);
+      const invalidFeatures = config.features.filter(f => !allowedFeatures.includes(f));
+      if (invalidFeatures.length > 0) {
+        console.error(`\n❌ Security Error: Unsupported features "${invalidFeatures.join(', ')}". Allowed: ${allowedFeatures.join(', ')}`);
+        process.exit(1);
+      }
     }
 
     // Validate project name
