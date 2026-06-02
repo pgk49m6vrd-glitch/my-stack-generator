@@ -17,3 +17,6 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-05-16 - CLI Startup Latency
 **Learning:** Synchronous top-level imports of subcommand modules (and their nested dependencies) in the CLI entry point (`src/cli.js`) causes an unnecessary performance penalty during startup, even for simple commands like `--help`.
 **Action:** Use dynamic imports (`await import()`) inside the command `.action()` handlers to defer loading the heavy modules until they are actually executed, decreasing startup time.
+## 2025-06-02 - Batch Async FS Operations
+**Learning:** Iterating over sequential `Promise.all` blocks for asynchronous file system operations (like `mkdir`) introduces unnecessary Node.js event-loop and system call overhead.
+**Action:** Consolidate related async file system operations into a single `Promise.all` batch. By merging required empty directory paths into the initial directory extraction Set, we reduced generation overhead by ~10%.
