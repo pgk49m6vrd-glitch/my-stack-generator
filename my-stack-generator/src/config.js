@@ -42,11 +42,12 @@ const PRESETS = {
 
 export { PRESETS };
 
+const explorer = cosmiconfig('mystack');
+
 /**
  * Loads the user's saved presets from ~/.mystackrc.json.
  */
 export async function loadUserConfig() {
-  const explorer = cosmiconfig('mystack');
   try {
     const result = await explorer.search();
     if (result && result.config) {

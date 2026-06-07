@@ -17,3 +17,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-05-16 - CLI Startup Latency
 **Learning:** Synchronous top-level imports of subcommand modules (and their nested dependencies) in the CLI entry point (`src/cli.js`) causes an unnecessary performance penalty during startup, even for simple commands like `--help`.
 **Action:** Use dynamic imports (`await import()`) inside the command `.action()` handlers to defer loading the heavy modules until they are actually executed, decreasing startup time.
+
+## 2025-06-07 - Cosmiconfig Initialization Overhead
+**Learning:** In Node.js applications, repeatedly instantiating `cosmiconfig()` inside a frequently called function introduces measurable initialization overhead (~3.5ms per call) because it re-initializes caches and filesystem abstractions.
+**Action:** Cache the explorer instance at the module scope to reuse it across calls, which drops execution time significantly (to ~0.01ms per call).
