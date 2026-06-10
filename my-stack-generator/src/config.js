@@ -45,10 +45,15 @@ export { PRESETS };
 /**
  * Loads the user's saved presets from ~/.mystackrc.json.
  */
+// ⚡ Bolt Optimization: Cache the cosmiconfig explorer instance to avoid initialization overhead on repeated calls.
+let explorerCache = null;
+
 export async function loadUserConfig() {
-  const explorer = cosmiconfig('mystack');
+  if (!explorerCache) {
+    explorerCache = cosmiconfig('mystack');
+  }
   try {
-    const result = await explorer.search();
+    const result = await explorerCache.search();
     if (result && result.config) {
       return result.config;
     }
