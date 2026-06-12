@@ -45,3 +45,7 @@
 **Vulnerability:** The CLI accepted any string for the package manager flag (`--pm`) in non-interactive mode, which was directly passed to `spawn()`, leading to potential command injection.
 **Learning:** Even though `spawn()` is used without a shell by default, an attacker could supply an arbitrary binary name. Unvalidated inputs passed to OS-level APIs must be validated safely against allowlists.
 **Prevention:** Always validate untrusted CLI inputs against a strict allowlist before using them in child processes, taking care to safely handle undefined values before default fallbacks.
+## 2025-02-21 - Authentication Error Message Information Leakage
+**Vulnerability:** User enumeration is possible because the login and registration forms display specific backend errors directly in the UI (e.g., indicating if an email is already in use or not found).
+**Learning:** Returning specific error messages from authentication endpoints or passing raw backend error messages directly to the UI allows attackers to map valid usernames and emails in the system.
+**Prevention:** Always catch authentication errors and display generic, non-specific error messages (e.g., 'Invalid email or password', 'Registration failed') to prevent information leakage and user enumeration.

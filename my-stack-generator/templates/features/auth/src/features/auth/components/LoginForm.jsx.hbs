@@ -37,7 +37,9 @@ function LoginForm() {
       }
 {{/if}}
     } catch (err) {
-      setError(err.message || 'An error occurred');
+      // SECURITY: Display generic error message to prevent user enumeration
+      console.error(err);
+      setError(isLogin ? 'Invalid email or password.' : 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
