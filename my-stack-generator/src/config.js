@@ -42,13 +42,16 @@ const PRESETS = {
 
 export { PRESETS };
 
+// ⚡ Bolt Optimization: Cache the cosmiconfig explorer instance at the module scope
+// to reuse it across calls, avoiding measurable initialization overhead.
+const configExplorer = cosmiconfig('mystack');
+
 /**
  * Loads the user's saved presets from ~/.mystackrc.json.
  */
 export async function loadUserConfig() {
-  const explorer = cosmiconfig('mystack');
   try {
-    const result = await explorer.search();
+    const result = await configExplorer.search();
     if (result && result.config) {
       return result.config;
     }
