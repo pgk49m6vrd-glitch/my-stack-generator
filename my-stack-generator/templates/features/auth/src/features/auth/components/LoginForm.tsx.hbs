@@ -37,7 +37,9 @@ function LoginForm(): React.JSX.Element {
       }
 {{/if}}
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      // SECURITY: Avoid leaking raw backend error messages to prevent user enumeration
+      setError(isLogin ? 'Invalid email or password.' : 'Failed to create account. Please try again.');
+      console.error('Authentication error:', err);
     } finally {
       setLoading(false);
     }
