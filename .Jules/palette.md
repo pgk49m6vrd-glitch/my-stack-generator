@@ -41,3 +41,6 @@
 ## 2026-03-02 - Dynamic Error Announcements
 **Learning:** Error messages that appear after a form submission are visually obvious but invisible to screen readers unless marked with `role="alert"`. Loading states on buttons also need `aria-busy` to convey their status.
 **Action:** Always add `role="alert"` to dynamic error message containers and `aria-busy` to buttons undergoing async operations in React templates.
+## 2026-03-02 - Visual and Sensory Parity in Loading States
+**Learning:** Adding `aria-busy={true}` to buttons without a visual loading indicator creates an accessibility gap where screen reader users perceive a loading state but sighted users only see static text or a disabled button.
+**Action:** Always pair `aria-busy={true}` with a visual indicator, such as an animated SVG spinner with `aria-hidden="true"`, to ensure sensory parity between sighted users and screen readers.
