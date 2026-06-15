@@ -5,11 +5,12 @@
 
 import readline from 'readline';
 import { loadDependencies, getProjectNameValidationError } from '../utils.js';
-import { runPrompts } from '../prompts.js';
+import { runPrompts, AVAILABLE_FEATURES } from '../prompts.js';
 import { generateProject } from '../generator.js';
 import { resolvePreset, mergeConfig, PRESETS } from '../config.js';
 
 const ALLOWED_PACKAGE_MANAGERS = ['npm', 'pnpm', 'bun'];
+const ALLOWED_FEATURES_KEYS = AVAILABLE_FEATURES.map(f => f.name);
 const ALLOWED_BACKENDS = ['firebase', 'supabase'];
 
 /**
@@ -57,6 +58,15 @@ export async function initCommand(options = {}) {
     // Parse features if passed as string
     if (typeof config.features === 'string') {
       config.features = config.features.split(',').map(s => s.trim()).filter(Boolean);
+    }
+
+    if (config.features && Array.isArray(config.features)) {
+      for (const f of config.features) {
+        if (!ALLOWED_FEATURES_KEYS.includes(f)) {
+          console.error(`\n❌ Security Error: Unsupported feature "${f}". Allowed: ${ALLOWED_FEATURES_KEYS.join(', ')}`);
+          process.exit(1);
+        }
+      }
     }
 
     // Validate project name
