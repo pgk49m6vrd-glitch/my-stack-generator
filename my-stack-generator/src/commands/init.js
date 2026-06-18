@@ -59,6 +59,16 @@ export async function initCommand(options = {}) {
       config.features = config.features.split(',').map(s => s.trim()).filter(Boolean);
     }
 
+    // Validate features against allowlist to prevent injection or out-of-bounds input
+    const ALLOWED_FEATURES = ['router', 'zustand', 'eslint', 'vitest', 'auth', 'shadcn'];
+    if (config.features && Array.isArray(config.features)) {
+      const invalidFeatures = config.features.filter(f => !ALLOWED_FEATURES.includes(f));
+      if (invalidFeatures.length > 0) {
+        console.error(`\n❌ Security Error: Unsupported features: ${invalidFeatures.join(', ')}. Allowed: ${ALLOWED_FEATURES.join(', ')}`);
+        process.exit(1);
+      }
+    }
+
     // Validate project name
     const nameError = getProjectNameValidationError(config.projectName);
     if (nameError) {
