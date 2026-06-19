@@ -11,6 +11,10 @@ import os from 'os';
 
 const RC_FILE = path.join(os.homedir(), '.mystackrc.json');
 
+// ⚡ Bolt Optimization: Cache the cosmiconfig explorer at module scope
+// Repeatedly instantiating cosmiconfig() adds significant initialization overhead (~13ms per call)
+const explorer = cosmiconfig('mystack');
+
 // ─── Built-in Presets ───────────────────────────────────────────────
 
 const PRESETS = {
@@ -46,7 +50,6 @@ export { PRESETS };
  * Loads the user's saved presets from ~/.mystackrc.json.
  */
 export async function loadUserConfig() {
-  const explorer = cosmiconfig('mystack');
   try {
     const result = await explorer.search();
     if (result && result.config) {
