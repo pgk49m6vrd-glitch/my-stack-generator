@@ -59,6 +59,16 @@ export async function initCommand(options = {}) {
       config.features = config.features.split(',').map(s => s.trim()).filter(Boolean);
     }
 
+    if (config.features && Array.isArray(config.features)) {
+      const allowedFeatures = ['router', 'zustand', 'eslint', 'vitest', 'auth', 'shadcn'];
+      for (const feature of config.features) {
+        if (!allowedFeatures.includes(feature)) {
+          console.error(`\n❌ Security Error: Unsupported feature "${feature}". Allowed: ${allowedFeatures.join(', ')}`);
+          process.exit(1);
+        }
+      }
+    }
+
     // Validate project name
     const nameError = getProjectNameValidationError(config.projectName);
     if (nameError) {
