@@ -37,7 +37,7 @@ function LoginForm() {
       }
 {{/if}}
     } catch (err) {
-      setError(err.message || 'An error occurred');
+      setError('An error occurred during authentication. Please try again.');
     } finally {
       setLoading(false);
     }
