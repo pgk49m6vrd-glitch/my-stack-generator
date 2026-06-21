@@ -37,7 +37,8 @@ function LoginForm(): React.JSX.Element {
       }
 {{/if}}
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      // 🛡️ Sentinel: Prevent user enumeration and information leakage by using a generic error message
+      setError('Authentication failed. Please check your credentials and try again.');
     } finally {
       setLoading(false);
     }

@@ -45,3 +45,8 @@
 **Vulnerability:** The CLI accepted any string for the package manager flag (`--pm`) in non-interactive mode, which was directly passed to `spawn()`, leading to potential command injection.
 **Learning:** Even though `spawn()` is used without a shell by default, an attacker could supply an arbitrary binary name. Unvalidated inputs passed to OS-level APIs must be validated safely against allowlists.
 **Prevention:** Always validate untrusted CLI inputs against a strict allowlist before using them in child processes, taking care to safely handle undefined values before default fallbacks.
+
+## 2025-02-22 - Prevent Authentication Info Leakage
+**Vulnerability:** Raw backend error messages (from Firebase/Supabase) were passed directly to the UI, allowing user enumeration and information leakage.
+**Learning:** Returning specific error messages like 'User not found' or 'Invalid password' allows attackers to enumerate registered users and gain insight into the system's state.
+**Prevention:** Always catch authentication errors and display generic, non-specific error messages like 'Authentication failed. Please check your credentials and try again.'
