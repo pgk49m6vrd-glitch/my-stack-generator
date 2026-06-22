@@ -37,7 +37,10 @@ function LoginForm() {
       }
 {{/if}}
     } catch (err) {
-      setError(err.message || 'An error occurred');
+      // Security enhancement: Prevent user enumeration and information leakage
+      // by displaying a generic error message instead of raw backend errors.
+      console.error('Authentication error:', err);
+      setError('Authentication failed. Please check your credentials and try again.');
     } finally {
       setLoading(false);
     }

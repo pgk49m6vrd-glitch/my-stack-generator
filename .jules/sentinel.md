@@ -45,3 +45,7 @@
 **Vulnerability:** The CLI accepted any string for the package manager flag (`--pm`) in non-interactive mode, which was directly passed to `spawn()`, leading to potential command injection.
 **Learning:** Even though `spawn()` is used without a shell by default, an attacker could supply an arbitrary binary name. Unvalidated inputs passed to OS-level APIs must be validated safely against allowlists.
 **Prevention:** Always validate untrusted CLI inputs against a strict allowlist before using them in child processes, taking care to safely handle undefined values before default fallbacks.
+## 2025-10-24 - Generic Error Messages for Authentication
+**Vulnerability:** The authentication form directly passed raw backend errors to the UI via `err.message`.
+**Learning:** Displaying raw backend errors to users can leak sensitive system information and enable user enumeration attacks (e.g., revealing whether an email is registered or not).
+**Prevention:** Always catch raw backend errors and display generic, safe error messages to users, logging the specific error internally if needed.
