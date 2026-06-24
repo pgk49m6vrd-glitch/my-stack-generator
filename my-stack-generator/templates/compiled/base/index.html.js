@@ -1,6 +1,6 @@
-{"1":function(container,depth0,helpers,partials,data) {
+{"0":function(container,depth0,helpers,partials,data) {
     return "tsx";
-},"3":function(container,depth0,helpers,partials,data) {
+},"1":function(container,depth0,helpers,partials,data) {
     return "jsx";
 },"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", lookupProperty = container.lookupProperty || function(parent, propertyName) {
@@ -19,6 +19,6 @@
     + "\" />\n\n  <title>"
     + ((stack1 = ((helper = (helper = lookupProperty(helpers,"projectName") || (depth0 != null ? lookupProperty(depth0,"projectName") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"projectName","hash":{},"data":data,"loc":{"start":{"line":19,"column":9},"end":{"line":19,"column":24}}}) : helper))) != null ? stack1 : "")
     + "</title>\n</head>\n<body class=\"bg-slate-900\">\n  <noscript>\n    <div class=\"fixed inset-0 z-50 flex items-center justify-center bg-slate-900 text-slate-200 p-6 text-center\">\n      <div class=\"max-w-md\">\n        <h1 class=\"text-3xl font-bold mb-4\">JavaScript Required</h1>\n        <p class=\"text-lg opacity-90\">\n          This application requires JavaScript to function. Please enable it to continue.\n        </p>\n      </div>\n    </div>\n  </noscript>\n  <div id=\"root\"></div>\n  <script type=\"module\" src=\"/src/main."
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,(depth0 != null ? lookupProperty(depth0,"typescript") : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data,"loc":{"start":{"line":33,"column":39},"end":{"line":33,"column":78}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,(depth0 != null ? lookupProperty(depth0,"typescript") : depth0),{"name":"if","hash":{},"fn":container.program(0, data, 0),"inverse":container.program(1, data, 0),"data":data,"loc":{"start":{"line":33,"column":39},"end":{"line":33,"column":78}}})) != null ? stack1 : "")
     + "\"></script>\n</body>\n</html>\n";
 },"useData":true}
