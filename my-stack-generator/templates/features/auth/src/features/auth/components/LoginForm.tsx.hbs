@@ -37,7 +37,7 @@ function LoginForm(): React.JSX.Element {
       }
 {{/if}}
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError('Invalid email or password. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -51,7 +51,7 @@ function LoginForm(): React.JSX.Element {
         </h2>
 
         {error && (
-          <div role="alert" className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-4 text-sm">
+          <div id="login-error" role="alert" className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-4 text-sm">
             {error}
           </div>
         )}
@@ -65,6 +65,8 @@ function LoginForm(): React.JSX.Element {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              aria-invalid={!!error}
+              aria-describedby={error ? "login-error" : undefined}
               autoComplete="username"
               className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="you@example.com"
@@ -80,6 +82,8 @@ function LoginForm(): React.JSX.Element {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
+              aria-invalid={!!error}
+              aria-describedby={error ? "login-error" : undefined}
               autoComplete="current-password"
               className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="••••••••"
