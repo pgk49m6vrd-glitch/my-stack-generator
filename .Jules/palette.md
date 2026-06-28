@@ -45,3 +45,7 @@
 ## 2026-03-03 - Sensory Parity for Loading States
 **Learning:** Adding `aria-busy={true}` to a button helps screen readers, but sighted users need a visual indicator (like a spinner) to understand the loading state. Relying solely on text changes (e.g., "Loading...") can be missed.
 **Action:** Always pair `aria-busy={true}` on async submit buttons with a visual indicator, such as an animated SVG spinner with `aria-hidden="true"`, to ensure sensory parity.
+
+## 2026-03-04 - Dynamic Form Field AutoComplete
+**Learning:** Sharing the same form component for Login and Registration workflows creates an accessibility conflict for password fields. Using `autoComplete="current-password"` is incorrect for a signup context.
+**Action:** Always dynamically toggle the `autoComplete` attribute between `current-password` and `new-password` depending on the current flow (isLogin) to support password managers properly.
