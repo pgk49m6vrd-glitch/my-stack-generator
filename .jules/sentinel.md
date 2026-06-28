@@ -45,3 +45,8 @@
 **Vulnerability:** The CLI accepted any string for the package manager flag (`--pm`) in non-interactive mode, which was directly passed to `spawn()`, leading to potential command injection.
 **Learning:** Even though `spawn()` is used without a shell by default, an attacker could supply an arbitrary binary name. Unvalidated inputs passed to OS-level APIs must be validated safely against allowlists.
 **Prevention:** Always validate untrusted CLI inputs against a strict allowlist before using them in child processes, taking care to safely handle undefined values before default fallbacks.
+
+## 2024-05-18 - [Command Injection via Unvalidated CLI Input (Features Allowlist)]
+**Vulnerability:** The CLI accepted any string for the features flag (`--features`) in non-interactive mode. While currently used to select templates, unvalidated array-like inputs can be abused if passed to other systems or child processes.
+**Learning:** All CLI parameters, even those that seem harmless (like a comma-separated list of features), must be rigorously validated against a strict allowlist.
+**Prevention:** Always implement strict allowlists for array-based or comma-separated CLI inputs, failing securely (e.g., `process.exit(1)`) if inputs are out-of-bounds, and safely handle `undefined` or non-array inputs.
