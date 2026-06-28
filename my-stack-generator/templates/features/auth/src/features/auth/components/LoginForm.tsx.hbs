@@ -51,7 +51,7 @@ function LoginForm(): React.JSX.Element {
         </h2>
 
         {error && (
-          <div role="alert" className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-4 text-sm">
+          <div role="alert" id="auth-error" className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-4 text-sm">
             {error}
           </div>
         )}
@@ -66,6 +66,8 @@ function LoginForm(): React.JSX.Element {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="username"
+              aria-invalid={!!error}
+              aria-describedby={error ? "auth-error" : undefined}
               className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="you@example.com"
             />
@@ -80,7 +82,9 @@ function LoginForm(): React.JSX.Element {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              autoComplete="current-password"
+              autoComplete={isLogin ? "current-password" : "new-password"}
+              aria-invalid={!!error}
+              aria-describedby={error ? "auth-error" : undefined}
               className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="••••••••"
             />
