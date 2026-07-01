@@ -21,3 +21,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-06-24 - cosmiconfig Initialization Overhead
 **Learning:** Repeatedly instantiating `cosmiconfig()` inside a frequently called function introduces measurable initialization overhead (~13-25ms per call) because it re-initializes caches and filesystem abstractions.
 **Action:** Cache the explorer instance at the module scope to reuse it across calls, reducing the overhead to ~0.01ms.
+
+## 2024-07-01 - Concurrent Dependency Loading
+**Learning:** In Node.js CLIs, sequential dynamic imports (`await import(...)`) for loading multiple dependencies create unnecessary startup latency by halting execution between each fetch.
+**Action:** Always use `Promise.all([import('...'), ...])` to fetch non-dependent modules concurrently and reduce initialization time.
