@@ -61,7 +61,12 @@ const originalExit = process.exit;
 const originalError = console.error;
 const originalLog = console.log;
 
-async function testCliValidation(pm, backend, expectedToFail) {
+async function testCliValidation(pm, backend, features, expectedToFail) {
+  if (expectedToFail === undefined) {
+    expectedToFail = features;
+    features = undefined;
+  }
+
   let exited = false;
   let errorLogged = false;
 
@@ -79,7 +84,9 @@ async function testCliValidation(pm, backend, expectedToFail) {
   };
 
   try {
-    await initCommand({ yes: true, pm, backend, dryRun: true });
+    const opts = { yes: true, pm, backend, dryRun: true };
+    if (features) opts.features = features;
+    await initCommand(opts);
   } catch(e) {
     // Ignore Process exited error or other errors
   } finally {
@@ -108,6 +115,10 @@ async function runCliTests() {
   await testCliValidation('yarn', 'firebase', true);
   await testCliValidation('npm', 'mongodb', true);
   await testCliValidation('invalid;rm -rf /', 'firebase', true);
+
+  await testCliValidation('npm', 'firebase', 'router,zustand', false);
+  await testCliValidation('npm', 'firebase', 'router,invalid-feature', true);
+  await testCliValidation('npm', 'firebase', 'evil;rm -rf /', true);
 
   console.log(`\n📊 CLI Summary: ${passedCli} passed, ${failedCli} failed.`);
 
