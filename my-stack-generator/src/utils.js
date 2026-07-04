@@ -135,9 +135,13 @@ let validatePkgName = null;
 
 export async function loadDependencies() {
   try {
-    const spawnModule = await import('cross-spawn');
+    // ⚡ Bolt Optimization: Use Promise.all to load non-dependent modules concurrently
+    // Reduces initialization time by preventing the event loop from halting between fetches
+    const [spawnModule, validateModule] = await Promise.all([
+      import('cross-spawn'),
+      import('validate-npm-package-name')
+    ]);
     spawn = spawnModule.default || spawnModule;
-    const validateModule = await import('validate-npm-package-name');
     validatePkgName = validateModule.default || validateModule;
   } catch (err) {
     console.error(`\n❌ Error: Failed to load required dependencies.`);
