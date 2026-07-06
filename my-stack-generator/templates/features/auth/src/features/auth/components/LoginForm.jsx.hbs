@@ -51,7 +51,7 @@ function LoginForm() {
         </h2>
 
         {error && (
-          <div role="alert" className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-4 text-sm">
+          <div id="form-error" role="alert" className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-4 text-sm">
             {error}
           </div>
         )}
@@ -66,6 +66,8 @@ function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="username"
+              aria-invalid={!!error}
+              aria-describedby={error ? "form-error" : undefined}
               className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="you@example.com"
             />
@@ -81,6 +83,8 @@ function LoginForm() {
               required
               minLength={6}
               autoComplete="current-password"
+              aria-invalid={!!error}
+              aria-describedby={error ? "form-error" : undefined}
               className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="••••••••"
             />
