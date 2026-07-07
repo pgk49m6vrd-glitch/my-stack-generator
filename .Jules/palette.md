@@ -45,3 +45,7 @@
 ## 2026-03-03 - Sensory Parity for Loading States
 **Learning:** Adding `aria-busy={true}` to a button helps screen readers, but sighted users need a visual indicator (like a spinner) to understand the loading state. Relying solely on text changes (e.g., "Loading...") can be missed.
 **Action:** Always pair `aria-busy={true}` on async submit buttons with a visual indicator, such as an animated SVG spinner with `aria-hidden="true"`, to ensure sensory parity.
+
+## 2024-07-07 - Linking global error states to inputs
+**Learning:** In shared boilerplate components like `LoginForm` that handle multiple auth flows, dynamic global error messages using `role="alert"` are common but lack explicit association with the input fields causing the errors.
+**Action:** Always associate dynamic global error containers with the relevant input fields using `aria-invalid` and `aria-describedby`, ensuring the error container has a specific `id` (e.g., `id="auth-error"`).
