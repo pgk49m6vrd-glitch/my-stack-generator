@@ -45,3 +45,7 @@
 ## 2026-03-03 - Sensory Parity for Loading States
 **Learning:** Adding `aria-busy={true}` to a button helps screen readers, but sighted users need a visual indicator (like a spinner) to understand the loading state. Relying solely on text changes (e.g., "Loading...") can be missed.
 **Action:** Always pair `aria-busy={true}` on async submit buttons with a visual indicator, such as an animated SVG spinner with `aria-hidden="true"`, to ensure sensory parity.
+
+## 2026-07-08 - Programmatic Association of Dynamic Errors
+**Learning:** While `role="alert"` announces a dynamic error message when it appears, it doesn't help users who navigate back to the input fields later, as the error context is lost.
+**Action:** Always add an `id` to dynamic error containers and explicitly link them to their corresponding inputs using `aria-invalid={!!error}` and `aria-describedby="[error-id]"`.
