@@ -12,7 +12,6 @@ import { resolvePreset, mergeConfig, PRESETS } from '../config.js';
 const ALLOWED_PACKAGE_MANAGERS = ['npm', 'pnpm', 'bun'];
 const ALLOWED_BACKENDS = ['firebase', 'supabase'];
 const ALLOWED_FEATURES = AVAILABLE_FEATURES.map(f => f.name);
-const ALLOWED_FEATURES = ['router', 'zustand', 'eslint', 'vitest', 'auth', 'shadcn'];
 
 /**
  * Executes the init command.
@@ -62,12 +61,6 @@ export async function initCommand(options = {}) {
     }
 
     // Validate features against strict allowlist to prevent injection or out-of-bounds inputs
-    if (config.features && Array.isArray(config.features)) {
-      for (const feature of config.features) {
-        if (!ALLOWED_FEATURES.includes(feature)) {
-          console.error(`\n❌ Security Error: Unsupported feature "${feature}". Allowed: ${ALLOWED_FEATURES.join(', ')}`);
-          process.exit(1);
-        }
     if (config.features && Array.isArray(config.features)) {
       const invalidFeatures = config.features.filter(f => !ALLOWED_FEATURES.includes(f));
       if (invalidFeatures.length > 0) {
