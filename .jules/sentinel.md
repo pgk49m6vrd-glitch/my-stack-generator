@@ -50,3 +50,7 @@
 **Vulnerability:** Command injection risk via unvalidated `--features` flag in non-interactive mode.
 **Learning:** CLI parameters that are arrays or comma-separated lists must be rigorously validated against a strict allowlist.
 **Prevention:** Always implement strict allowlists for sensitive CLI arguments (including arrays) before process execution.
+## 2025-06-27 - CLI Feature Allowlist Validation
+**Vulnerability:** Unvalidated `--features` input in CLI arguments could allow injection of arbitrary strings or out-of-bounds parameters into project templates.
+**Learning:** Even optional, array-based or comma-separated CLI inputs can be vectors for injection if not strictly validated against a known allowlist.
+**Prevention:** Always validate every item in array-based or comma-separated CLI inputs against a strict allowlist and safely handle undefined states to prevent out-of-bounds inputs.

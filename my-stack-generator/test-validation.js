@@ -95,7 +95,7 @@ async function testCliValidation(pm, backend, features, expectedToFail) {
   const actuallyFailed = exited && errorLogged;
   const passedResult = expectedToFail ? actuallyFailed : !actuallyFailed;
 
-  const testName = `pm=${pm}, backend=${backend}`;
+  const testName = `pm=${pm}, backend=${backend}, features=${features}`;
   if (passedResult) {
     console.log(`✅ Passed: ${testName} (Expected failure: ${expectedToFail})`);
     passedCli++;
