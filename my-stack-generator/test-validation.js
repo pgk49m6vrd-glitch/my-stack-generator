@@ -112,8 +112,8 @@ async function runCliTests() {
   await testCliValidation('yarn', 'firebase', true);
   await testCliValidation('npm', 'mongodb', true);
   await testCliValidation('invalid;rm -rf /', 'firebase', true);
-  await testCliValidation('npm', 'firebase', 'router,zustand', false);
-  await testCliValidation('npm', 'firebase', 'router,invalid_feature', true);
+  await testCliValidation('npm', 'firebase', 'router,eslint', false);
+  await testCliValidation('npm', 'firebase', 'router,malicious;rm -rf /', true);
 
   console.log(`\n📊 CLI Summary: ${passedCli} passed, ${failedCli} failed.`);
 

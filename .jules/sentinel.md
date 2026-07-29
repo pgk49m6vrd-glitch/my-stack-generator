@@ -46,6 +46,10 @@
 **Learning:** Even though `spawn()` is used without a shell by default, an attacker could supply an arbitrary binary name. Unvalidated inputs passed to OS-level APIs must be validated safely against allowlists.
 **Prevention:** Always validate untrusted CLI inputs against a strict allowlist before using them in child processes, taking care to safely handle undefined values before default fallbacks.
 
+## 2025-06-26 - Non-Interactive CLI Input Allowlist (Features)
+**Vulnerability:** Command injection risk via unvalidated `--features` flag in non-interactive mode.
+**Learning:** CLI parameters that are arrays or comma-separated lists must be rigorously validated against a strict allowlist.
+**Prevention:** Always implement strict allowlists for sensitive CLI arguments (including arrays) before process execution.
 ## 2025-06-27 - CLI Feature Allowlist Validation
 **Vulnerability:** Unvalidated `--features` input in CLI arguments could allow injection of arbitrary strings or out-of-bounds parameters into project templates.
 **Learning:** Even optional, array-based or comma-separated CLI inputs can be vectors for injection if not strictly validated against a known allowlist.
