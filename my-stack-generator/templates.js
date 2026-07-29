@@ -1,15 +1,16 @@
 export const getTemplates = (projectName, pm) => {
   return {
-    'vite.config.js': `import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
+    'vite.config.js': `import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
   ],
-})`,
+});
+`,
 
     'src/lib/firebase.config.js': `import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
@@ -26,11 +27,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);`,
+export const db = getFirestore(app);
+`,
 
-    'src/App.jsx': `import React from 'react';
-
-function App() {
+    'src/App.jsx': `function App() {
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center overflow-hidden relative">
       <div className="absolute w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -50,24 +50,39 @@ function App() {
   );
 }
 
-export default App;`,
+export default App;
+`,
 
-    'src/main.jsx': `import React from 'react';
+    'src/main.jsx': `import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  <StrictMode>
     <App />
-  </React.StrictMode>
-);`,
+  </StrictMode>
+);
+`,
 
-    'src/index.css': `@import "tailwindcss";`,
+    'src/index.css': `@import "tailwindcss";
+`,
 
-    'index.html': `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>${projectName}</title></head><body class="bg-slate-900"><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>`,
+    'index.html': `<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${projectName}</title>
+  </head>
+  <body class="bg-slate-900">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+`,
 
-    '.gitignore': `node_modules\ndist\n.env\n.env.local\n.DS_Store`,
+    '.gitignore': `node_modules\ndist\n.env\n.env.local\n.DS_Store\n`,
 
     '.ai-stack-instructions.md': `# 🧠 AI Project Instructions & Architecture
 

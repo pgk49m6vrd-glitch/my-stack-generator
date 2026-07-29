@@ -25,12 +25,14 @@ async function main() {
   console.log("1. npm");
   console.log("2. pnpm");
   console.log("3. bun");
-  let pmChoice = await askQuestion("Your Choice (1, 2 or 3) : ");
+  const pmChoice = await askQuestion("Your Choice (1, 2 or 3) : ");
   
-  let pm = "npm";
-  let installCmd = "install";
-  if (pmChoice === "2") { pm = "pnpm"; installCmd = "add"; }
-  if (pmChoice === "3") { pm = "bun"; installCmd = "add"; }
+  const pmConfig = {
+    '1': { pm: 'npm', installCmd: 'install' },
+    '2': { pm: 'pnpm', installCmd: 'add' },
+    '3': { pm: 'bun', installCmd: 'add' }
+  };
+  const { pm, installCmd } = pmConfig[pmChoice] || pmConfig['1'];
 
   const root = path.join(process.cwd(), projectName);
 
@@ -71,7 +73,7 @@ async function main() {
     type: "module",
     scripts: { "dev": "vite", "build": "vite build", "preview": "vite preview" }
   };
-  fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(projectPkgJson, null, 2));
+  fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(projectPkgJson, null, 2) + '\n');
 
   console.log(`\n📦 Installation des dépendances avec ${pm}...`);
   try {
@@ -86,7 +88,7 @@ async function main() {
     });
 
     console.log(`\n✅ Terminé ! Lancez :\n  cd ${projectName}\n  ${pm === 'npm' ? 'npm run dev' : pm + ' dev'}`);
-  } catch (error) {
+  } catch {
     console.error("\n❌ Erreur lors de l'installation.");
   }
   rl.close();
