@@ -25,3 +25,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-06-27 - Concurrent Dynamic Imports
 **Learning:** Sequential dynamic imports (`await import(...)`) for loading CLI dependencies create unnecessary startup latency by halting execution between each fetch.
 **Action:** Use `Promise.all` to fetch non-dependent modules concurrently, reducing total initialization time.
+
+## 2026-03-02 - Suboptimal Array Spread in Precompile Recursion
+**Learning:** Returning intermediate arrays and using the array spread operator (`results.push(...findHbsFiles(...))`) in deeply recursive filesystem traversal creates multiple short-lived array allocations, increasing garbage collection pressure and CPU overhead.
+**Action:** Use an accumulator pattern by passing the results array down through recursive calls. This completely avoids intermediate array allocations and spread operations, resulting in a cleaner and more memory-efficient implementation.

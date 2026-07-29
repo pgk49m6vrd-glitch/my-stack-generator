@@ -20,9 +20,11 @@ const COMPILED_DIR = path.join(TEMPLATES_DIR, 'compiled');
 
 /**
  * Recursively find all .hbs files in a directory.
+ *
+ * Optimization: Avoid array spread recursion overhead by passing results array
+ * down as an accumulator. This reduces GC pressure and intermediate array allocations.
  */
-function findHbsFiles(dir, basePath = '') {
-  const results = [];
+function findHbsFiles(dir, basePath = '', results = []) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
 
   for (const entry of entries) {
@@ -32,7 +34,7 @@ function findHbsFiles(dir, basePath = '') {
     if (entry.isDirectory()) {
       // Skip the compiled directory
       if (entry.name === 'compiled') continue;
-      results.push(...findHbsFiles(fullPath, relativePath));
+      findHbsFiles(fullPath, relativePath, results);
     } else if (entry.name.endsWith('.hbs')) {
       results.push({ fullPath, relativePath });
     }
