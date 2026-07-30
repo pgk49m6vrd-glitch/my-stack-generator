@@ -111,7 +111,7 @@ function LoginForm(): React.JSX.Element {
           <button
             type="button"
             onClick={() => { setIsLogin(!isLogin); setError(''); }}
-            className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+            className="text-blue-400 hover:text-blue-300 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-1"
           >
             {isLogin ? 'Sign up' : 'Sign in'}
           </button>
