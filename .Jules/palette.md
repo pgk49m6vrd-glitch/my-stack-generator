@@ -49,3 +49,7 @@
 ## 2025-10-26 - Connected Error Messages
 **Learning:** Passing raw backend error messages directly to the UI is confusing for users and can leak information. Furthermore, simply displaying an error visually is insufficient for accessibility.
 **Action:** Always map backend errors to generic user-friendly messages (e.g., 'Invalid credentials'), and explicitly associate the input fields with the error container using `aria-invalid` and `aria-describedby` attributes so screen readers immediately announce the error context when the input is focused.
+
+## 2026-03-04 - Missing Focus Visible Styles on Interactive Elements
+**Learning:** Text-only interactive elements like links and inline toggle buttons often lack clear visual indicators during keyboard navigation, frustrating users who rely on keyboards.
+**Action:** Always add explicit `focus-visible` utility classes (e.g., `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded`) to all interactive elements to ensure distinct and accessible keyboard focus states.
