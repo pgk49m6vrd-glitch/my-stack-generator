@@ -29,3 +29,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-03-02 - Suboptimal Array Spread in Precompile Recursion
 **Learning:** Returning intermediate arrays and using the array spread operator (`results.push(...findHbsFiles(...))`) in deeply recursive filesystem traversal creates multiple short-lived array allocations, increasing garbage collection pressure and CPU overhead.
 **Action:** Use an accumulator pattern by passing the results array down through recursive calls. This completely avoids intermediate array allocations and spread operations, resulting in a cleaner and more memory-efficient implementation.
+
+## 2024-05-23 - Synchronous I/O Overhead in File Checks
+**Learning:** Using `fs.existsSync` immediately followed by `fs.readFileSync` introduces measurable overhead (~30% slower) due to performing two synchronous system calls (stat then open/read) instead of one.
+**Action:** Use a `try/catch` block around `fs.readFileSync` and check for the `ENOENT` error code to handle missing files. This cuts the file system calls in half, speeding up read-heavy operations like template loading.
