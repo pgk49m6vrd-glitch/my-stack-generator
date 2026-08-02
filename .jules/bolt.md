@@ -33,3 +33,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-05-23 - Synchronous I/O Overhead in File Checks
 **Learning:** Using `fs.existsSync` immediately followed by `fs.readFileSync` introduces measurable overhead (~30% slower) due to performing two synchronous system calls (stat then open/read) instead of one.
 **Action:** Use a `try/catch` block around `fs.readFileSync` and check for the `ENOENT` error code to handle missing files. This cuts the file system calls in half, speeding up read-heavy operations like template loading.
+
+## 2024-08-02 - Unify Concurrent Filesystem Operations
+**Learning:** In Node.js applications, performing multiple independent `Promise.all` passes for sequential filesystem operations (like creating template directories followed by empty ones) introduces unnecessary event loop ticks and I/O latency.
+**Action:** Unify them into a single concurrent batch by pre-seeding data structures (e.g., a `Set`) with static requirements before dynamic collection loops.
