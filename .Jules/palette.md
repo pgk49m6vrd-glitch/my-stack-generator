@@ -53,3 +53,7 @@
 ## 2026-03-04 - Missing Focus Visible Styles on Interactive Elements
 **Learning:** Text-only interactive elements like links and inline toggle buttons often lack clear visual indicators during keyboard navigation, frustrating users who rely on keyboards.
 **Action:** Always add explicit `focus-visible` utility classes (e.g., `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded`) to all interactive elements to ensure distinct and accessible keyboard focus states.
+
+## 2026-03-05 - Dynamic AutoComplete on Shared Auth Forms
+**Learning:** Hardcoding `autoComplete="current-password"` on a shared login/signup form causes password managers to misbehave and suggest updating existing passwords during account creation.
+**Action:** Always toggle the `autoComplete` attribute between `current-password` and `new-password` dynamically based on the form's current state (e.g., `isLogin`).
