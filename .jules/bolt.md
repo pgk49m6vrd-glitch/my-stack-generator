@@ -36,4 +36,6 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 
 ## 2024-08-02 - Unify Concurrent Filesystem Operations
 **Learning:** In Node.js applications, performing multiple independent `Promise.all` passes for sequential filesystem operations (like creating template directories followed by empty ones) introduces unnecessary event loop ticks and I/O latency.
+## 2024-08-03 - Concurrent Filesystem Passes
+**Learning:** Performing multiple independent `Promise.all` passes for sequential filesystem operations (such as creating required template directories followed by standard empty directories) introduces unnecessary event loop ticks and I/O latency.
 **Action:** Unify them into a single concurrent batch by pre-seeding data structures (e.g., a `Set`) with static requirements before dynamic collection loops.
