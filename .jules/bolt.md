@@ -37,3 +37,8 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-05-23 - Batch Concurrent Directory Creations
 **Learning:** Performing multiple independent `Promise.all` passes for filesystem operations (like creating required template directories and then standard empty directories) introduces unnecessary event loop ticks, GC pressure from redundant array allocations, and I/O latency.
 **Action:** Pre-seed a `Set` with all static requirements before the dynamic collection loop to unify all directory creations into a single concurrent batch. This reduced filesystem overhead during project generation by ~15%.
+## 2024-08-02 - Unify Concurrent Filesystem Operations
+**Learning:** In Node.js applications, performing multiple independent `Promise.all` passes for sequential filesystem operations (like creating template directories followed by empty ones) introduces unnecessary event loop ticks and I/O latency.
+## 2024-08-03 - Concurrent Filesystem Passes
+**Learning:** Performing multiple independent `Promise.all` passes for sequential filesystem operations (such as creating required template directories followed by standard empty directories) introduces unnecessary event loop ticks and I/O latency.
+**Action:** Unify them into a single concurrent batch by pre-seeding data structures (e.g., a `Set`) with static requirements before dynamic collection loops.
