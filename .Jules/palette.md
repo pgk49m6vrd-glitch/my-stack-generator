@@ -59,3 +59,7 @@
 **Action:** Always toggle the `autoComplete` attribute between `current-password` and `new-password` dynamically based on the form's current state (e.g., `isLogin`).
 **Learning:** Password managers rely heavily on `autoComplete` attributes. Hardcoding `autoComplete="current-password"` on a shared form that toggles between login and signup breaks the manager's ability to generate or save new passwords during sign up.
 **Action:** Always toggle the `autoComplete` attribute dynamically (e.g., between 'current-password' and 'new-password') based on the current mode of a shared authentication form.
+
+## 2026-03-05 - Visual Parity for Required Form Fields
+**Learning:** Adding the `required` attribute to an input field provides semantic meaning for screen readers, but sighted users may not realize the field is mandatory until they submit the form and see an error. This lack of visual parity creates friction.
+**Action:** Always pair the `required` attribute on input fields with a clear visual indicator (like a red asterisk `*`) in the `<label>`, ensuring it has `aria-hidden="true"` so it isn't redundantly announced by screen readers.
