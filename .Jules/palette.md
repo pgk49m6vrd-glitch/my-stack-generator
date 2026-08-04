@@ -57,3 +57,8 @@
 ## 2024-05-18 - Dynamic Password AutoComplete for Shared Auth Forms
 **Learning:** Hardcoding `autoComplete="current-password"` in a shared login/signup component frustrates users by confusing password managers during account creation, preventing them from generating or correctly saving new passwords.
 **Action:** Always dynamically toggle the `autoComplete` attribute between `current-password` and `new-password` based on the auth form's current state (login vs signup).
+## 2026-03-05 - Dynamic AutoComplete on Shared Auth Forms
+**Learning:** Hardcoding `autoComplete="current-password"` on a shared login/signup form causes password managers to misbehave and suggest updating existing passwords during account creation.
+**Action:** Always toggle the `autoComplete` attribute between `current-password` and `new-password` dynamically based on the form's current state (e.g., `isLogin`).
+**Learning:** Password managers rely heavily on `autoComplete` attributes. Hardcoding `autoComplete="current-password"` on a shared form that toggles between login and signup breaks the manager's ability to generate or save new passwords during sign up.
+**Action:** Always toggle the `autoComplete` attribute dynamically (e.g., between 'current-password' and 'new-password') based on the current mode of a shared authentication form.
