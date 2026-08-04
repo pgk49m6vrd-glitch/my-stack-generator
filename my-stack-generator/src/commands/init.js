@@ -6,7 +6,6 @@
 import readline from 'readline';
 import { loadDependencies, getProjectNameValidationError } from '../utils.js';
 import { runPrompts, AVAILABLE_FEATURES } from '../prompts.js';
-import { generateProject } from '../generator.js';
 import { resolvePreset, mergeConfig, PRESETS } from '../config.js';
 
 const ALLOWED_PACKAGE_MANAGERS = ['npm', 'pnpm', 'bun'];
@@ -99,6 +98,8 @@ export async function initCommand(options = {}) {
 
   // Generate the project
   try {
+    // ⚡ Bolt Optimization: Dynamically import generator to defer heavy template-engine and Handlebars loading until after user prompts, reducing interactive startup latency.
+    const { generateProject } = await import('../generator.js');
     await generateProject(config, { dryRun: options.dryRun || false });
   } catch (error) {
     console.error(`\n❌ Error: ${error.message}`);

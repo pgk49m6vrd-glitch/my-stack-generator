@@ -42,3 +42,6 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-08-03 - Concurrent Filesystem Passes
 **Learning:** Performing multiple independent `Promise.all` passes for sequential filesystem operations (such as creating required template directories followed by standard empty directories) introduces unnecessary event loop ticks and I/O latency.
 **Action:** Unify them into a single concurrent batch by pre-seeding data structures (e.g., a `Set`) with static requirements before dynamic collection loops.
+## 2024-10-31 - Defer Heavy Imports in Interactive CLIs
+**Learning:** Statically importing heavy modules (like the template engine and Handlebars) at the top of an interactive CLI command causes unnecessary startup latency before the first prompt is displayed to the user.
+**Action:** Use dynamic imports (`await import(...)`) for heavy task-specific modules right before they are executed, ensuring the CLI interface remains snappy and responsive during initial interaction.
