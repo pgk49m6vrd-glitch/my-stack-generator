@@ -66,3 +66,6 @@
 ## 2026-03-05 - Visual Parity for Required Form Fields
 **Learning:** Adding the `required` attribute to an input field provides semantic meaning for screen readers, but sighted users may not realize the field is mandatory until they submit the form and see an error. This lack of visual parity creates friction.
 **Action:** Always pair the `required` attribute on input fields with a clear visual indicator (like a red asterisk `*`) in the `<label>`, ensuring it has `aria-hidden="true"` so it isn't redundantly announced by screen readers.
+## 2024-05-18 - Password Visibility Toggles
+**Learning:** A password visibility toggle is a critical usability and accessibility feature, particularly for "Create Account" forms that lack a "Confirm Password" field, as it prevents user frustration from hidden typos.
+**Action:** Always include an accessible toggle button (using `aria-label` and `aria-pressed`) on password inputs where confirmation fields are omitted.
