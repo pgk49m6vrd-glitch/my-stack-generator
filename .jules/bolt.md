@@ -45,3 +45,6 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-10-31 - Defer Heavy Imports in Interactive CLIs
 **Learning:** Statically importing heavy modules (like the template engine and Handlebars) at the top of an interactive CLI command causes unnecessary startup latency before the first prompt is displayed to the user.
 **Action:** Use dynamic imports (`await import(...)`) for heavy task-specific modules right before they are executed, ensuring the CLI interface remains snappy and responsive during initial interaction.
+## 2024-08-06 - Avoid synchronous stat before async read
+**Learning:** Using `fs.existsSync` to check for a file's existence before calling `fs.promises.readFile` introduces a blocking synchronous operation and an extra I/O call (stat then read).
+**Action:** Rely on the `ENOENT` error thrown by `fs.promises.readFile` inside a `try/catch` block instead, effectively halving the I/O operations and preventing main thread blocking.
