@@ -58,3 +58,8 @@
 **Vulnerability:** js-yaml versions before 4.3.0 can spend quadratic CPU time parsing a document whose size grows only linearly, due to a chain of mappings where each mapping merges the previous one.
 **Learning:** Even well-known parsing libraries can have edge-case logic that allows a Denial of Service through resource exhaustion.
 **Prevention:** Ensure parsing libraries are up-to-date and restrict parsing features like merged keys if not strictly necessary.
+
+## 2026-03-15 - Arbitrary Code Execution via Template AST Evaluation
+**Vulnerability:** The template engine used `new Function()` to synchronously execute precompiled Handlebars ASTs read from disk.
+**Learning:** Using `new Function()` or `eval()` to process cached or pre-built template files bypasses JavaScript's strict execution context and introduces critical code injection vulnerabilities if an attacker can manipulate the file system.
+**Prevention:** Never evaluate file system contents as executable code using `new Function()`. Either use native module loading (e.g., dynamic `import()`) with precompiled standard ES modules, or rely on the framework's secure runtime compiler instead of rolling custom evaluation contexts.
