@@ -54,3 +54,7 @@
 **Vulnerability:** Unvalidated `--features` input in CLI arguments could allow injection of arbitrary strings or out-of-bounds parameters into project templates.
 **Learning:** Even optional, array-based or comma-separated CLI inputs can be vectors for injection if not strictly validated against a known allowlist.
 **Prevention:** Always validate every item in array-based or comma-separated CLI inputs against a strict allowlist and safely handle undefined states to prevent out-of-bounds inputs.
+## 2024-08-07 - Denial of Service in js-yaml
+**Vulnerability:** js-yaml versions before 4.3.0 can spend quadratic CPU time parsing a document whose size grows only linearly, due to a chain of mappings where each mapping merges the previous one.
+**Learning:** Even well-known parsing libraries can have edge-case logic that allows a Denial of Service through resource exhaustion.
+**Prevention:** Ensure parsing libraries are up-to-date and restrict parsing features like merged keys if not strictly necessary.
