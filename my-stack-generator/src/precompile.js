@@ -67,12 +67,12 @@ function precompile() {
       const source = fs.readFileSync(fullPath, 'utf-8');
       const precompiled = Handlebars.precompile(source, { noEscape: true });
 
-      // Output path mirrors the template path but with .js extension
-      const outputRelative = relativePath.replace(/\.hbs$/, '.js');
+      // Output path mirrors the template path but with .cjs extension for safe synchronous require in ES modules
+      const outputRelative = relativePath.replace(/\.hbs$/, '.cjs');
       const outputPath = path.join(COMPILED_DIR, outputRelative);
 
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-      fs.writeFileSync(outputPath, precompiled);
+      fs.writeFileSync(outputPath, `module.exports = ${precompiled};`);
 
       console.log(`  ✅ ${relativePath} → compiled/${outputRelative}`);
       compiled++;
