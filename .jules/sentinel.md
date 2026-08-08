@@ -58,3 +58,7 @@
 **Vulnerability:** js-yaml versions before 4.3.0 can spend quadratic CPU time parsing a document whose size grows only linearly, due to a chain of mappings where each mapping merges the previous one.
 **Learning:** Even well-known parsing libraries can have edge-case logic that allows a Denial of Service through resource exhaustion.
 **Prevention:** Ensure parsing libraries are up-to-date and restrict parsing features like merged keys if not strictly necessary.
+## 2025-05-24 - Input Length Limits in Forms
+**Vulnerability:** Unbounded input fields in authentication forms (e.g., email and password) can lead to potential resource exhaustion and Denial of Service (DoS) attacks.
+**Learning:** Failing to implement `maxLength` on form inputs allows users (or bots) to paste excessively large strings, which could overload the frontend rendering engine or be forwarded to backend services, exposing them to resource exhaustion.
+**Prevention:** Always enforce explicit, reasonable `maxLength` limits on all user input fields (e.g., 255 characters for emails, 128 for passwords) to prevent bounded resource consumption.
