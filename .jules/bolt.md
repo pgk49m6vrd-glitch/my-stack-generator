@@ -52,3 +52,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-03-05 - Concurrent Template Precompilation
 **Learning:** Performing multiple independent file system operations (like reading, compiling, and writing templates) in a synchronous, blocking loop causes unnecessary CPU wait times for I/O operations.
 **Action:** Refactored template precompilation to use asynchronous `fs.promises` combined with `Promise.all`. This allows the Node.js event loop to process file reads/writes concurrently, reducing overall build time.
+
+## 2024-05-27 - Native CommonJS Precompiled Template Loading
+**Learning:** Using `fs.readFileSync` and `new Function` to parse and load precompiled scripts in a synchronous ES module environment introduces significant evaluation overhead and security risks.
+**Action:** Output the compiled scripts as CommonJS (`.cjs`) and load them natively using `createRequire`. This replaces unsafe dynamic code evaluation and reduces parsing time overhead.
