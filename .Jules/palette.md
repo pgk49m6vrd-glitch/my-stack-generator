@@ -73,3 +73,7 @@
 ## 2026-03-05 - Use of Color in Error Messages
 **Learning:** Communicating error states solely through color (e.g., red text) fails WCAG 1.4.1 (Use of Color) and disadvantages users with color blindness.
 **Action:** Always pair color-based error indicators with an explicit icon (like a warning triangle) and structural layout changes (like flex with gap) to provide redundant sensory cues.
+
+## 2026-03-05 - Skip-to-Content Navigation
+**Learning:** Navigational headers without a "skip-to-content" link force keyboard and screen-reader users to tediously tab through all navigation links on every page load to reach the primary content.
+**Action:** Always include a visually hidden "skip-to-content" link at the top of the DOM that becomes visible on focus, and ensure the main content area has a matching ID (e.g., `<main id="main-content">`) to receive focus.
