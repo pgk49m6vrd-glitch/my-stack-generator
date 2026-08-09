@@ -58,3 +58,7 @@
 **Vulnerability:** js-yaml versions before 4.3.0 can spend quadratic CPU time parsing a document whose size grows only linearly, due to a chain of mappings where each mapping merges the previous one.
 **Learning:** Even well-known parsing libraries can have edge-case logic that allows a Denial of Service through resource exhaustion.
 **Prevention:** Ensure parsing libraries are up-to-date and restrict parsing features like merged keys if not strictly necessary.
+## 2025-06-28 - Unsafe Dynamic Code Evaluation
+**Vulnerability:** Precompiled Handlebars templates were evaluated using `new Function('return ' + specSource)()`, which introduces arbitrary code execution risks.
+**Learning:** In modern Node.js, `new Function` or `eval` for script execution bypasses security boundaries. Precompiled specs can be securely required as CommonJS modules (`.cjs`), even in ES Module contexts.
+**Prevention:** Always rely on native module loaders (`require` or `import`) instead of unsafe code evaluation techniques.

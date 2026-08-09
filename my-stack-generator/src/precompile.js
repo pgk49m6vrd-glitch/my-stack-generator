@@ -68,12 +68,12 @@ async function precompile() {
       const source = await fs.promises.readFile(fullPath, 'utf-8');
       const precompiled = Handlebars.precompile(source, { noEscape: true });
 
-      // Output path mirrors the template path but with .js extension
-      const outputRelative = relativePath.replace(/\.hbs$/, '.js');
+      // Output path mirrors the template path but with .cjs extension
+      const outputRelative = relativePath.replace(/\.hbs$/, '.cjs');
       const outputPath = path.join(COMPILED_DIR, outputRelative);
 
       await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
-      await fs.promises.writeFile(outputPath, precompiled);
+      await fs.promises.writeFile(outputPath, 'module.exports = ' + precompiled);
 
       console.log(`  ✅ ${relativePath} → compiled/${outputRelative}`);
       compiled++;
