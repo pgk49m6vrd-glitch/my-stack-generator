@@ -52,3 +52,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2026-03-05 - Concurrent Template Precompilation
 **Learning:** Performing multiple independent file system operations (like reading, compiling, and writing templates) in a synchronous, blocking loop causes unnecessary CPU wait times for I/O operations.
 **Action:** Refactored template precompilation to use asynchronous `fs.promises` combined with `Promise.all`. This allows the Node.js event loop to process file reads/writes concurrently, reducing overall build time.
+
+## 2024-08-10 - Synchronous file reading vs require for templates
+**Learning:** Using `fs.readFileSync` + `new Function()` for loading precompiled Handlebars templates in a loop is significantly slower than natively loading them via `require` with CommonJS cache when called repeatedly.
+**Action:** When evaluating precompiled JavaScript templates or configurations dynamically, output them as `.cjs` and use `createRequire(import.meta.url)` instead of `new Function` + `fs.readFileSync` for improved security, maintainability, and repeated execution speed via internal module caching.
