@@ -69,3 +69,7 @@
 ## 2024-05-18 - Password Visibility Toggles
 **Learning:** A password visibility toggle is a critical usability and accessibility feature, particularly for "Create Account" forms that lack a "Confirm Password" field, as it prevents user frustration from hidden typos.
 **Action:** Always include an accessible toggle button (using `aria-label` and `aria-pressed`) on password inputs where confirmation fields are omitted.
+
+## 2026-03-05 - Use of Color in Error Messages
+**Learning:** Communicating error states solely through color (e.g., red text) fails WCAG 1.4.1 (Use of Color) and disadvantages users with color blindness.
+**Action:** Always pair color-based error indicators with an explicit icon (like a warning triangle) and structural layout changes (like flex with gap) to provide redundant sensory cues.

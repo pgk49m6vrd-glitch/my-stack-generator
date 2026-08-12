@@ -46,7 +46,7 @@ function findHbsFiles(dir, basePath = '', results = []) {
 /**
  * Main precompilation routine.
  */
-function precompile() {
+async function precompile() {
   console.log('🔨 Precompiling Handlebars templates...\n');
 
   const hbsFiles = findHbsFiles(TEMPLATES_DIR);
@@ -62,17 +62,18 @@ function precompile() {
   let compiled = 0;
   let failed = 0;
 
-  for (const { fullPath, relativePath } of hbsFiles) {
+  // ⚡ Bolt Optimization: Use Promise.all to process template compilation concurrently instead of blocking synchronously, reducing overall precompilation time.
+  await Promise.all(hbsFiles.map(async ({ fullPath, relativePath }) => {
     try {
-      const source = fs.readFileSync(fullPath, 'utf-8');
+      const source = await fs.promises.readFile(fullPath, 'utf-8');
       const precompiled = Handlebars.precompile(source, { noEscape: true });
 
       // Output path mirrors the template path but with .js extension
       const outputRelative = relativePath.replace(/\.hbs$/, '.js');
       const outputPath = path.join(COMPILED_DIR, outputRelative);
 
-      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-      fs.writeFileSync(outputPath, precompiled);
+      await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
+      await fs.promises.writeFile(outputPath, precompiled);
 
       console.log(`  ✅ ${relativePath} → compiled/${outputRelative}`);
       compiled++;
@@ -80,7 +81,7 @@ function precompile() {
       console.error(`  ❌ ${relativePath}: ${e.message}`);
       failed++;
     }
-  }
+  }));
 
   console.log(`\n📊 Done: ${compiled} compiled, ${failed} failed out of ${hbsFiles.length} total.`);
 }
