@@ -84,3 +84,7 @@
 ## 2026-03-05 - Avoiding Sticky Mouse Focus
 **Learning:** Using `focus:ring` on buttons causes the focus ring to "stick" after a user clicks the button with a mouse, which looks like a visual bug. `focus-visible:ring` ensures the ring only appears during keyboard navigation.
 **Action:** Always use `focus-visible:` pseudo-classes instead of `focus:` for focus rings on buttons and links to improve the mouse user experience without degrading keyboard accessibility.
+
+## 2026-03-05 - Contextual Caps Lock Warnings
+**Learning:** Users often type passwords with Caps Lock accidentally enabled, leading to frustrating validation errors that don't explain the root cause.
+**Action:** Always add `onKeyUp` and `onKeyDown` listeners to password fields to detect `e.getModifierState('CapsLock')` and display a clear, contextual warning message when active.
