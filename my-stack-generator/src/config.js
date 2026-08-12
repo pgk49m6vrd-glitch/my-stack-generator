@@ -4,7 +4,6 @@
  * Provides built-in presets and merges config layers: preset → rcfile → CLI flags → prompts.
  */
 
-import { cosmiconfig } from 'cosmiconfig';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
@@ -42,15 +41,24 @@ const PRESETS = {
 
 export { PRESETS };
 
-// ⚡ Bolt Optimization: Cache the explorer instance to avoid ~13-25ms initialization overhead per call
-const explorer = cosmiconfig('mystack');
+// ⚡ Bolt Optimization: Cache the lazily loaded explorer instance to avoid ~35-50ms initialization and module resolution overhead on CLI startup.
+let explorer = null;
+
+async function getExplorer() {
+  if (!explorer) {
+    const { cosmiconfig } = await import('cosmiconfig');
+    explorer = cosmiconfig('mystack');
+  }
+  return explorer;
+}
 
 /**
  * Loads the user's saved presets from ~/.mystackrc.json.
  */
 export async function loadUserConfig() {
   try {
-    const result = await explorer.search();
+    const exp = await getExplorer();
+    const result = await exp.search();
     if (result && result.config) {
       return result.config;
     }

@@ -48,6 +48,9 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-08-06 - Avoid synchronous stat before async read
 **Learning:** Using `fs.existsSync` to check for a file's existence before calling `fs.promises.readFile` introduces a blocking synchronous operation and an extra I/O call (stat then read).
 **Action:** Rely on the `ENOENT` error thrown by `fs.promises.readFile` inside a `try/catch` block instead, effectively halving the I/O operations and preventing main thread blocking.
+## 2024-05-23 - Lazy Load Heavy Configurations
+**Learning:** Statically importing `cosmiconfig` at the module top-level forces a synchronous penalty during module resolution (~35-50ms), even if the configuration parsing is only triggered conditionally.
+**Action:** Use dynamic `import()` for heavy configuration modules like `cosmiconfig` combined with lazy initialization to defer the startup penalty until the specific code path is executed.
 
 ## 2026-03-05 - Concurrent Template Precompilation
 **Learning:** Performing multiple independent file system operations (like reading, compiling, and writing templates) in a synchronous, blocking loop causes unnecessary CPU wait times for I/O operations.
