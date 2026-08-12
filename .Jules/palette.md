@@ -73,3 +73,14 @@
 ## 2026-03-05 - Use of Color in Error Messages
 **Learning:** Communicating error states solely through color (e.g., red text) fails WCAG 1.4.1 (Use of Color) and disadvantages users with color blindness.
 **Action:** Always pair color-based error indicators with an explicit icon (like a warning triangle) and structural layout changes (like flex with gap) to provide redundant sensory cues.
+
+## 2026-03-05 - Skip-to-Content Navigation
+**Learning:** Navigational headers without a "skip-to-content" link force keyboard and screen-reader users to tediously tab through all navigation links on every page load to reach the primary content.
+**Action:** Always include a visually hidden "skip-to-content" link at the top of the DOM that becomes visible on focus, and ensure the main content area has a matching ID (e.g., `<main id="main-content">`) to receive focus.
+## 2026-03-05 - Native Tooltips for Icon-Only Buttons
+**Learning:** Icon-only buttons with `aria-label` are accessible to screen readers, but sighted users (who may not recognize the icon) lack a way to discover the button's action. A native `title` attribute provides an instant, zero-dependency tooltip on hover.
+**Action:** Always add a `title` attribute matching the `aria-label` to icon-only buttons to support visual discovery.
+
+## 2026-03-05 - Avoiding Sticky Mouse Focus
+**Learning:** Using `focus:ring` on buttons causes the focus ring to "stick" after a user clicks the button with a mouse, which looks like a visual bug. `focus-visible:ring` ensures the ring only appears during keyboard navigation.
+**Action:** Always use `focus-visible:` pseudo-classes instead of `focus:` for focus rings on buttons and links to improve the mouse user experience without degrading keyboard accessibility.

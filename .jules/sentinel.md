@@ -62,3 +62,12 @@
 **Vulnerability:** Precompiled Handlebars templates were evaluated using `new Function('return ' + specSource)()`, which introduces arbitrary code execution risks.
 **Learning:** In modern Node.js, `new Function` or `eval` for script execution bypasses security boundaries. Precompiled specs can be securely required as CommonJS modules (`.cjs`), even in ES Module contexts.
 **Prevention:** Always rely on native module loaders (`require` or `import`) instead of unsafe code evaluation techniques.
+## 2025-02-23 - Login Form Resource Exhaustion
+**Vulnerability:** Missing maxLength constraints on authentication inputs (email and password).
+**Learning:** Unbounded text inputs are susceptible to resource exhaustion or denial of service attacks through pasting extremely large payloads.
+**Prevention:** Explicitly apply reasonable `maxLength` attributes to all user input fields (e.g., 255 for emails, 128 for passwords) on the frontend.
+
+## 2026-08-11 - Missing Input Length Limits (DoS Risk)
+**Vulnerability:** The email and password input fields in the generated `LoginForm` component lacked `maxLength` attributes.
+**Learning:** Without explicit maximum length limits on frontend forms, malicious actors can submit excessively long strings to authentication backends (like Supabase or Firebase). This can cause resource exhaustion (CPU/RAM) during hashing or validation, leading to a potential Denial of Service (DoS).
+**Prevention:** Always apply explicit and reasonable `maxLength` attributes (e.g., 255 for emails, 128 for passwords) to user input fields in forms to mitigate resource exhaustion and DoS attacks.
