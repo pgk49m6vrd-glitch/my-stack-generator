@@ -67,3 +67,7 @@
 **Vulnerability:** The email and password input fields in the generated `LoginForm` component lacked `maxLength` attributes.
 **Learning:** Without explicit maximum length limits on frontend forms, malicious actors can submit excessively long strings to authentication backends (like Supabase or Firebase). This can cause resource exhaustion (CPU/RAM) during hashing or validation, leading to a potential Denial of Service (DoS).
 **Prevention:** Always apply explicit and reasonable `maxLength` attributes (e.g., 255 for emails, 128 for passwords) to user input fields in forms to mitigate resource exhaustion and DoS attacks.
+## 2026-08-11 - Unsafe Dynamic Code Evaluation
+**Vulnerability:** Use of `new Function()` in `src/template-engine.js` to evaluate precompiled Handlebars templates.
+**Learning:** Evaluating dynamically constructed code strings (like `new Function()`) introduces security vulnerabilities. It bypasses strict Content Security Policies and opens the door for code injection if the evaluated string is compromised.
+**Prevention:** To replace unsafe dynamic code evaluation of precompiled scripts in a synchronous ES module environment, output the compiled scripts as CommonJS (`.cjs`) and load them natively and securely using `createRequire`.
