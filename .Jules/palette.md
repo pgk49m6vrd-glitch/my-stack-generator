@@ -84,3 +84,7 @@
 ## 2026-03-05 - Avoiding Sticky Mouse Focus
 **Learning:** Using `focus:ring` on buttons causes the focus ring to "stick" after a user clicks the button with a mouse, which looks like a visual bug. `focus-visible:ring` ensures the ring only appears during keyboard navigation.
 **Action:** Always use `focus-visible:` pseudo-classes instead of `focus:` for focus rings on buttons and links to improve the mouse user experience without degrading keyboard accessibility.
+
+## 2024-08-15 - NavLink for Active State Accessibility
+**Learning:** Using standard `<Link>` tags for navigation menus forces sighted users to guess their current location, and screen readers miss the `aria-current="page"` attribute.
+**Action:** Always use `<NavLink>` from `react-router-dom` for primary navigation items to natively support `aria-current="page"` and enable active state styling.
