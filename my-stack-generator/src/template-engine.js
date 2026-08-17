@@ -97,7 +97,7 @@ export function renderTemplate(templatePath, context) {
 
   // ⚡ Bolt Optimization: Use try/catch instead of fs.existsSync to avoid double I/O calls (stat then read), reducing file reading time by ~25-30%.
   // Try precompiled version first
-  const compiledPath = path.join(COMPILED_DIR, templatePath.replace(/\.hbs$/, '.cjs'));
+  const compiledPath = path.join(COMPILED_DIR, templatePath.endsWith('.hbs') ? templatePath.slice(0, -4) + '.cjs' : templatePath);
   try {
     const spec = require(compiledPath);
     const template = Handlebars.template(spec);
