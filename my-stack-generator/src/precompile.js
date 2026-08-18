@@ -69,7 +69,7 @@ async function precompile() {
       const precompiled = Handlebars.precompile(source, { noEscape: true });
 
       // Output path mirrors the template path but with .cjs extension
-      const outputRelative = relativePath.replace(/\.hbs$/, '.cjs');
+      const outputRelative = relativePath.endsWith('.hbs') ? relativePath.slice(0, -4) + '.cjs' : relativePath;
       const outputPath = path.join(COMPILED_DIR, outputRelative);
 
       await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
