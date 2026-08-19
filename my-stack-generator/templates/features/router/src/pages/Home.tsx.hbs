@@ -2,10 +2,29 @@ import React from 'react';
 
 function Home(): React.JSX.Element {
   return (
-    <main id="main-content" className="min-h-screen bg-slate-900 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-white mb-4">Home</h1>
-        <p className="text-slate-400">Welcome to {{projectName}}</p>
+    <main id="main-content" className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+      <div className="text-center max-w-md w-full bg-slate-800 rounded-2xl p-8 shadow-xl border border-slate-700">
+        <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg className="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+          </svg>
+        </div>
+        <h1 className="text-2xl font-bold text-white mb-3">No Content Yet</h1>
+        <p className="text-slate-400 mb-8 text-sm">
+          Welcome to {{projectName}}. This is your new home page. Start building your amazing application by editing this component.
+        </p>
+        <a
+          href="https://react.dev"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
+        >
+          Read the Docs
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          <span className="sr-only">(opens in a new tab)</span>
+        </a>
       </div>
     </main>
   );
