@@ -88,3 +88,7 @@
 ## 2026-03-05 - Native Active Navigation State
 **Learning:** Using standard `<Link>` components for navigation menus fails to convey the active page to screen readers, violating WCAG principles. It also lacks an automatic mechanism for visual active states, requiring manual matching logic.
 **Action:** Always prefer `<NavLink>` from `react-router-dom` over `<Link>` for navigation menus. It natively provides `aria-current="page"` for accessibility and seamlessly supports dynamic styling via the `isActive` function parameter, enhancing both screen reader and sighted user experiences.
+
+## 2026-03-05 - Persistent Context for Form Warnings
+**Learning:** While `role="alert"` announces dynamic warnings (like Caps Lock active) when they first appear, screen reader users lose this context if they navigate away and focus back on the input.
+**Action:** Always link contextual warnings to the associated input field using `aria-describedby` (alongside `role="alert"`) so the warning is reliably read out upon field focus.
