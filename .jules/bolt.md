@@ -62,3 +62,6 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-05-24 - Optimize String Replacement over Regex
 **Learning:** Using regular expressions like `.replace(/\.hbs$/, '.cjs')` for simple suffix string replacement introduces unnecessary overhead in hot paths (like template resolution or build loops) compared to simple string operations, being over 3 times slower.
 **Action:** Replace regular expressions with string methods like `.endsWith()` and `.slice()` for simple suffix manipulation, ensuring a conditional check is present to guarantee functional parity.
+## 2024-05-24 - Avoid Intermediate Array Allocations in Promise Loops
+**Learning:** Using `Array.from(iterable).map(...)` to collect promises for `Promise.all` creates multiple short-lived array allocations and requires double-iteration of the collection.
+**Action:** Use a `for...of` loop to directly push promises into an array. This avoids intermediate garbage collection pressure and is significantly faster, reducing overhead during concurrent generation.
