@@ -32,6 +32,7 @@
 **Vulnerability:** Generated `.gitignore` only blocked specific environments (`.env`, `.env.local`), leaving custom environments like `.env.production` or `.env.staging` vulnerable to accidental commit if a developer created them locally.
 **Learning:** Hardcoded exclude lists for configuration files fail when users naturally extend naming conventions.
 **Prevention:** Always use wildcard patterns (`.env.*`) with explicit opt-in exceptions (`!.env.example`) to create a secure-by-default posture for secrets.
+
 ## 2026-03-03 - Referrer-Policy Meta Tag
 **Vulnerability:** Leaking sensitive URL paths or parameters to external sites when users click external links in the generated application.
 **Learning:** The default behavior of modern browsers is often 'strict-origin-when-cross-origin', but it's best practice to explicitly set it to ensure consistent security across all browsers and versions.
@@ -41,7 +42,8 @@
 **Vulnerability:** Command injection risk via unvalidated `--pm` and `--backend` flags in non-interactive mode.
 **Learning:** CLI parameters that are later passed to OS-level child processes (like `spawn`) must be rigorously validated even when reasonable defaults are provided. In non-interactive modes, validation logic is often accidentally bypassed.
 **Prevention:** Always implement strict allowlists for sensitive CLI arguments before any process execution, failing securely (e.g., `process.exit(1)`) if inputs are out-of-bounds. Safely handle `undefined` cases to preserve legitimate defaults.
-## 2024-05-18 - [Command Injection via Unvalidated CLI Input]
+
+## 2024-05-18 - Command Injection via Unvalidated CLI Input
 **Vulnerability:** The CLI accepted any string for the package manager flag (`--pm`) in non-interactive mode, which was directly passed to `spawn()`, leading to potential command injection.
 **Learning:** Even though `spawn()` is used without a shell by default, an attacker could supply an arbitrary binary name. Unvalidated inputs passed to OS-level APIs must be validated safely against allowlists.
 **Prevention:** Always validate untrusted CLI inputs against a strict allowlist before using them in child processes, taking care to safely handle undefined values before default fallbacks.
@@ -50,14 +52,17 @@
 **Vulnerability:** Command injection risk via unvalidated `--features` flag in non-interactive mode.
 **Learning:** CLI parameters that are arrays or comma-separated lists must be rigorously validated against a strict allowlist.
 **Prevention:** Always implement strict allowlists for sensitive CLI arguments (including arrays) before process execution.
+
 ## 2025-06-27 - CLI Feature Allowlist Validation
 **Vulnerability:** Unvalidated `--features` input in CLI arguments could allow injection of arbitrary strings or out-of-bounds parameters into project templates.
 **Learning:** Even optional, array-based or comma-separated CLI inputs can be vectors for injection if not strictly validated against a known allowlist.
 **Prevention:** Always validate every item in array-based or comma-separated CLI inputs against a strict allowlist and safely handle undefined states to prevent out-of-bounds inputs.
+
 ## 2024-08-07 - Denial of Service in js-yaml
 **Vulnerability:** js-yaml versions before 4.3.0 can spend quadratic CPU time parsing a document whose size grows only linearly, due to a chain of mappings where each mapping merges the previous one.
 **Learning:** Even well-known parsing libraries can have edge-case logic that allows a Denial of Service through resource exhaustion.
 **Prevention:** Ensure parsing libraries are up-to-date and restrict parsing features like merged keys if not strictly necessary.
+
 ## 2025-02-23 - Login Form Resource Exhaustion
 **Vulnerability:** Missing maxLength constraints on authentication inputs (email and password).
 **Learning:** Unbounded text inputs are susceptible to resource exhaustion or denial of service attacks through pasting extremely large payloads.
@@ -67,7 +72,13 @@
 **Vulnerability:** The email and password input fields in the generated `LoginForm` component lacked `maxLength` attributes.
 **Learning:** Without explicit maximum length limits on frontend forms, malicious actors can submit excessively long strings to authentication backends (like Supabase or Firebase). This can cause resource exhaustion (CPU/RAM) during hashing or validation, leading to a potential Denial of Service (DoS).
 **Prevention:** Always apply explicit and reasonable `maxLength` attributes (e.g., 255 for emails, 128 for passwords) to user input fields in forms to mitigate resource exhaustion and DoS attacks.
+
 ## 2026-08-11 - Unsafe Dynamic Code Evaluation
 **Vulnerability:** Use of `new Function()` in `src/template-engine.js` to evaluate precompiled Handlebars templates.
 **Learning:** Evaluating dynamically constructed code strings (like `new Function()`) introduces security vulnerabilities. It bypasses strict Content Security Policies and opens the door for code injection if the evaluated string is compromised.
 **Prevention:** To replace unsafe dynamic code evaluation of precompiled scripts in a synchronous ES module environment, output the compiled scripts as CommonJS (`.cjs`) and load them natively and securely using `createRequire`.
+
+## 2026-08-11 - Unsafe CSP Directive in Generated Templates
+**Vulnerability:** The generated `index.html` template included `'unsafe-eval'` in its Content-Security-Policy `script-src` directive.
+**Learning:** While build tools like Vite might filter out `'unsafe-eval'` during production builds, having it in the source templates creates a poor security-by-default posture and unnecessary risk if build configurations change or fail.
+**Prevention:** Never include `'unsafe-eval'` in base CSP templates unless absolutely strictly required by a specific framework or tool, and prefer relying on build tools to inject it only during development if needed, rather than filtering it out of production.
