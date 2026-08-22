@@ -71,3 +71,8 @@
 **Vulnerability:** Use of `new Function()` in `src/template-engine.js` to evaluate precompiled Handlebars templates.
 **Learning:** Evaluating dynamically constructed code strings (like `new Function()`) introduces security vulnerabilities. It bypasses strict Content Security Policies and opens the door for code injection if the evaluated string is compromised.
 **Prevention:** To replace unsafe dynamic code evaluation of precompiled scripts in a synchronous ES module environment, output the compiled scripts as CommonJS (`.cjs`) and load them natively and securely using `createRequire`.
+
+## 2026-08-11 - Enforce CSP Consistency Across Environments
+**Vulnerability:** Dev environment allowed 'unsafe-eval' in CSP which was stripped during build.
+**Learning:** Having different security constraints between development and production (like stripping 'unsafe-eval' only in build) can hide XSS vulnerabilities during development that only manifest or break in production. Development environments should mirror secure production configurations.
+**Prevention:** Remove 'unsafe-eval' directly from the source template CSP and eliminate environment-specific stripping logic in build tools.
