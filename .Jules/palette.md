@@ -92,3 +92,7 @@
 ## 2026-03-05 - Persistent Context for Form Warnings
 **Learning:** While `role="alert"` announces dynamic warnings (like Caps Lock active) when they first appear, screen reader users lose this context if they navigate away and focus back on the input.
 **Action:** Always link contextual warnings to the associated input field using `aria-describedby` (alongside `role="alert"`) so the warning is reliably read out upon field focus.
+
+## 2026-08-23 - Comprehensive Form Disablement & Focus Protection
+**Learning:** When adding async loading states, it's critical to comprehensively disable all interactive elements within the form (inputs, toggles, secondary actions) to prevent unexpected mid-flight state mutations. Additionally, utility buttons embedded inside inputs (like password visibility toggles) often steal focus when clicked, which is a jarring UX for keyboard and screen reader users.
+**Action:** Always map the `loading` state to `disabled` and apply `disabled:opacity-50 disabled:cursor-not-allowed` styles to all inputs and interactive buttons in a form. Always add `onMouseDown={(e) => e.preventDefault()}` to in-input utility buttons to ensure they operate without stealing input focus.
