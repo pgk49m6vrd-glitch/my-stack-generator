@@ -13,7 +13,6 @@ export default defineConfig(({ command }) => ({
           return html.replace(/script-src [^;]+;?/, (match) => {
             return match
               .replace(/'unsafe-inline'/g, '')
-              .replace(/'unsafe-eval'/g, '')
               .replace(/\s+/g, ' ')
               .trim();
           });
