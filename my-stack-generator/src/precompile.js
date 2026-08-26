@@ -62,27 +62,43 @@ async function precompile() {
   let compiled = 0;
   let failed = 0;
 
-  // ⚡ Bolt Optimization: Use Promise.all to process template compilation concurrently instead of blocking synchronously, reducing overall precompilation time.
-  await Promise.all(hbsFiles.map(async ({ fullPath, relativePath }) => {
-    try {
-      const source = await fs.promises.readFile(fullPath, 'utf-8');
-      const precompiled = Handlebars.precompile(source, { noEscape: true });
+  // ⚡ Bolt Optimization: Batch concurrent directory creations to prevent redundant I/O calls
+  const dirs = new Set();
+  const tasks = [];
 
-      // Output path mirrors the template path but with .cjs extension
-      const outputRelative = relativePath.endsWith('.hbs') ? relativePath.slice(0, -4) + '.cjs' : relativePath;
-      const outputPath = path.join(COMPILED_DIR, outputRelative);
+  for (const { fullPath, relativePath } of hbsFiles) {
+    const outputRelative = relativePath.endsWith('.hbs') ? relativePath.slice(0, -4) + '.cjs' : relativePath;
+    const outputPath = path.join(COMPILED_DIR, outputRelative);
+    dirs.add(path.dirname(outputPath));
+    tasks.push({ fullPath, relativePath, outputPath, outputRelative });
+  }
 
-      await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
-      // Export the precompiled template spec as a CommonJS module
-      await fs.promises.writeFile(outputPath, `module.exports = ${precompiled};`);
+  const dirPromises = [];
+  for (const dir of dirs) {
+    dirPromises.push(fs.promises.mkdir(dir, { recursive: true }));
+  }
+  await Promise.all(dirPromises);
 
-      console.log(`  ✅ ${relativePath} → compiled/${outputRelative}`);
-      compiled++;
-    } catch (e) {
-      console.error(`  ❌ ${relativePath}: ${e.message}`);
-      failed++;
-    }
-  }));
+  const filePromises = [];
+  for (const task of tasks) {
+    filePromises.push((async () => {
+      try {
+        const source = await fs.promises.readFile(task.fullPath, 'utf-8');
+        const precompiled = Handlebars.precompile(source, { noEscape: true });
+
+        // Export the precompiled template spec as a CommonJS module
+        await fs.promises.writeFile(task.outputPath, `module.exports = ${precompiled};`);
+
+        console.log(`  ✅ ${task.relativePath} → compiled/${task.outputRelative}`);
+        compiled++;
+      } catch (e) {
+        console.error(`  ❌ ${task.relativePath}: ${e.message}`);
+        failed++;
+      }
+    })());
+  }
+
+  await Promise.all(filePromises);
 
   console.log(`\n📊 Done: ${compiled} compiled, ${failed} failed out of ${hbsFiles.length} total.`);
 }
