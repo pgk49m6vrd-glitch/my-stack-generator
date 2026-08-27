@@ -95,3 +95,7 @@
 ## 2024-08-21 - Improve form loading states and password toggle UX
 **Learning:** Missing disabled states on form elements during async submissions can cause mid-flight state changes and user confusion. Password toggles can unexpectedly steal focus.
 **Action:** Always add `disabled` state with visual cues (`disabled:opacity-50 disabled:cursor-not-allowed`) to all inputs/buttons during loading. Prevent focus stealing on password toggles using `onMouseDown={(e) => e.preventDefault()}`.
+
+## 2026-03-05 - Contextual Loading Text
+**Learning:** Generic "Loading..." text on shared buttons (like Login/Signup) loses the context of the user's action and feels disjointed.
+**Action:** Always map loading text to the specific action being performed (e.g., "Signing in..." or "Creating account...") to maintain context during async operations.
