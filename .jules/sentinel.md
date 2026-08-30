@@ -75,3 +75,8 @@
 **Vulnerability:** Content Security Policy allowed `unsafe-eval` in the development base template, which could have been mistakenly preserved in downstream projects.
 **Learning:** Even in development source templates, security policies like CSP should mirror secure production configurations by explicitly omitting directives like `unsafe-eval` to prevent XSS and instill secure-by-default behavior. Build tools can be simplified by avoiding redundant stripping of these directives.
 **Prevention:** Default CSPs in generated templates must be strictly configured without unsafe directives, ensuring applications are secure by default from the initial scaffolding phase.
+
+## 2024-03-09 - Remove unsafe-inline from CSP
+**Vulnerability:** Content Security Policy allowed `unsafe-inline` in the development base template for script-src and style-src.
+**Learning:** Allowing inline scripts and styles even in development templates creates a habit of bypassing CSP, leading to XSS vulnerabilities if these configurations leak into production.
+**Prevention:** Default CSPs in generated templates must be strictly configured without `unsafe-inline`, ensuring applications are secure against XSS by default.
