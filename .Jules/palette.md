@@ -99,3 +99,6 @@
 ## 2026-03-05 - Contextual Loading Text
 **Learning:** Generic "Loading..." text on shared buttons (like Login/Signup) loses the context of the user's action and feels disjointed.
 **Action:** Always map loading text to the specific action being performed (e.g., "Signing in..." or "Creating account...") to maintain context during async operations.
+## 2026-08-30 - Added Skip button for Async Animation Sequence
+**Learning:** Implementing 'Skip' functionality for async, Promise-based animation sequences (like an Easter egg) requires tracking cancellation state (e.g. using `useRef`) to prevent state race conditions and memory leaks from background tasks continuing after skip.
+**Action:** Always include cancellation tracking and verify component unmount safety when dealing with long-running timeout/promise sequences.
