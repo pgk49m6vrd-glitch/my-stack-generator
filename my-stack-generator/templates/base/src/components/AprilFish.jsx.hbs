@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const AprilFish = () => {
   const [showEasterEgg, setShowEasterEgg] = useState(false);
   const [phase, setPhase] = useState('hidden'); // hidden, entering, fishing, caught, done
+  const isCancelled = useRef(false);
 
   useEffect(() => {
     // Check if current date is between April 1 (00:00) and April 3 (23:59)
@@ -12,30 +13,55 @@ const AprilFish = () => {
 
     if (isApril && validDay) {
       // It's April Fool's time! Start the sequence after a tiny delay
-      setTimeout(() => setShowEasterEgg(true), 500);
+      setTimeout(() => {
+        if (!isCancelled.current) setShowEasterEgg(true);
+      }, 500);
       
       const sequence = async () => {
+        if (isCancelled.current) return;
         setPhase('entering');
         await new Promise((r) => setTimeout(r, 1000));
         
+        if (isCancelled.current) return;
         setPhase('fishing');
         await new Promise((r) => setTimeout(r, 3000)); // 3s of fishing action
         
+        if (isCancelled.current) return;
         setPhase('caught');
         await new Promise((r) => setTimeout(r, 2000)); // 2s of showing the fish out of water
         
+        if (isCancelled.current) return;
         setPhase('done');
       };
       
       sequence();
     }
+
+    return () => {
+      isCancelled.current = true;
+    };
   }, []);
+
+  const handleSkip = () => {
+    isCancelled.current = true;
+    setPhase('done');
+  };
 
   if (!showEasterEgg) return null;
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center bg-slate-900 overflow-hidden transition-opacity duration-1000 ${phase === 'done' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
       
+      {/* Skip Button */}
+      <button
+        type="button"
+        onClick={handleSkip}
+        className="absolute top-6 right-6 z-50 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 text-sm font-medium"
+        aria-label="Skip animation"
+      >
+        Skip
+      </button>
+
       {/* Dynamic Background with SVG Waves */}
       <div className="absolute inset-0 z-0 flex flex-col justify-end overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-sky-900/40"></div>
