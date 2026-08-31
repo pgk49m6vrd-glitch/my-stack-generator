@@ -69,3 +69,6 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-08-25 - Concurrent Batch Directory Creation for Precompilation
 **Learning:** Using `fs.promises.mkdir` for each file inside a `Promise.all` `.map` loop leads to redundant I/O calls when multiple files share the same directory, degrading filesystem performance.
 **Action:** Pre-compute a `Set` of unique target directories and create them concurrently in a separate batch before writing the files. This minimizes duplicate `mkdir` calls and reduces execution overhead.
+## 2024-05-24 - Pre-compute properties and avoid redundant iterations
+**Learning:** In `renderAllTemplates`, `ctx.features.includes` was redundantly searching arrays when boolean flags (`hasRouter`, etc.) were already pre-computed in the context. In `buildTemplateContext`, repeated property access and fallbacks (`config.backend || 'firebase'`) created unnecessary overhead.
+**Action:** Pre-compute and assign frequently accessed object properties with fallbacks to local variables to avoid redundant evaluation. Leverage pre-computed boolean flags instead of repeating array lookups (`O(n)`). Use `Set` for multiple lookups on the same array.
