@@ -6,18 +6,5 @@ export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     tailwindcss(),
-    {
-      name: 'html-transform',
-      transformIndexHtml(html) {
-        if (command === 'build') {
-          return html.replace(/script-src [^;]+;?/, (match) => {
-            return match
-              .replace(/'unsafe-inline'/g, '')
-              .replace(/\s+/g, ' ')
-              .trim();
-          });
-        }
-      },
-    },
   ],
 }))
