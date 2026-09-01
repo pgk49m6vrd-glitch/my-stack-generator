@@ -72,3 +72,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-05-24 - Pre-compute properties and avoid redundant iterations
 **Learning:** In `renderAllTemplates`, `ctx.features.includes` was redundantly searching arrays when boolean flags (`hasRouter`, etc.) were already pre-computed in the context. In `buildTemplateContext`, repeated property access and fallbacks (`config.backend || 'firebase'`) created unnecessary overhead.
 **Action:** Pre-compute and assign frequently accessed object properties with fallbacks to local variables to avoid redundant evaluation. Leverage pre-computed boolean flags instead of repeating array lookups (`O(n)`). Use `Set` for multiple lookups on the same array.
+
+## 2024-11-20 - Optimize template context array iterations
+**Learning:** Allocating a new `Set` on every template context build inside a generator process introduces unnecessary garbage collection pressure and CPU overhead, especially when checking flags on a small array. A direct evaluation loop is significantly faster.
+**Action:** Replace `Set` allocations with a direct `for` loop to compute boolean flags.
