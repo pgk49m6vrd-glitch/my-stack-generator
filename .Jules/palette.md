@@ -102,3 +102,7 @@
 ## 2026-08-30 - Added Skip button for Async Animation Sequence
 **Learning:** Implementing 'Skip' functionality for async, Promise-based animation sequences (like an Easter egg) requires tracking cancellation state (e.g. using `useRef`) to prevent state race conditions and memory leaks from background tasks continuing after skip.
 **Action:** Always include cancellation tracking and verify component unmount safety when dealing with long-running timeout/promise sequences.
+
+## 2026-03-05 - Proactive Password Requirements
+**Learning:** Relying solely on HTML5 `minLength` validation for password flows only provides feedback after a user submits, causing friction during sign-ups.
+**Action:** Proactively display visible password requirements as helper text during "Create Account" flows, and explicitly link it to the password input using `aria-describedby` so screen readers announce the constraints upon focus.
