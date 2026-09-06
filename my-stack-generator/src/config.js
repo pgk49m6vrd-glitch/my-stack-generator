@@ -90,7 +90,7 @@ export async function savePreset(name, config) {
     features: config.features,
   };
 
-  await fs.promises.writeFile(RC_FILE, JSON.stringify(existing, null, 2));
+  await fs.promises.writeFile(RC_FILE, JSON.stringify(existing, null, 2), { mode: 0o600 });
   console.log(`\n💾 Preset "${name}" saved to ${RC_FILE}`);
 }
 
