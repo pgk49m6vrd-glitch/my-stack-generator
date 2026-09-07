@@ -106,3 +106,7 @@
 ## 2026-03-05 - Proactive Password Requirements
 **Learning:** Relying solely on HTML5 reactive form validation (like `minLength`) only provides feedback after a user submits, leading to a frustrating user experience.
 **Action:** Proactively display visible password requirements as helper text and explicitly link it to the input field using `aria-describedby` so screen readers announce constraints upon focus.
+
+## 2024-09-07 - Esc-to-Skip for Overlays
+**Learning:** Full-screen overlays and long-running animations without keyboard dismissability trap keyboard-navigators, leading to frustration.
+**Action:** Always implement an `Escape` key listener for full-screen overlays or sequences, and expose the shortcut visually using a `<kbd>` element.
