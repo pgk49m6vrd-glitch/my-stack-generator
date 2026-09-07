@@ -20,9 +20,14 @@ export async function generateProject(config, options = {}) {
 
   const root = path.join(process.cwd(), config.projectName);
 
-  // Validate project directory doesn't exist
-  if (fs.existsSync(root)) {
+  // ⚡ Bolt Optimization: Replace blocking synchronous fs.existsSync with an asynchronous stat check.
+  // This prevents main thread blocking while maintaining the required early fail-fast behavior
+  // before expensive template rendering begins.
+  try {
+    await fs.promises.stat(root);
     throw new Error(`Directory "${config.projectName}" already exists.`);
+  } catch (e) {
+    if (e.code !== 'ENOENT') throw e;
   }
 
   // Sanitize package name
