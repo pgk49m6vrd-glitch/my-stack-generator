@@ -76,3 +76,9 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-11-20 - Optimize template context array iterations
 **Learning:** Allocating a new `Set` on every template context build inside a generator process introduces unnecessary garbage collection pressure and CPU overhead, especially when checking flags on a small array. A direct evaluation loop is significantly faster.
 **Action:** Replace `Set` allocations with a direct `for` loop to compute boolean flags.
+## 2024-05-27 - Remove Redundant Synchronous File Existence Check Before Directory Creation
+**Learning:** Using `fs.existsSync` to check if a directory exists before creating it introduces a blocking synchronous operation and an unnecessary extra I/O stat call, especially when the subsequent `fs.promises.mkdir` inherently handles the `EEXIST` error natively.
+**Action:** Eliminate the synchronous `fs.existsSync` check and rely entirely on catching the `EEXIST` error from the asynchronous `fs.promises.mkdir` operation, effectively halving the I/O operations and avoiding thread blocking.
+## 2024-05-27 - Remove Blocking Synchronous Directory Check
+**Learning:** Using `fs.existsSync` to check if a directory exists at the start of a process introduces a blocking synchronous operation that halts the main thread.
+**Action:** Replace `fs.existsSync` with `await fs.promises.stat` inside a `try/catch` block to perform the validation asynchronously, preventing event loop blocking while still preserving the early fail-fast behavior.
