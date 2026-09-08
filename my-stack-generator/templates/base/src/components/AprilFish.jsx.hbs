@@ -47,6 +47,17 @@ const AprilFish = () => {
     setPhase('done');
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        isCancelled.current = true;
+        setPhase('done');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   if (!showEasterEgg) return null;
 
   return (
@@ -56,10 +67,12 @@ const AprilFish = () => {
       <button
         type="button"
         onClick={handleSkip}
-        className="absolute top-6 right-6 z-50 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 text-sm font-medium"
-        aria-label="Skip animation"
+        className="absolute top-6 right-6 z-50 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 text-sm font-medium"
+        aria-label="Skip animation (Press Escape)"
+        title="Skip animation (Press Escape)"
       >
-        Skip
+        <span>Skip</span>
+        <kbd className="hidden sm:inline-flex items-center justify-center font-sans text-[10px] bg-white/10 border border-white/20 rounded px-1.5 py-0.5 opacity-80" aria-hidden="true">ESC</kbd>
       </button>
 
       {/* Dynamic Background with SVG Waves */}
