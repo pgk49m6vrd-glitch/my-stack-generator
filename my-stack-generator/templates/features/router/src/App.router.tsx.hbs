@@ -14,7 +14,7 @@ function App(): React.JSX.Element {
             {{projectName}}
           </Link>
           <div className="flex gap-4">
-            <NavLink to="/" className={({ isActive }) => `transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-2 py-1 ${isActive ? 'text-white font-medium' : 'text-slate-300 hover:text-white'}`}>Home</NavLink>
+            <NavLink to="/" className={({ isActive }) => `transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded px-3 py-1.5 ${isActive ? 'bg-slate-700 text-white font-medium' : 'text-slate-300 hover:text-white hover:bg-slate-700/50'}`}>Home</NavLink>
           </div>
         </div>
       </nav>
