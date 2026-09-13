@@ -42,8 +42,11 @@ export function sanitizePackageName(name, validatePkgName) {
 const pmAvailability = new Map();
 
 export function checkPackageManager(pm, spawn) {
-  if (pmAvailability.has(pm)) {
-    return pmAvailability.get(pm);
+  // ⚡ Bolt Optimization: Avoid using Map.has() followed by Map.get() which performs two sequential hash lookups.
+  // Instead, use a single Map.get() and check for undefined to halve the lookup overhead.
+  const cachedPromise = pmAvailability.get(pm);
+  if (cachedPromise !== undefined) {
+    return cachedPromise;
   }
 
   const userAgent = process.env.npm_config_user_agent || '';

@@ -91,8 +91,11 @@ const templateCache = new Map();
  * @returns {string} Rendered content
  */
 export function renderTemplate(templatePath, context) {
-  if (templateCache.has(templatePath)) {
-    return templateCache.get(templatePath)(context);
+  // ⚡ Bolt Optimization: Avoid using Map.has() followed by Map.get() which performs two sequential hash lookups.
+  // Instead, use a single Map.get() and check for undefined to halve the lookup overhead.
+  const cachedTemplate = templateCache.get(templatePath);
+  if (cachedTemplate !== undefined) {
+    return cachedTemplate(context);
   }
 
   // ⚡ Bolt Optimization: Use try/catch instead of fs.existsSync to avoid double I/O calls (stat then read), reducing file reading time by ~25-30%.
