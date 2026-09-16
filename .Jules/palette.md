@@ -110,3 +110,7 @@
 ## 2024-09-07 - Esc-to-Skip for Overlays
 **Learning:** Full-screen overlays and long-running animations without keyboard dismissability trap keyboard-navigators, leading to frustration.
 **Action:** Always implement an `Escape` key listener for full-screen overlays or sequences, and expose the shortcut visually using a `<kbd>` element.
+
+## 2023-10-24 - Accessible Active Navigation States
+**Learning:** In the router templates, active `NavLink` elements relied solely on text color and font-weight changes to indicate state, which fails WCAG 1.4.1 (Use of Color).
+**Action:** Always provide a structural layout change (like a background color pill `bg-slate-700` or a border indicator) in addition to text changes when designing active navigation states for React Router menus.
