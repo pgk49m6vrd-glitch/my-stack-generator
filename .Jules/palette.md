@@ -110,3 +110,7 @@
 ## 2024-09-07 - Esc-to-Skip for Overlays
 **Learning:** Full-screen overlays and long-running animations without keyboard dismissability trap keyboard-navigators, leading to frustration.
 **Action:** Always implement an `Escape` key listener for full-screen overlays or sequences, and expose the shortcut visually using a `<kbd>` element.
+
+## 2026-03-05 - Active State Visual Distinction
+**Learning:** Relying solely on text color or font-weight changes for active navigation links fails WCAG 1.4.1 (Use of Color). Screen readers use `aria-current="page"`, but sighted users need stronger visual cues.
+**Action:** Always provide a structural layout change, such as a background color pill or a border indicator, to ensure accessible visual distinction for the active state.
