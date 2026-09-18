@@ -82,3 +82,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-05-27 - Remove Blocking Synchronous Directory Check
 **Learning:** Using `fs.existsSync` to check if a directory exists at the start of a process introduces a blocking synchronous operation that halts the main thread.
 **Action:** Replace `fs.existsSync` with `await fs.promises.stat` inside a `try/catch` block to perform the validation asynchronously, preventing event loop blocking while still preserving the early fail-fast behavior.
+
+## 2024-05-24 - Map Lookup Optimization
+**Learning:** Using `Map.has(key)` immediately followed by `Map.get(key)` performs two sequential hash lookups for the same key, doubling the lookup overhead in hot paths like cache retrieval.
+**Action:** Use a single `const val = Map.get(key)` and check `if (val !== undefined)` to halve the lookup overhead.
