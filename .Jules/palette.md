@@ -113,3 +113,7 @@
 ## 2024-09-27 - Active Navigation Link Styling
 **Learning:** Relying solely on text color and font-weight changes for active navigation links (`<NavLink>`) fails WCAG 1.4.1 (Use of Color). Screen reader users and those with visual impairments need structural or layout cues.
 **Action:** Always provide a structural layout change, such as a background color pill (`bg-slate-700`) or border indicator, to ensure accessible visual distinction for the active state.
+
+## 2026-03-05 - Clear Stale Form Errors
+**Learning:** Leaving a form submission error visible while the user is actively typing to correct their input creates cognitive dissonance and frustration.
+**Action:** Always clear the form error state immediately when the user begins typing in the related input fields (e.g., inside the `onChange` handler).
