@@ -81,3 +81,8 @@
 **Learning:** Allowing inline scripts and styles even in development templates creates a habit of bypassing CSP, leading to XSS vulnerabilities if these configurations leak into production.
 **Prevention:** Default CSPs in generated templates must be strictly configured without `unsafe-inline`, ensuring applications are secure against XSS by default.
 ## 2026-09-06 - Insecure Config File Permissions\n**Vulnerability:** User configuration files (`~/.mystackrc.json`) were being created with default file permissions (`0666`), potentially allowing other users on the system to read or modify the file.\n**Learning:** Configuration files that might contain sensitive data or affect application behavior should always be created with restricted permissions to prevent unauthorized access or tampering.\n**Prevention:** Explicitly pass `{ mode: 0o600 }` to `fs.promises.writeFile` when creating configuration files to ensure only the owner can read and write the file.
+
+## 2026-10-11 - Handlebars AST Confusion & Own Property Check Bypass
+**Vulnerability:** Handlebars package versions prior to 4.7.10 contained critical vulnerabilities allowing JavaScript injection via AST type confusion and own property check bypass.
+**Learning:** Outdated templating dependencies can introduce remote code execution risks even if template input is partially sanitized.
+**Prevention:** Regularly audit and update templating libraries to patched releases (`>=4.7.10`).
