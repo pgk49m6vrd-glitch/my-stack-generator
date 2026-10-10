@@ -145,7 +145,13 @@ export function mergeConfig(preset, cliFlags) {
   if (cliFlags.backend) merged.backend = cliFlags.backend;
   if (cliFlags.typescript !== undefined) merged.typescript = cliFlags.typescript;
   if (cliFlags.features) {
-    merged.features = cliFlags.features.split(',').map(s => s.trim()).filter(Boolean);
+    // ⚡ Bolt Optimization: Replace chained .map().filter() with a single .reduce() pass
+    // to avoid redundant intermediate array allocations and double-iterations.
+    merged.features = cliFlags.features.split(',').reduce((acc, s) => {
+      const trimmed = s.trim();
+      if (trimmed) acc.push(trimmed);
+      return acc;
+    }, []);
   }
 
   return merged;

@@ -56,7 +56,13 @@ export async function initCommand(options = {}) {
 
     // Parse features if passed as string
     if (typeof config.features === 'string') {
-      config.features = config.features.split(',').map(s => s.trim()).filter(Boolean);
+      // ⚡ Bolt Optimization: Replace chained .map().filter() with a single .reduce() pass
+      // to avoid redundant intermediate array allocations and double-iterations.
+      config.features = config.features.split(',').reduce((acc, s) => {
+        const trimmed = s.trim();
+        if (trimmed) acc.push(trimmed);
+        return acc;
+      }, []);
     }
 
     // Validate features against strict allowlist to prevent injection or out-of-bounds inputs
