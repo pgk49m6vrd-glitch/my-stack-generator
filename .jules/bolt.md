@@ -86,3 +86,7 @@ Action: Pre-fill `package.json` with `latest` versioned dependencies and run a s
 ## 2024-11-20 - Optimize Map lookups in hot paths
 **Learning:** Using `Map.has(key)` immediately followed by `Map.get(key)` in hot paths like template caching or dependency checking performs two sequential hash lookups, which introduces unnecessary CPU overhead.
 **Action:** Replace the double lookup pattern with a single `const val = Map.get(key)` and an `if (val !== undefined)` check to halve the lookup overhead.
+
+## 2023-10-10 - Replace chained array methods with reduce in hot paths
+**Learning:** Chaining `.map()` and `.filter()` creates intermediate arrays that are immediately discarded, increasing garbage collection pressure. This is especially relevant during parsing operations, although the absolute performance gain might be small for short arrays.
+**Action:** When transforming and filtering arrays in hot paths or initialization sequences, use a single `.reduce()` pass to construct the final array directly, avoiding redundant intermediate allocations.
