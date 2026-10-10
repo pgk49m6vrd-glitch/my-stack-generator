@@ -81,7 +81,10 @@ function LoginForm(): React.JSX.Element {
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (error) setError('');
+              }}
               required
               maxLength={255}
               autoComplete="username"
@@ -102,7 +105,10 @@ function LoginForm(): React.JSX.Element {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (error) setError('');
+                }}
                 onKeyUp={handleKeyEvent}
                 onKeyDown={handleKeyEvent}
                 required
